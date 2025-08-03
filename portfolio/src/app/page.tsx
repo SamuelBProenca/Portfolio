@@ -1,5 +1,4 @@
 import React from 'react';
-import LogoComponent from './assets/logoComponent';
 import HeroSection from './components/HeroSection';
 import HProjects from './components/highlighted-projects';
 import Skills from './components/skills';

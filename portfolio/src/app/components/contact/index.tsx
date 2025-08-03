@@ -8,7 +8,7 @@ export default function Contact() {
     message: "",
   });
 
-  const handleChange = (event: { target: { name: any; value: any; }; }) => {
+  const handleChange = (event: { target: { name: string; value: string; }; }) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
