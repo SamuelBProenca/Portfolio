@@ -12,13 +12,14 @@ export default function Home() {
     <body className="min-h-screen bg-white text-black">
       <div className="w-full flex justify-center">
         <main className="max-w-screen-xl w-full px-6 py-12">
-          <HeroSection />
-          <HProjects />
-          <Skills />
-          <Experiences />
-          <Projects />
-          <About />
-          <Contact />
+          <HeroSection />       
+          <About />             
+          <Skills />            
+          <Experiences />       
+          <HProjects />         
+          <Projects />          
+          <Contact />           
+
         </main>
       </div>
     </body>
