@@ -89,7 +89,7 @@ export default function Contact() {
       <h3 className="text-3xl font-semibold mb-2">{t.title}</h3>
       <p className="text-neutral-400 mb-8">{t.subtitle}</p>
 
-      <form onSubmit={handleSubmit} className="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
         <label className="block col-span-1">
           <span className="text-neutral-200">{t.labels.name}</span>
           <input
