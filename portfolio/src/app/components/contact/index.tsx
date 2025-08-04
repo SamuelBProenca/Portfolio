@@ -22,8 +22,8 @@ export default function Contact() {
     title: locale === 'pt' ? 'Entre em contato' : 'Get in touch',
     subtitle:
       locale === 'pt'
-        ? 'Ou envie um email diretamente para dev.proenca.samuel@gmail.com'
-        : 'Or email me directly at dev.proenca.samuel@gmail.com',
+        ? 'Ou envie um email diretamente para contact@samuelproenca.com'
+        : 'Or email me directly at contact@samuelproenca.com',
     labels: {
       name: locale === 'pt' ? 'Nome *' : 'Name *',
       email: locale === 'pt' ? 'Email *' : 'Email *',

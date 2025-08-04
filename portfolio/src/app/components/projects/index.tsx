@@ -27,60 +27,65 @@ export default function Projects() {
         {
             title: 'Gerador de Currículos Personalizados',
             date: '2025',
-            description: 'Aplicação dinâmica para gerar currículos em PDF adaptados a vagas específicas. Inclui validação de dados, casamento de requisitos e exportação estilizada. Desenvolvido com foco em modularidade, SOLID e usabilidade.',
-            link: 'https://github.com/SamuelBProenca/resume-generator', // se houver
+            description:
+                'Aplicação dinâmica para gerar currículos em PDF adaptados a vagas específicas. Inclui validação de dados, casamento de requisitos e exportação estilizada. Desenvolvido com foco em modularidade, SOLID e usabilidade.',
+            link: 'https://github.com/SamuelBProenca/resume-generator',
             image: '/assets/curriculo.png',
         },
         {
             title: 'Design Patterns Dojo',
             date: '2025',
-            description: 'Repositório com implementações dos 23 principais Design Patterns. Código didático, comentado, e com exemplos práticos. Ideal para estudo e referência.',
+            description:
+                'Repositório com implementações dos 23 principais Design Patterns. Código didático, comentado, e com exemplos práticos. Ideal para estudo e referência.',
             link: 'https://github.com/SamuelBProenca/design-patterns-dojo',
             image: '/assets/designpatterns.png',
         },
         {
             title: 'Ebook: Fundamentos da Programação',
             date: '2025 (em andamento)',
-            description: 'Ebook que explora os fundamentos da programação com exemplos práticos e funções que replicam comportamentos nativos, como lógica condicional sem `if`, e uso de funções lambda.',
+            description:
+                'Ebook que explora os fundamentos da programação com exemplos práticos e funções que replicam comportamentos nativos, como lógica condicional sem `if`, e uso de funções lambda.',
             link: 'https://github.com/SamuelBProenca/programming-foundations-ebook',
             image: '/assets/ebook.png',
         },
         {
             title: 'Plataforma de Cursos Híbrida',
             date: '2025',
-            description: 'Desenvolvida com stack híbrida (No-code + code), integra áreas de vídeo, materiais, progressão de usuários e dashboards. Inclui backend customizado e integrações com Airtable.',
+            description:
+                'Desenvolvida com stack híbrida (No-code + code), integra áreas de vídeo, materiais, progressão de usuários e dashboards. Inclui backend customizado e integrações com Airtable.',
             link: '',
             image: '/assets/curso.png',
-        }, {
+        },
+        {
             title: 'Scripts de Diagnóstico de Rede',
             date: '2024',
-            description: 'Scripts automáticos em .BAT e C# para diagnóstico, monitoramento e automação de tarefas de rede corporativa. Inclui geração de logs, alertas, e ferramentas CLI customizadas.',
+            description:
+                'Scripts automáticos em .BAT e C# para diagnóstico, monitoramento e automação de tarefas de rede corporativa. Inclui geração de logs, alertas, e ferramentas CLI customizadas.',
             link: 'https://github.com/SamuelBProenca/network_monitoring',
             image: '/assets/network.png',
-        }
-
-
-
-
-
-        // Outros projetos reais virão aqui
+        },
     ];
 
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
     return (
-        <section id="projects" className="mb-32 mt-40">
+        <section
+            id="projects"
+            className="mb-32 mt-40 px-4 md:px-0 overflow-x-hidden"
+        >
             <h3 className="text-2xl font-semibold mb-10 border-b border-neutral-800 pb-2">
-                Projetos em destaque
+                Projects
             </h3>
 
             <div className="grid md:grid-cols-2 gap-10 mt-6">
                 {projects.map((project, index) => (
                     <div
                         key={index}
-                        className="bg-neutral-900 p-6 rounded-xl shadow-md hover:shadow-cyan-600/30 transition"
+                        className="backdrop-blur-sm bg-white/5 border border-white/10 p-6 rounded-xl shadow-md hover:shadow-cyan-600/30 transition-all duration-300 overflow-hidden"
                     >
-                        <p className="text-neutral-500 text-xs mb-3">{project.date}</p>
+                        <p className="text-neutral-400 text-xs mb-3">
+                            {project.date}
+                        </p>
 
                         <Image
                             src={project.image}
@@ -90,9 +95,11 @@ export default function Projects() {
                             className="w-full h-40 object-cover mb-5 rounded-lg"
                         />
 
-                        <h4 className="text-xl font-semibold mb-3">{project.title}</h4>
+                        <h4 className="text-xl font-semibold mb-3 text-white">
+                            {project.title}
+                        </h4>
 
-                        <p className="text-neutral-400 text-sm leading-relaxed">
+                        <p className="text-neutral-300 text-sm leading-relaxed">
                             {expandedIndex === index
                                 ? project.description
                                 : `${project.description.slice(0, 180)}...`}
@@ -100,23 +107,29 @@ export default function Projects() {
 
                         <button
                             onClick={() =>
-                                setExpandedIndex(expandedIndex === index ? null : index)
+                                setExpandedIndex(
+                                    expandedIndex === index ? null : index
+                                )
                             }
                             className="text-cyan-400 hover:underline mt-3 text-sm"
                         >
-                            {expandedIndex === index ? 'Mostrar menos' : 'Ver mais'}
+                            {expandedIndex === index
+                                ? 'Mostrar menos'
+                                : 'Ver mais'}
                         </button>
 
                         <div className="mt-5 flex flex-wrap items-center gap-4">
-                            <a
-                                href={project.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-neutral-300 flex items-center text-sm hover:text-cyan-400 transition"
-                            >
-                                <FaGithub className="mr-2" />
-                                Repositório
-                            </a>
+                            {project.link && (
+                                <a
+                                    href={project.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-neutral-300 flex items-center text-sm hover:text-cyan-400 transition"
+                                >
+                                    <FaGithub className="mr-2" />
+                                    Repositório
+                                </a>
+                            )}
 
                             {project.deploy && (
                                 <a

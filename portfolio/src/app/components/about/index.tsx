@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function About() {
   const [lang, setLang] = useState<"pt" | "en">("pt");
@@ -31,25 +32,27 @@ export default function About() {
   const { title, paragraphs } = content[lang];
 
   return (
-    <section id="about" className="mb-32">
+    <section id="about" className="mb-32 mt-20 px-4">
       <h3 className="text-2xl font-semibold mb-10 border-b border-neutral-800 pb-2">
         {title}
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
-        {/* Imagem ou conteúdo visual à esquerda */}
-        <div className="w-full flex justify-center md:justify-start">
-          <div className="w-48 h-48 rounded-xl overflow-hidden border border-neutral-800 shadow-lg">
-            <img
-              src="/me.jpg" // Substitua pelo seu caminho
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+        {/* Imagem à esquerda */}
+        <div className="flex justify-center">
+          <div className="w-[260px] h-[260px] rounded-xl overflow-hidden border border-neutral-800 shadow-lg">
+            <Image
+              src="/professional-test.jpg"
               alt="Foto de Samuel Proença"
               className="w-full h-full object-cover"
+              width={260}
+              height={260}
             />
           </div>
         </div>
 
-        {/* Texto à direita (ocupa duas colunas) */}
-        <div className="md:col-span-2 space-y-6 text-neutral-400 leading-relaxed">
+        {/* Texto à direita */}
+        <div className="md:col-span-2 self-start space-y-6 text-neutral-400 leading-relaxed">
           {paragraphs.map((text, i) => (
             <p key={i}>{text}</p>
           ))}
