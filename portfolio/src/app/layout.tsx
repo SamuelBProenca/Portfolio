@@ -4,6 +4,7 @@ import "./globals.css";
 import HeaderComponent from "./components/header";
 import FooterComponent from "./components/footer";
 import ContactWP from "./assets/whatsapp";
+import { ThemeProvider } from './context/ThemeProvider';
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -28,10 +29,12 @@ export default function RootLayout({
       <body
         className={`${geistMono.variable} antialiased`}
       >
-        <HeaderComponent />
-        {children}
-        <ContactWP />
-        <FooterComponent />
+        <ThemeProvider>
+          <HeaderComponent />
+          {children}
+          <ContactWP />
+          <FooterComponent />
+        </ThemeProvider>
       </body>
     </html>
   );
