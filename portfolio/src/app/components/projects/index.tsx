@@ -14,7 +14,7 @@ export default function Projects() {
             link: 'https://github.com/SamuelBProenca/OctoCards',
             deploy:
                 'https://portfolio-drino7ws7-sams-projects-c32da6ea.vercel.app/',
-            Image: '/assets/octocards.png',
+            Image: '/assets/OctoCards.png',
         },
         {
             title: 'Automação de Processos com .BAT + C# + Logs',

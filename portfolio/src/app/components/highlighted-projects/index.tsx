@@ -29,7 +29,7 @@ export default function HProjects() {
           link: 'https://github.com/SamuelBProenca/OctoCards',
           deploy:
             'https://portfolio-drino7ws7-sams-projects-c32da6ea.vercel.app/',
-          image: '/assets/octocards.png',
+          image: '/assets/OctoCards.png',
         },
         {
           title: 'Automação de Processos com .BAT + C# + Logs',
@@ -56,7 +56,7 @@ export default function HProjects() {
           link: 'https://github.com/SamuelBProenca/OctoCards',
           deploy:
             'https://portfolio-drino7ws7-sams-projects-c32da6ea.vercel.app/',
-          image: '/assets/octocards.png',
+          image: '/assets/OctoCards.png',
         },
         {
           title: 'Process Automation with .BAT + C# + Logs',

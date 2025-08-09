@@ -8,7 +8,7 @@ import Contact from './components/contact';
 import Experiences from './components/experiences';
 import About from './components/about';
 import Projects from './components/projects';
-import FallingLeaves from './components/FallingLeaves';
+// import FallingLeaves from './components/FallingLeaves';
 
 export default function Home() {
   return (
