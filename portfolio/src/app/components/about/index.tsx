@@ -33,14 +33,26 @@ export default function About() {
 
   return (
     <section id="about" className="mb-32 mt-20 px-4">
-      <h3 className="text-2xl font-semibold mb-10 border-b border-neutral-800 pb-2">
+
+      <h3 className="text-2xl font-semibold mb-10  border-neutral-800 pb-2">
         {title}
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+      <div
+        className="
+          grid grid-cols-1 md:grid-cols-3 gap-10 items-center
+          bg-white/20 dark:bg-black/30
+          backdrop-blur-md
+          border border-white/30 dark:border-white/20 border-r-4
+          rounded-2xl
+          p-8
+          shadow-lg
+          transition-colors
+        "
+      >
         {/* Imagem à esquerda */}
         <div className="flex justify-center">
-          <div className="w-[260px] h-[260px] rounded-xl overflow-hidden border border-neutral-800 shadow-lg">
+          <div className="w-[260px] h-[260px] rounded-xl overflow-hidden border border-white/30 dark:border-white/20 shadow-lg">
             <Image
               src="/professional-test.jpg"
               alt="Foto de Samuel Proença"
