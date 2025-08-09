@@ -1,10 +1,13 @@
+`use client`;
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import HeaderComponent from "./components/header";
 import FooterComponent from "./components/footer";
 import ContactWP from "./assets/whatsapp";
-import { ThemeProvider } from './context/ThemeProvider';
+import { ThemeProvider } from "next-themes";
+// import { ThemeProvider } from './context/ThemeProvider';
+import FallingLeaves from "./components/FallingLeaves";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -19,19 +22,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider>
+      <body className="relative overflow-hidden">
+        {/* Folhas caindo no fundo */}
+        {/* <div className="pointer-events-none fixed inset-0 z-0">
+          <FallingLeaves />
+        </div> */}
+
+        {/* Conteúdo */}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <HeaderComponent />
-          {children}
+          <main className="relative z-10">
+            {children}
+          </main>
           <ContactWP />
           <FooterComponent />
         </ThemeProvider>

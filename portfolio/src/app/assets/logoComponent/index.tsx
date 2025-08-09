@@ -11,14 +11,14 @@ type LogoProps = {
 
 const LogoComponent: React.FC<LogoProps> = ({
   theme = "light",
-  className = "",
+  className = "LogoComponent",
   width = 40,
   height = 40,
 }) => {
   const logoSrc =
     theme === "dark"
-      ? "/assets/VectorLogoPortfolioLight.svg"
-      : "/assets/VectorLogoPortfolioDark.svg";
+      ? "/assets/VectorLogoPortfolio.svg"
+      : "/assets/VectorLogoPortfolioLight.svg";
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>

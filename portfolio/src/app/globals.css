@@ -20,7 +20,7 @@
 }
 
 body {
-  background: var(--background);
+  background: transparent; /* deixa as folhas visíveis */
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
@@ -42,4 +42,43 @@ h6 {
 
 html, body {
   overflow: auto;
+}
+
+/* deixa as folhas mais suaves e com shadow */
+.leaf {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  display: inline-block;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.08));
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  background: transparent; /* deixa as folhas visíveis */
+  color: var(--foreground);
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 10; /* garante que o cabeçalho fique acima das folhas */
+}
+
+@keyframes fall {
+  0% {
+    transform: translateX(0) translateY(-10vh) rotate(0deg);
+  }
+  50% {
+    transform: translateX(var(--sway)) translateY(50vh) rotate(180deg);
+  }
+  100% {
+    transform: translateX(0) translateY(110vh) rotate(360deg);
+  }
+}
+
+.leaf {
+  display: inline-block;
+}
+
+.animate-fall {
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }

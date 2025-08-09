@@ -24,7 +24,7 @@ export default function Experiences() {
                     technologies: ["Bash", "C#", "Banco de Dados", "Redes", "Logs"],
                 },
                 {
-                    period: "Jun 2018 - Dez 2019",
+                    period: "Jun 2024 - Dez 2025",
                     title: "Engenheiro de Software - icarusRoc",
                     description: `
             Desenvolvimento de soluções completas em backend e frontend com PHP, JavaScript e ferramentas NoCode.
@@ -94,6 +94,7 @@ export default function Experiences() {
 
             <ul className="space-y-6">
                 {items.map((exp, index) => (
+                    
                     <li key={index} className="bg-neutral-900 p-6 rounded-lg shadow-md">
                         <div className="flex flex-col md:flex-row md:items-start md:gap-16">
                             <p className="text-sm text-neutral-400 md:w-40">{exp.period}</p>

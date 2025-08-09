@@ -176,7 +176,7 @@ export default function Contact() {
 
         <button
           type="submit"
-          className="bg-cyan-500 text-neutral-950 font-semibold px-6 py-3 rounded-xl hover:bg-cyan-400 transition col-span-2"
+          className="bg-cyan-500 text-neutral-950 font-semibold px-6 py-3 rounded-xl hover:bg-cyan-400 transition col-span-2 hover:cursor-pointer mt-4"
         >
           {t.labels.send}
         </button>

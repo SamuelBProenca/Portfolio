@@ -14,7 +14,7 @@ export default function Projects() {
             link: 'https://github.com/SamuelBProenca/OctoCards',
             deploy:
                 'https://portfolio-drino7ws7-sams-projects-c32da6ea.vercel.app/',
-            image: '/assets/octocards.png',
+            Image: '/assets/octocards.png',
         },
         {
             title: 'Automação de Processos com .BAT + C# + Logs',
@@ -22,7 +22,7 @@ export default function Projects() {
             description:
                 'Ferramenta interna para automação de tarefas com .BAT e C#, aumentando eficiência em até 4x. Sem acesso admin à rede, inclui geração automática de logs e expansão futura com banco de dados.',
             link: 'https://github.com/SamuelBProenca/network_monitoring',
-            image: '/assets/octocards.png',
+            Image: '/assets/Automation.png',
         },
         {
             title: 'Gerador de Currículos Personalizados',
@@ -30,7 +30,7 @@ export default function Projects() {
             description:
                 'Aplicação dinâmica para gerar currículos em PDF adaptados a vagas específicas. Inclui validação de dados, casamento de requisitos e exportação estilizada. Desenvolvido com foco em modularidade, SOLID e usabilidade.',
             link: 'https://github.com/SamuelBProenca/resume-generator',
-            image: '/assets/curriculo.png',
+            Image: '/assets/CurriculumService.png',
         },
         {
             title: 'Design Patterns Dojo',
@@ -38,7 +38,7 @@ export default function Projects() {
             description:
                 'Repositório com implementações dos 23 principais Design Patterns. Código didático, comentado, e com exemplos práticos. Ideal para estudo e referência.',
             link: 'https://github.com/SamuelBProenca/design-patterns-dojo',
-            image: '/assets/designpatterns.png',
+            Image: '/assets/DesignPatternsDojo.png',
         },
         {
             title: 'Ebook: Fundamentos da Programação',
@@ -46,7 +46,7 @@ export default function Projects() {
             description:
                 'Ebook que explora os fundamentos da programação com exemplos práticos e funções que replicam comportamentos nativos, como lógica condicional sem `if`, e uso de funções lambda.',
             link: 'https://github.com/SamuelBProenca/programming-foundations-ebook',
-            image: '/assets/ebook.png',
+            Image: '/assets/Ebook.png',
         },
         {
             title: 'Plataforma de Cursos Híbrida',
@@ -54,7 +54,7 @@ export default function Projects() {
             description:
                 'Desenvolvida com stack híbrida (No-code + code), integra áreas de vídeo, materiais, progressão de usuários e dashboards. Inclui backend customizado e integrações com Airtable.',
             link: '',
-            image: '/assets/curso.png',
+            Image: '/assets/Sites.png',
         },
         {
             title: 'Scripts de Diagnóstico de Rede',
@@ -62,7 +62,7 @@ export default function Projects() {
             description:
                 'Scripts automáticos em .BAT e C# para diagnóstico, monitoramento e automação de tarefas de rede corporativa. Inclui geração de logs, alertas, e ferramentas CLI customizadas.',
             link: 'https://github.com/SamuelBProenca/network_monitoring',
-            image: '/assets/network.png',
+            Image: '/assets/NotasFiscaisPHP.png',
         },
     ];
 
@@ -88,7 +88,7 @@ export default function Projects() {
                         </p>
 
                         <Image
-                            src={project.image}
+                            src={project.Image}
                             alt={`Imagem ilustrativa do projeto ${project.title}`}
                             width={400}
                             height={160}

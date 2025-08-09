@@ -37,7 +37,7 @@ export default function HProjects() {
           description:
             'Desenvolvi uma ferramenta interna utilizando .BAT e C# que otimizou em até 4x a eficiência das minhas tarefas diárias. Mesmo sem acesso administrativo à rede, entreguei uma solução funcional, eficiente e segura. A geração de logs automáticos permite monitoramento, rastreabilidade e manutenção facilitada. Em andamento: integração com banco de dados e expansão de funcionalidades.',
           link: 'https://github.com/SamuelBProenca/network_monitoring',
-          image: '/assets/octocards.png',
+          image: '/assets/Automation.png',
         },
       ],
     },
@@ -64,7 +64,7 @@ export default function HProjects() {
           description:
             'I developed an internal tool using .BAT and C# that boosted daily task efficiency by up to 4x. Despite lacking administrative network access, I delivered a functional, secure, and efficient solution. Automatic log generation enables monitoring, traceability, and easier maintenance. In progress: database integration and feature expansion.',
           link: 'https://github.com/SamuelBProenca/network_monitoring',
-          image: '/assets/octocards.png',
+          image: '/assets/Automation.png',
         },
       ],
     },
@@ -74,7 +74,7 @@ export default function HProjects() {
 
   return (
     <section
-      id="projects"
+      id="highlights"
       className="mb-32 mt-40 px-4 md:px-0 overflow-x-hidden"
     >
       <h3 className="text-2xl font-semibold mb-10 border-b border-neutral-800 pb-2">
