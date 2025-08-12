@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LogoComponent from "../../assets/logoComponent";
 import { HiMenu, HiX } from "react-icons/hi";
 
 const HeaderComponent = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [lang, setLang] = useState<"pt" | "en">("pt");
+
+  useEffect(() => {
+    const browserLang = navigator.language || navigator.languages?.[0] || "pt";
+    setLang(browserLang.startsWith("pt") ? "pt" : "en");
+  }, []);
 
   const navItems = {
     pt: [
@@ -31,7 +36,7 @@ const HeaderComponent = () => {
         {/* Logo + Título */}
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg transition-colors duration-300 dark:bg-neutral-800 bg-neutral-200">
-            <LogoComponent width={50} height={50}  />
+            <LogoComponent width={50} height={50} />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight hidden sm:block dark:text-neutral-100 text-neutral-800">
             Samuel Proença
@@ -52,23 +57,13 @@ const HeaderComponent = () => {
           ))}
         </nav>
 
-        {/* Troca de idioma */}
-        <div className="flex items-center gap-2">
-          <button
-            className="px-2 py-1 text-xs border rounded dark:border-neutral-500 border-neutral-400"
-            onClick={() => setLang(lang === "pt" ? "en" : "pt")}
-          >
-            {lang.toUpperCase()}
-          </button>
-
-          {/* Menu mobile */}
-          <button
-            className="md:hidden text-2xl dark:text-neutral-300 text-neutral-700 focus:outline-none"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <HiX /> : <HiMenu />}
-          </button>
-        </div>
+        {/* Menu mobile */}
+        <button
+          className="md:hidden text-2xl dark:text-neutral-300 text-neutral-700 focus:outline-none"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <HiX /> : <HiMenu />}
+        </button>
       </div>
 
       {/* Menu suspenso mobile */}

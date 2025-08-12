@@ -4,8 +4,8 @@
 import React, { useEffect, useState } from "react";
 
 const leafSvgs = [
-  `<svg viewBox="0 0 64 64" fill="orange" xmlns="http://www.w3.org/2000/svg"><path d="M32 2c8 8 20 20 20 34S44 62 32 62 12 50 12 36 24 10 32 2z"/></svg>`,
-  `<svg viewBox="0 0 64 64" fill="#f4a261" xmlns="http://www.w3.org/2000/svg"><path d="M32 4c10 6 22 18 18 32s-14 22-26 22S6 44 10 30 22 10 32 4z"/></svg>`,
+  `<svg viewBox="0 0 64 64" fill="green" xmlns="http://www.w3.org/2000/svg"><path d="M32 2c8 8 20 20 20 34S44 62 32 62 12 50 12 36 24 10 32 2z"/></svg>`,
+  `<svg viewBox="0 0 64 64" fill="#22D3EE" xmlns="http://www.w3.org/2000/svg"><path d="M32 4c10 6 22 18 18 32s-14 22-26 22S6 44 10 30 22 10 32 4z"/></svg>`,
   `<svg viewBox="0 0 64 64" fill="#e9c46a" xmlns="http://www.w3.org/2000/svg"><path d="M32 6c8 8 16 20 12 30s-10 16-20 16S8 40 12 30 24 14 32 6z"/></svg>`
 ];
 

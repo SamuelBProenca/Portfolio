@@ -6,7 +6,6 @@ import HeaderComponent from "./components/header";
 import FooterComponent from "./components/footer";
 import ContactWP from "./assets/whatsapp";
 import { ThemeProvider } from "next-themes";
-// import { ThemeProvider } from './context/ThemeProvider';
 import FallingLeaves from "./components/FallingLeaves";
 
 const geistMono = Geist_Mono({
@@ -26,10 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="relative overflow-hidden">
-        {/* Folhas caindo no fundo */}
-        {/* <div className="pointer-events-none fixed inset-0 z-0">
-          <FallingLeaves />
-        </div> */}
+        
 
         {/* Conteúdo */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
