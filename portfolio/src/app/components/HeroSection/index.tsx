@@ -36,7 +36,7 @@ export default function HeroSection() {
       <h1 className="text-4xl font-bold text-cyan-500 transition mb-10">{name}</h1>
       <h2 className="text-3xl md:text-5xl font-semibold mb-8 px-4">{title}</h2>
 
-      <p className="text-lg text-neutral-400 max-w-2xl mx-auto px-6 leading-relaxed">{description}</p>
+      <p className="text-lg dark:text-neutral-400 text-gray-900 max-w-2xl mx-auto px-6 leading-relaxed">{description}</p>
     </section>
   );
 }

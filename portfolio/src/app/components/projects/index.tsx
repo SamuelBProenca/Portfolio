@@ -152,7 +152,7 @@ export default function Projects() {
             key={index}
             className="backdrop-blur-sm bg-white/5 border border-white/10 p-6 rounded-xl shadow-md hover:shadow-cyan-600/30 transition-all duration-300 overflow-hidden"
           >
-            <p className="text-neutral-400 text-xs mb-3">{project.date}</p>
+            <p className="text-gray-800 dark:text-neutral-400 text-xs mb-3">{project.date}</p>
 
             <Image
               src={project.Image}
@@ -162,11 +162,11 @@ export default function Projects() {
               className="w-full h-40 object-cover mb-5 rounded-lg"
             />
 
-            <h4 className="text-xl font-semibold mb-3 text-white">
+            <h4 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">
               {project.title}
             </h4>
 
-            <p className="text-neutral-300 text-sm leading-relaxed">
+            <p className="text-gray-700 dark:text-neutral-300 text-sm leading-relaxed">
               {expandedIndex === index
                 ? project.description
                 : `${project.description.slice(0, 180)}...`}
@@ -176,7 +176,7 @@ export default function Projects() {
               onClick={() =>
                 setExpandedIndex(expandedIndex === index ? null : index)
               }
-              className="text-cyan-400 hover:underline mt-3 text-sm"
+              className="text-teal-700 dark:text-cyan-400 hover:underline mt-3 text-sm"
             >
               {expandedIndex === index
                 ? lang === "pt"
@@ -193,7 +193,7 @@ export default function Projects() {
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-300 flex items-center text-sm hover:text-cyan-400 transition"
+                  className="text-dark dark:text-neutral-300 flex items-center text-sm hover:text-cyan-400 transition"
                 >
                   <FaGithub className="mr-2" />
                   {lang === "pt" ? "Repositório" : "Repository"}
@@ -205,7 +205,7 @@ export default function Projects() {
                   href={project.deploy}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-300 flex items-center text-sm hover:text-green-400 transition"
+                  className="text-dark dark:text-neutral-300 flex items-center text-sm dark:hover:text-green-400 hover:text-green-700 transition"
                 >
                   <FaExternalLinkAlt className="mr-2" />
                   {lang === "pt" ? "Deploy" : "Live Demo"}

@@ -12,7 +12,7 @@ import FallingLeaves from './components/FallingLeaves';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white relative">
+    <div className="min-h-screen bg-gray-300 dark:bg-black text-black dark:text-white relative">
       
       {/* Folhas caindo - ficam no fundo, mas acima do background */}
       <div className="absolute inset-0 z-0">

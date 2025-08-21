@@ -85,9 +85,9 @@ export default function HProjects() {
         {projects.map((project, index) => (
           <div
             key={index}
-            className="backdrop-blur-sm bg-white/5 border border-white/10 p-6 rounded-xl shadow-md hover:shadow-cyan-600/30 transition-all duration-300 overflow-hidden"
+            className="backdrop-blur-sm bg-gray-400/6 dark:bg-white/5 border dark:border-white/10 p-6 rounded-xl shadow-md hover:shadow-cyan-600/30 transition-all duration-300 overflow-hidden"
           >
-            <p className="text-neutral-400 text-xs mb-3">{project.date}</p>
+            <p className="text-gray-800 dark:text-neutral-400 text-xs mb-3">{project.date}</p>
 
             <Image
               src={project.image}
@@ -97,11 +97,11 @@ export default function HProjects() {
               className="w-full h-40 object-cover mb-5 rounded-lg"
             />
 
-            <h4 className="text-xl font-semibold mb-3 text-white">
+            <h4 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">
               {project.title}
             </h4>
 
-            <p className="text-neutral-300 text-sm leading-relaxed">
+            <p className="text-gray-700 dark:text-neutral-300 text-sm leading-relaxed">
               {expandedIndex === index
                 ? project.description
                 : `${project.description.slice(0, 180)}...`}
@@ -111,7 +111,7 @@ export default function HProjects() {
               onClick={() =>
                 setExpandedIndex(expandedIndex === index ? null : index)
               }
-              className="text-cyan-400 hover:underline mt-3 text-sm"
+              className="text-teal-700 dark:text-cyan-400 hover:underline mt-3 text-sm"
             >
               {expandedIndex === index ? seeLess : seeMore}
             </button>
@@ -122,7 +122,7 @@ export default function HProjects() {
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-300 flex items-center text-sm hover:text-cyan-400 transition"
+                  className="text-dark dark:text-neutral-300 flex items-center text-sm hover:text-cyan-400 transition"
                 >
                   <FaGithub className="mr-2" />
                   {repo}
@@ -134,7 +134,7 @@ export default function HProjects() {
                   href={project.deploy}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-300 flex items-center text-sm hover:text-green-400 transition"
+                  className="text-dark dark:text-neutral-300 flex items-center text-sm dark:hover:text-green-400 hover:text-green-700 transition"
                 >
                   <FaExternalLinkAlt className="mr-2" />
                   {deploy}

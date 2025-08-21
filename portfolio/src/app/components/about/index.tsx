@@ -64,7 +64,7 @@ export default function About() {
         </div>
 
         {/* Texto à direita */}
-        <div className="md:col-span-2 self-start space-y-6 text-neutral-400 leading-relaxed">
+        <div className="md:col-span-2 self-start space-y-6 text-gray-900 dark:text-neutral-400 leading-relaxed">
           {paragraphs.map((text, i) => (
             <p key={i}>{text}</p>
           ))}

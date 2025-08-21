@@ -95,17 +95,17 @@ export default function Experiences() {
             <ul className="space-y-6">
                 {items.map((exp, index) => (
                     
-                    <li key={index} className="bg-neutral-900 p-6 rounded-lg shadow-md">
+                    <li key={index} className="bg-gray-400 dark:bg-neutral-900  p-6 rounded-lg shadow-md">
                         <div className="flex flex-col md:flex-row md:items-start md:gap-16">
-                            <p className="text-sm text-neutral-400 md:w-40">{exp.period}</p>
+                            <p className="text-sm dark:text-neutral-400 text-zinc-900 md:w-40">{exp.period}</p>
                             <div className="md:flex-1">
-                                <h4 className="text-lg font-semibold text-cyan-500">{exp.title}</h4>
-                                <p className="mt-4 whitespace-pre-line leading-relaxed text-neutral-300">
+                                <h4 className="text-lg font-semibold dark:text-cyan-500 text-dark-900">{exp.title}</h4>
+                                <p className="mt-4 whitespace-pre-line leading-relaxed dark:text-neutral-300 text-sky-950">
                                     {exp.description.trim()}
                                 </p>
                                 <div className="mt-4">
-                                    <span className="text-sm text-neutral-400">Tecnologias: </span>
-                                    <span className="text-sm text-cyan-400">
+                                    <span className="text-sm dark:text-neutral-400 text-gray-800">Tecnologias: </span>
+                                    <span className="text-sm text-black dark:text-cyan-400">
                                         {exp.technologies.join(", ")}
                                     </span>
                                 </div>
