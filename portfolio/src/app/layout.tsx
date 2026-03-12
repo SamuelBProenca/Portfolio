@@ -6,12 +6,6 @@ import HeaderComponent from "./components/header";
 import FooterComponent from "./components/footer";
 import ContactWP from "./assets/whatsapp";
 import { ThemeProvider } from "next-themes";
-// import FallingLeaves from "./components/FallingLeaves";
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 export const metadata: Metadata = {
   title: "Samuel Proença - Portfolio",

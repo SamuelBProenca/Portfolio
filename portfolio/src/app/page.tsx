@@ -1,14 +1,6 @@
 "use client";
 
 import React from 'react';
-// import HeroSection from './components/HeroSection';
-// import HProjects from './components/highlighted-projects';
-// import Skills from './components/skills';
-// import Contact from './components/contact';
-// import Experiences from './components/experiences';
-// import About from './components/about';
-// import Projects from './components/projects';
-// import FallingLeaves from './components/FallingLeaves';
 
 export default function HomePage() {
   const projects = [
