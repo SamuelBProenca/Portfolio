@@ -127,7 +127,7 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               <a href="https://github.com/SamuelBProenca" className="transition hover:text-white">GitHub</a>
               <a href="https://www.linkedin.com/in/samuel-proença" className="transition hover:text-white">LinkedIn</a>
-              <a href="mailto:contato@samuelproenca.com" className="transition hover:text-white">Email</a>
+              <a href="mailto:samuelbrito782@gmail.com" className="transition hover:text-white">Email</a>
             </div>
           </div>
 
@@ -374,7 +374,7 @@ export default function HomePage() {
               <a href="https://www.linkedin.com/in/samuel-proença" className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-medium text-slate-100 transition hover:bg-white/10">
                 LinkedIn
               </a>
-              <a href="mailto:contato@samuelproenca.com" className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-medium text-slate-100 transition hover:bg-white/10">
+              <a href="mailto:samuelbrito782@gmail.com" className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-medium text-slate-100 transition hover:bg-white/10">
                 Email
               </a>
             </div>
