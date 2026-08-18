@@ -27,7 +27,7 @@ export default function HeroSection() {
     },
   };
 
-  // const { name, title, description, switch: switchText } = content[lang];
+  const { name, title, description, switch: switchText } = content[lang];
   const { name, title, description } = content[lang];
 
 
