@@ -2,8 +2,8 @@
 import type { Metadata } from "next";
 // import { Geist_Mono } from "next/font/google";
 import "./globals.css";
-import HeaderComponent from "./components/header";
-import FooterComponent from "./components/footer";
+// import HeaderComponent from "./components/header/index";
+// import FooterComponent from "./components/footer";
 import ContactWP from "./assets/whatsapp";
 import { ThemeProvider } from "next-themes";
 // import FallingLeaves from "./components/FallingLeaves";
@@ -29,12 +29,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Conteúdo */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <HeaderComponent />
+          {/* <HeaderComponent /> */}
           <main className="relative z-10">
             {children}
           </main>
           <ContactWP />
-          <FooterComponent />
+          {/* <FooterComponent /> */}
         </ThemeProvider>
       </body>
     </html>
