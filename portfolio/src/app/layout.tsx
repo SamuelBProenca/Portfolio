@@ -1,8 +1,6 @@
 `use client`;
 import type { Metadata } from "next";
 import "./globals.css";
-// import HeaderComponent from "./components/header/index";
-// import FooterComponent from "./components/footer";
 import ContactWP from "./assets/whatsapp";
 import { ThemeProvider } from "next-themes";
 
@@ -23,12 +21,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* Conteúdo */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {/* <HeaderComponent /> */}
           <main className="relative z-10">
-            {children}
+            {children} 
           </main>
           <ContactWP />
-          {/* <FooterComponent /> */}
         </ThemeProvider>
       </body>
     </html>
