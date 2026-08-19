@@ -30,12 +30,7 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-<<<<<<< HEAD
     "**/*.d.ts",
-=======
->>>>>>> ef59b3fb3135ef3c2c03f8f70a47b4b6186e2cb9
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
