@@ -1,0 +1,14 @@
+.git
+.github
+.next
+.vercel
+node_modules
+release
+legacy
+playwright-report
+test-results
+coverage
+.env*
+!.env.example
+*.log
+*.tsbuildinfo

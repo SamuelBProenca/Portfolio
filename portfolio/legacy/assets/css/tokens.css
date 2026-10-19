@@ -1,0 +1,20 @@
+/* Design tokens — Samuel Proença / Portfólio 2026 */
+:root {
+  --ink: #111111;
+  --canvas: #141414;
+  --canvas-2: #1b1b1b;
+  --surface: #232321;
+  --paper: #f0eee8;
+  --paper-soft: #dedbd3;
+  --accent: #c94e37;
+  --accent-hover: #e0654a;
+  --text: #f2f0ea;
+  --muted: #a6a49f;
+  --hairline: rgba(242, 240, 234, 0.19);
+  --hairline-dark: rgba(22, 22, 22, 0.2);
+  --gutter: clamp(22px, 5vw, 86px);
+  --wide: 1540px;
+  --font-body: "Lato", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Roboto Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+}

@@ -128,3 +128,13 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Hosting configuration and private environment files
+.vercel/
+.env*
+!.env.example
+playwright-report/
+test-results/
+
+# Local source copy; the published application lives in portfolio/.
+/portfolio-design-v1/

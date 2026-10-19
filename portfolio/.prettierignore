@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+legacy/
+package-lock.json
+next-env.d.ts
+*.tsbuildinfo
+release/
+.vercel/
