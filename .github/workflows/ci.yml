@@ -1,0 +1,52 @@
+name: Portfolio checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Locate application
+        id: app
+        shell: bash
+        run: |
+          if [ -f portfolio/package.json ]; then
+            echo "directory=portfolio" >> "$GITHUB_OUTPUT"
+          else
+            echo "directory=." >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ steps.app.outputs.directory }}/package-lock.json
+      - run: npm ci
+        working-directory: ${{ steps.app.outputs.directory }}
+      - run: npm run check
+        working-directory: ${{ steps.app.outputs.directory }}
+      - run: npm run build
+        working-directory: ${{ steps.app.outputs.directory }}
+      - run: npx playwright install --with-deps chromium
+        working-directory: ${{ steps.app.outputs.directory }}
+      - name: Browser tests against production server
+        working-directory: ${{ steps.app.outputs.directory }}
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
+        shell: bash
+        run: |
+          node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3000 > "$RUNNER_TEMP/portfolio-next.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          curl --fail --silent --show-error --retry 30 --retry-connrefused --retry-delay 1 http://127.0.0.1:3000/ > /dev/null
+          npm run test:e2e
