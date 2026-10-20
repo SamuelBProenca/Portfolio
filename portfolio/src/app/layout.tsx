@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import MotionControl from "@/components/motion-control";
 import "@/styles/styles.css";
 import "@/styles/responsive.css";
 import "@/styles/rework.css";
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <SiteHeader />
         <main id="conteudo">{children}</main>
         <SiteFooter />
+        <MotionControl />
       </body>
     </html>
   );

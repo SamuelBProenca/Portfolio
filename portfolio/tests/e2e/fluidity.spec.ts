@@ -1,5 +1,72 @@
 import { expect, test } from "@playwright/test";
 
+test("text links draw only a thin underline with 500ms hover and keyboard feedback", async ({
+  page,
+  isMobile,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  for (const route of [
+    {
+      path: "/",
+      selectors: [
+        ".button-secondary",
+        ".work-section .text-link",
+        ".project-accordion__repository",
+        ".contact-links a",
+        ".site-footer a",
+      ],
+    },
+    { path: "/projetos", selectors: [".project-entry__detail"] },
+    { path: "/projetos/octocards", selectors: [".project-plan__source a"] },
+  ]) {
+    await page.goto(route.path);
+    for (const selector of route.selectors) {
+      const link = page.locator(selector).first();
+      await link.scrollIntoViewIfNeeded();
+      const scale = () =>
+        link.evaluate(
+          (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::after").transform).a,
+        );
+      await expect.poll(scale).toBe(0);
+      const geometry = () =>
+        link.evaluate((element) => {
+          const bounds = element.getBoundingClientRect();
+          return {
+            x: bounds.x + scrollX,
+            y: bounds.y + scrollY,
+            width: bounds.width,
+            height: bounds.height,
+          };
+        });
+      const before = await geometry();
+      const style = await link.evaluate((element) => {
+        const underline = getComputedStyle(element, "::after");
+        return {
+          height: parseFloat(underline.height),
+          duration: parseFloat(underline.transitionDuration),
+          origin: underline.transformOrigin,
+        };
+      });
+      expect(style.height).toBe(2);
+      expect(style.duration).toBe(0.5);
+      expect(style.origin).toMatch(/^0px /);
+      if (isMobile) {
+        await page.keyboard.press("Tab");
+        await link.focus();
+      } else {
+        await link.hover();
+      }
+      await expect.poll(scale, { intervals: [16] }).toBeGreaterThan(0);
+      expect(await scale()).toBeLessThan(1);
+      await expect.poll(scale).toBe(1);
+      expect(await geometry()).toEqual(before);
+      await page.mouse.move(0, 0);
+      await link.evaluate((element: HTMLElement) => element.blur());
+      await expect.poll(scale).toBe(0);
+    }
+  }
+});
+
 test("accordion height and opacity progress in both directions without exposing closing links", async ({
   page,
 }) => {
@@ -16,7 +83,7 @@ test("accordion height and opacity progress in both directions without exposing 
       const inert = panel.inert;
       const frames: { height: number; opacity: number }[] = [];
       const start = performance.now();
-      while (performance.now() - start < 550) {
+      while (performance.now() - start < 850) {
         await new Promise(requestAnimationFrame);
         frames.push({
           height: panel.getBoundingClientRect().height,

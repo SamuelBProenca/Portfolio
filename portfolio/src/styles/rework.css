@@ -458,8 +458,8 @@ details[open] > summary > .plan-toggle {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .project-plan details::details-content,
-  .project-plan .plan-toggle {
+  :root:not([data-motion="full"]) .project-plan details::details-content,
+  :root:not([data-motion="full"]) .project-plan .plan-toggle {
     transition: none;
   }
 }

@@ -63,7 +63,7 @@
   --interaction-fill: var(--accent-fill);
 }
 .contact-outline {
-  --interaction-fill: var(--surface);
+  --interaction-fill: var(--accent-fill);
 }
 .contact-form__submit {
   --interaction-fill: var(--paper-soft);
@@ -149,13 +149,57 @@
     color var(--motion-duration) var(--motion-easing),
     border-color var(--motion-duration) var(--motion-easing);
 }
+:is(
+  .text-link,
+  .button-secondary,
+  .project-accordion__repository,
+  .project-entry__detail,
+  .project-entry a.arr,
+  .contact-links a,
+  .site-footer a,
+  .project-plan a
+) {
+  position: relative;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+:is(
+  .text-link,
+  .button-secondary,
+  .project-accordion__repository,
+  .project-entry__detail,
+  .project-entry a.arr,
+  .contact-links a,
+  .site-footer a,
+  .project-plan a
+)::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-selection) var(--motion-easing);
+  pointer-events: none;
+}
+:is(
+    .text-link,
+    .button-secondary,
+    .project-accordion__repository,
+    .project-entry__detail,
+    .project-entry a.arr,
+    .contact-links a,
+    .site-footer a,
+    .project-plan a
+  ):is(:focus-visible, :active)::after {
+  transform: scaleX(1);
+}
 .text-link:focus-visible .arr,
 .button-secondary:focus-visible .arr,
 .project-accordion__repository:focus-visible > span {
   transform: translateX(4px);
-}
-.contact-links a:focus-visible {
-  border-color: currentColor;
 }
 .paper-link:focus-visible {
   outline-color: var(--accent);
@@ -169,6 +213,18 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  :is(
+      .text-link,
+      .button-secondary,
+      .project-accordion__repository,
+      .project-entry__detail,
+      .project-entry a.arr,
+      .contact-links a,
+      .site-footer a,
+      .project-plan a
+    ):hover::after {
+    transform: scaleX(1);
+  }
   .desktop-nav a:hover::after,
   .mobile-panel a:hover::after {
     transform: scaleX(1);
@@ -196,19 +252,16 @@
   .site-footer a:hover {
     color: var(--accent-hover);
   }
-  .contact-links a:hover {
-    border-color: currentColor;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .button-primary:active,
-  .contact-outline:active,
-  .contact-form__submit:enabled:active,
-  .menu-toggle:active,
-  .text-link .arr,
-  .button-secondary .arr,
-  .project-accordion__repository > span {
+  :root:not([data-motion="full"]) .button-primary:active,
+  :root:not([data-motion="full"]) .contact-outline:active,
+  :root:not([data-motion="full"]) .contact-form__submit:enabled:active,
+  :root:not([data-motion="full"]) .menu-toggle:active,
+  :root:not([data-motion="full"]) .text-link .arr,
+  :root:not([data-motion="full"]) .button-secondary .arr,
+  :root:not([data-motion="full"]) .project-accordion__repository > span {
     transform: none !important;
   }
 }

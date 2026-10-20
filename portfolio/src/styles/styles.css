@@ -264,9 +264,6 @@ button:focus-visible {
 .button-secondary .arr {
   font-size: 21px;
 }
-.hero-copy > .eyebrow:last-child {
-  margin-top: 45px;
-}
 .hero-aside {
   position: relative;
   min-height: 660px;
@@ -310,7 +307,8 @@ button:focus-visible {
 .intro-strip__track {
   display: flex;
   width: max-content;
-  animation: intro-marquee 38s linear infinite;
+  animation: intro-marquee 24s linear infinite;
+  will-change: transform;
 }
 .intro-strip__track[data-paused="true"] {
   animation-play-state: paused;
@@ -353,6 +351,17 @@ button:focus-visible {
 .intro-strip b {
   color: var(--accent);
   font-weight: 400;
+}
+.contact-outline.motion-control {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 40;
+  min-height: 44px;
+  background-color: var(--canvas);
+  color: var(--text);
+  border-color: var(--muted);
+  cursor: pointer;
 }
 /* Work */
 .work-section {

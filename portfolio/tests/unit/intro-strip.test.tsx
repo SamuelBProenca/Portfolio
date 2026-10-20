@@ -8,6 +8,11 @@ describe("specialty marquee", () => {
     render(<IntroStrip />);
     const strip = screen.getByRole("region", { name: "Especialidades" });
     expect(within(strip).getAllByRole("listitem")).toHaveLength(4);
+    expect(
+      within(strip)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent),
+    ).toEqual(["Backend+", "Automação+", "Arquitetura+", "Infraestrutura+"]);
     expect(within(strip).getAllByRole("list")).toHaveLength(1);
     const groups = strip.querySelectorAll("ul");
     expect(groups).toHaveLength(2);

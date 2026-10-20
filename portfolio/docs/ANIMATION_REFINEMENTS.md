@@ -1,5 +1,19 @@
 # Refinamento de animações
 
+## Atualização: movimento visível e preferência do navegador
+
+A revisão seguinte reproduziu o comportamento instantâneo ao emular `prefers-reduced-motion: reduce`: as regras existentes reduziam as transições a 0,01ms e removiam a animação da faixa. Isso é uma reprodução do sintoma, não uma confirmação da configuração do navegador do proprietário.
+
+O novo `MotionControl`, no layout compartilhado, oferece **Ativar animações** quando essa preferência está presente. A escolha explícita aplica `data-motion="full"`, persiste no armazenamento local, funciona entre páginas e pode ser desfeita em **Reduzir movimento**. Se o armazenamento estiver bloqueado, o controle continua funcionando durante a visita. A preferência do sistema permanece sendo o padrão.
+
+O preenchimento e os sublinhados usam 500ms com `cubic-bezier(0.45, 0, 0.55, 1)`, evitando que quase toda a mudança aconteça no início. A cor do preenchimento principal foi escurecida para tornar a progressão mais perceptível mantendo o contraste. O acordeão usa 750ms; a faixa de Backend, Automação, Arquitetura e Infraestrutura usa um loop linear de 24 segundos. O rótulo estático duplicado dentro da hero foi removido.
+
+Validação atual: **66 testes de unidade/integração aprovados**, **61 testes de navegador aprovados e 5 ignorados por dispositivo**. TypeScript, ESLint, Prettier, build de produção e verificação de whitespace passaram. Os novos testes verificam a preferência do sistema, ativação explícita, persistência, restauração, armazenamento indisponível e estados intermediários reais do preenchimento sob movimento reduzido. A inspeção visual confirmou o preenchimento intermediário em desktop e a faixa no mobile sem overflow horizontal.
+
+Arquivos novos desta revisão: `src/components/motion-control.tsx`, `tests/unit/motion-control.test.tsx` e `tests/e2e/motion-preference.spec.ts`. A integração fica em `src/app/layout.tsx`; as condições de movimento reduzido nos três arquivos de estilos agora respeitam a escolha explícita.
+
+## Registro da implementação anterior
+
 Implementação e validação local em 20/10/2026. A inspeção incluiu os componentes atuais, estilos e tokens, testes, `AGENTS.md` e os guias locais do Next.js. “Reader” foi confirmado pelo proprietário como a navegação do cabeçalho.
 
 ## Alterações
