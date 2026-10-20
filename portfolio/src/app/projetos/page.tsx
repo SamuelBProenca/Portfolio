@@ -16,7 +16,7 @@ export default function ProjectsPage() {
         eyebrow="Projetos / Seleção"
         title="MEU"
         accent="TRABALHO."
-        description="Soluções, experimentos e ferramentas. Mais importante que o nome da tecnologia é o problema que motivou cada projeto."
+        description="APIs, automação e estudos de arquitetura. Conheça o problema que orienta cada projeto, o que já está disponível e as decisões que sustentam sua evolução."
       />
       <section className="content-section">
         <div className="container">
@@ -64,11 +64,17 @@ export default function ProjectsPage() {
             </article>
           ))}
           <div className="empty-editorial">
-            <h3>Projetos com contexto, não apenas vitrines.</h3>
+            <h3>Conheça as decisões por trás do código.</h3>
             <p>
-              Na próxima etapa, cada projeto terá uma página própria com problema, restrições,
-              arquitetura, alternativas consideradas, decisões, código e resultados verificáveis.
+              O plano técnico do OctoCards reúne a base implementada, as evidências no código e as
+              próximas etapas propostas de validação, confiabilidade e testes.
             </p>
+            <Link className="text-link" href="/projetos/octocards">
+              Explore o plano do OctoCards{" "}
+              <span className="arr" aria-hidden="true">
+                ↗
+              </span>
+            </Link>
           </div>
         </div>
       </section>

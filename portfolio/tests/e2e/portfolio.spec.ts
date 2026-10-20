@@ -113,7 +113,10 @@ test("contact actions expose working email, GitHub and section destinations", as
       "false",
     );
   } else {
-    await page.getByRole("link", { name: /Vamos conversar/ }).click();
+    await page
+      .locator(".site-header")
+      .getByRole("link", { name: /Vamos conversar/ })
+      .click();
   }
   await expect(page).toHaveURL(/\/#contato$/);
   await expect(contact).toBeInViewport();

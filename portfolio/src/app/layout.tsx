@@ -5,10 +5,12 @@ import SiteFooter from "@/components/site-footer";
 import "@/styles/styles.css";
 import "@/styles/responsive.css";
 import "@/styles/rework.css";
+import "@/styles/interactions.css";
 
 export const metadata: Metadata = {
   title: { default: "Samuel Proença — Engenharia de Software", template: "%s — Samuel Proença" },
-  description: "Projetos de engenharia de software, automação, backend e ideias de Samuel Proença.",
+  description:
+    "Samuel Proença: desenvolvimento backend, APIs e automação com base em infraestrutura. Conheça os projetos, as decisões técnicas e minha trajetória.",
 };
 
 export const viewport: Viewport = { colorScheme: "dark", themeColor: "#141414" };

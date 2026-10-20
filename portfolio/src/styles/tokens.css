@@ -8,10 +8,16 @@
   --paper-soft: #dedbd3;
   --accent: #c94e37;
   --accent-hover: #e0654a;
+  --accent-fill: #b24430;
+  --motion-duration: 280ms;
+  --motion-selection: 320ms;
+  --motion-expand: 440ms;
+  --motion-easing: cubic-bezier(0.2, 0.65, 0.3, 1);
   --status-completed: #b4c5b1;
   --status-blocked: #e2b56d;
   --text: #f2f0ea;
   --muted: #a6a49f;
+  --muted-on-paper: #575550;
   --hairline: rgba(242, 240, 234, 0.19);
   --hairline-dark: rgba(22, 22, 22, 0.2);
   --gutter: clamp(22px, 5vw, 86px);

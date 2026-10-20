@@ -13,13 +13,16 @@ export default function ContactSection() {
         <div className="contact-layout">
           <div className="contact-section__copy">
             <h2>
-              Vamos
+              Vamos falar
               <br />
-              construir
+              do próximo
               <br />
-              algo bom.
+              projeto.
             </h2>
-            <p>Um projeto, uma oportunidade ou uma boa conversa sobre tecnologia.</p>
+            <p>
+              Tem um projeto em mente ou uma oportunidade na equipe? Conte o contexto e o que você
+              precisa construir.
+            </p>
             <div className="contact-links contact-section__alternatives">
               <a href="https://github.com/SamuelBProenca" target="_blank" rel="noopener noreferrer">
                 GitHub ↗

@@ -30,6 +30,29 @@ beforeEach(() => {
 });
 
 describe("site navigation", () => {
+  it.each([
+    ["/projetos/octocards", "Projetos", "location"],
+    ["/projetos", "Projetos", "page"],
+    ["/", "Início", "page"],
+  ])("identifies the current page or parent section at %s", (pathname, label, current) => {
+    route.pathname = pathname;
+    render(<SiteHeader />);
+    for (const name of ["Menu principal", "Menu para celular"]) {
+      const navigation = screen.getByRole("navigation", { name });
+      expect(within(navigation).getByRole("link", { name: label })).toHaveAttribute(
+        "aria-current",
+        current,
+      );
+      expect(navigation.querySelectorAll("[aria-current]")).toHaveLength(1);
+    }
+  });
+
+  it("does not mark similarly prefixed routes as the current section", () => {
+    route.pathname = "/projetos-arquivados";
+    render(<SiteHeader />);
+    expect(document.querySelectorAll("[aria-current]")).toHaveLength(0);
+  });
+
   it("exposes an accessible toggle that opens and closes its associated mobile menu", async () => {
     const user = userEvent.setup();
     render(<SiteHeader />);
@@ -82,9 +105,13 @@ describe("site navigation", () => {
   it("updates the current-page link and closes the menu after a route change", async () => {
     const user = userEvent.setup();
     const { rerender } = render(<SiteHeader />);
+    const originalNavigation = screen.getByRole("navigation", { name: "Menu principal" });
+    const originalLink = within(originalNavigation).getByRole("link", { name: "Sobre" });
     await user.click(screen.getByRole("button", { name: "Abrir menu" }));
     route.pathname = "/sobre";
     rerender(<SiteHeader />);
+    expect(screen.getByRole("navigation", { name: "Menu principal" })).toBe(originalNavigation);
+    expect(within(originalNavigation).getByRole("link", { name: "Sobre" })).toBe(originalLink);
 
     expect(screen.getByRole("button", { name: "Abrir menu" })).toHaveAttribute(
       "aria-expanded",

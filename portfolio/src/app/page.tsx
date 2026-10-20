@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import SelectedWorks from "@/components/selected-works";
+import IntroStrip from "@/components/intro-strip";
 import ContactSection from "@/components/contact-section";
 import EngineeringProgress from "@/components/project-progress/EngineeringProgress";
 import { octocardsPlan } from "@/content/project-progress";
@@ -30,15 +31,21 @@ export default function HomePage() {
                 </span>
               </h1>
               <p className="hero-description">
-                Sou Samuel Proença. Desenvolvo ferramentas, automações e soluções backend a partir
-                de problemas que precisam funcionar fora da teoria.
+                Sou Samuel Proença. Desenvolvo APIs, ferramentas e automações para organizar dados e
+                simplificar rotinas. Minha base em infraestrutura orienta cada decisão.
               </p>
               <div className="hero-actions">
                 <Link className="button-primary" href="/projetos">
-                  Conheça meu trabalho <span className="arr">↗</span>
+                  Explore meus projetos{" "}
+                  <span className="arr" aria-hidden="true">
+                    ↗
+                  </span>
                 </Link>
                 <Link className="button-secondary" href="/sobre">
-                  Mais sobre mim <span className="arr">↗</span>
+                  Conheça minha trajetória{" "}
+                  <span className="arr" aria-hidden="true">
+                    ↗
+                  </span>
                 </Link>
               </div>
             </div>
@@ -49,7 +56,7 @@ export default function HomePage() {
           <div className="hero-aside">
             <Image
               src="/images/samuel-approved.webp"
-              alt="Samuel Proença usando camisa preta"
+              alt="Retrato de Samuel Proença"
               preload
               width={1122}
               height={1402}
@@ -59,15 +66,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <div className="container intro-strip">
-        <span>Design de sistemas</span>
-        <b>+</b>
-        <span>Engenharia backend</span>
-        <b>+</b>
-        <span>Automação operacional</span>
-        <b>+</b>
-        <span>Infraestrutura</span>
-      </div>
+      <IntroStrip />
       <section id="projetos" className="work-section">
         <div className="container">
           <div className="section-top">
@@ -77,10 +76,10 @@ export default function HomePage() {
             </span>
           </div>
           <div className="work-intro">
-            <h2 className="section-head">Projetos que existem por um motivo.</h2>
+            <h2 className="section-head">Cada projeto, um problema para resolver.</h2>
             <p>
-              De rotinas legadas a APIs e ferramentas reutilizáveis. Aqui, a tecnologia é
-              consequência do problema que precisamos resolver.
+              Automação de rotinas, integração de dados e estudo de arquitetura. Explore o contexto,
+              o código disponível e o estágio de cada projeto.
             </p>
           </div>
           <SelectedWorks projects={selectedProjects} />
@@ -104,7 +103,7 @@ export default function HomePage() {
             <div className="about-photo">
               <Image
                 src="/images/samuel-approved.webp"
-                alt="Samuel Proença usando camisa preta"
+                alt="Retrato de Samuel Proença"
                 fill
                 sizes="(max-width: 760px) 90vw, 45vw"
               />
@@ -186,11 +185,14 @@ export default function HomePage() {
               <span className="writing-category">01 / Engenharia</span>
               <h3>O que aprendo construindo.</h3>
               <p>
-                Estudos técnicos, decisões de arquitetura, observações sobre projetos e problemas
-                que apareceram no trabalho.
+                Vou compartilhar estudos técnicos, decisões de arquitetura e aprendizados dos
+                projetos e da rotina de trabalho.
               </p>
               <Link className="text-link" href="/escrita#engenharia">
-                Explorar a categoria <span className="arr">↗</span>
+                Conheça a proposta{" "}
+                <span className="arr" aria-hidden="true">
+                  ↗
+                </span>
               </Link>
             </article>
             <article className="writing-col">
@@ -201,12 +203,15 @@ export default function HomePage() {
                 dos textos de caráter técnico.
               </p>
               <Link className="text-link" href="/escrita#ensaios">
-                Explorar a categoria <span className="arr">↗</span>
+                Conheça a proposta{" "}
+                <span className="arr" aria-hidden="true">
+                  ↗
+                </span>
               </Link>
             </article>
           </div>
           <p className="writing-label" style={{ marginTop: "24px" }}>
-            * Categorias estruturadas para publicações futuras. Nenhum artigo fictício foi criado.
+            Primeiros textos em preparação. As categorias apresentam os temas que pretendo explorar.
           </p>
         </div>
       </section>

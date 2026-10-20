@@ -157,7 +157,7 @@
   color: var(--muted);
   font-size: 22px;
   text-align: center;
-  transition: transform 180ms ease;
+  transition: transform var(--motion-duration) var(--motion-easing);
 }
 details[open] > summary > .plan-toggle {
   transform: rotate(45deg);
@@ -270,8 +270,8 @@ details[open] > summary > .plan-toggle {
     block-size: 0;
     overflow: clip;
     transition:
-      block-size 180ms ease,
-      content-visibility 180ms allow-discrete;
+      block-size var(--motion-duration) var(--motion-easing),
+      content-visibility var(--motion-duration) allow-discrete;
   }
   .project-plan details[open]::details-content {
     block-size: auto;
@@ -373,9 +373,6 @@ details[open] > summary > .plan-toggle {
   color: var(--ink);
   cursor: pointer;
   font-weight: 700;
-}
-.contact-form__submit:hover {
-  background: var(--paper-soft);
 }
 .contact-form__submit:disabled {
   cursor: wait;

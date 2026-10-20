@@ -5,6 +5,37 @@ import SelectedWorks from "@/components/selected-works";
 import { selectedProjects } from "@/content/projects";
 
 describe("selected works accordion", () => {
+  it("keeps closing panels mounted for animation but excludes their content from interaction", async () => {
+    const user = userEvent.setup();
+    render(<SelectedWorks projects={selectedProjects} />);
+    const first = screen.getByRole("button", { name: /OpsCLI/ });
+    const panel = screen.getByRole("region", { name: /OpsCLI/ });
+    await user.click(first);
+    expect(panel).toBeInTheDocument();
+    expect(panel).not.toHaveAttribute("hidden");
+    expect(panel).toHaveAttribute("aria-hidden", "true");
+    expect(panel).toHaveAttribute("inert");
+    expect(screen.queryByRole("link", { name: /OpsCLI/ })).not.toBeInTheDocument();
+    await user.keyboard("{Enter}");
+    expect(screen.getByRole("region", { name: /OpsCLI/ })).toBe(panel);
+    expect(panel).not.toHaveAttribute("inert");
+    expect(panel).toHaveAttribute("aria-hidden", "false");
+  });
+
+  it("honors the last selection after repeated toggles", async () => {
+    const user = userEvent.setup();
+    render(<SelectedWorks projects={selectedProjects} />);
+    const first = screen.getByRole("button", { name: /OpsCLI/ });
+    const second = screen.getByRole("button", { name: /OctoCards/ });
+    await user.click(second);
+    await user.click(first);
+    await user.click(first);
+    await user.click(second);
+    expect(screen.getAllByRole("region")).toHaveLength(1);
+    expect(second).toHaveAttribute("aria-expanded", "true");
+    expect(first).toHaveAttribute("aria-expanded", "false");
+  });
+
   it("starts with OpsCLI expanded and keeps other project links hidden", () => {
     render(<SelectedWorks projects={selectedProjects} />);
     const first = screen.getByRole("button", { name: /OpsCLI/ });
