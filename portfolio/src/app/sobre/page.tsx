@@ -17,14 +17,14 @@ export default function AboutPage() {
         eyebrow="Sobre / Trajetória"
         title="MAIS QUE"
         accent="CÓDIGO."
-        description="Não me interesso por tecnologia apenas pelo que ela permite construir, mas por aquilo que ela pode tornar mais simples, confiável e útil."
+        description="Da infraestrutura ao backend, meu foco é simplificar rotinas e construir ferramentas claras. A experiência com operações me ajuda a entender o problema antes de propor uma solução."
       />
       <section className="content-section">
         <div className="container about-page-split">
           <div className="about-page-portrait">
             <Image
               src="/images/samuel-approved.webp"
-              alt="Samuel Proença usando camisa preta"
+              alt="Retrato de Samuel Proença"
               loading="eager"
               fill
               sizes="(max-width: 760px) 90vw, 45vw"
@@ -45,7 +45,10 @@ export default function AboutPage() {
             </p>
             <p style={{ marginTop: "30px" }}>
               <Link className="text-link" href="/projetos">
-                Ver projetos relacionados <span className="arr">↗</span>
+                Veja essa abordagem nos projetos{" "}
+                <span className="arr" aria-hidden="true">
+                  ↗
+                </span>
               </Link>
             </p>
           </div>
@@ -84,6 +87,14 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+          <p style={{ marginTop: "36px" }}>
+            <Link className="text-link paper-link" href="/#contato">
+              Vamos conversar sobre sua equipe ou projeto
+              <span className="arr" aria-hidden="true">
+                ↗
+              </span>
+            </Link>
+          </p>
         </div>
       </section>
     </>

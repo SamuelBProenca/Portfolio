@@ -96,7 +96,6 @@ button:focus-visible {
 .desktop-nav a {
   font-size: 13px;
   color: #c9c6c0;
-  transition: color 0.2s ease;
 }
 .desktop-nav a:hover,
 .desktop-nav a[aria-current="page"] {
@@ -114,10 +113,6 @@ button:focus-visible {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
-}
-.contact-outline:hover {
-  background: var(--paper);
-  color: var(--ink);
 }
 .menu-toggle {
   border: 0;
@@ -151,10 +146,6 @@ button:focus-visible {
   margin-right: 12px;
   vertical-align: 1px;
 }
-.section-rule {
-  height: 1px;
-  background: var(--hairline);
-}
 .section-top {
   display: flex;
   justify-content: space-between;
@@ -171,10 +162,6 @@ button:focus-visible {
   color: var(--accent);
   letter-spacing: 0.08em;
 }
-.section-meta {
-  color: var(--muted);
-  font-size: 12px;
-}
 .section-head {
   font-size: clamp(42px, 6vw, 96px);
   line-height: 0.97;
@@ -190,10 +177,6 @@ button:focus-visible {
   border-bottom: 1px solid currentColor;
   padding-bottom: 8px;
   font-size: 13px;
-  transition: gap 0.2s;
-}
-.text-link:hover {
-  gap: 24px;
 }
 .text-link .arr {
   font-size: 22px;
@@ -268,10 +251,6 @@ button:focus-visible {
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.015em;
-  transition: background 0.2s;
-}
-.button-primary:hover {
-  background: var(--accent-hover);
 }
 .button-secondary {
   display: inline-flex;
@@ -301,9 +280,6 @@ button:focus-visible {
   object-fit: contain;
   object-position: center;
 }
-.hero-aside:after {
-  content: none;
-}
 .portrait-note {
   position: absolute;
   z-index: 2;
@@ -314,28 +290,65 @@ button:focus-visible {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.hero-sideword {
-  position: absolute;
-  z-index: 1;
-  right: -3px;
-  bottom: 12%;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-size: 10px;
-  letter-spacing: 0.35em;
-}
 .intro-strip {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
   border-top: 1px solid var(--hairline);
   border-bottom: 1px solid var(--hairline);
-  padding: 22px 0;
+  padding: 7px 0;
   color: #b8b4ad;
   font: 11px var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+.intro-strip__viewport {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+.intro-strip__track {
+  display: flex;
+  width: max-content;
+  animation: intro-marquee 38s linear infinite;
+}
+.intro-strip__track[data-paused="true"] {
+  animation-play-state: paused;
+}
+.intro-strip__group {
+  --strip-gap: clamp(28px, 3.2vw, 50px);
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--strip-gap);
+  min-width: calc(min(100vw - 2 * var(--gutter), var(--wide)) - 60px);
+  list-style: none;
+  padding: 0 var(--strip-gap) 0 0;
+  margin: 0;
+}
+.intro-strip__group li {
+  display: flex;
+  align-items: center;
+  gap: var(--strip-gap);
+  white-space: nowrap;
+}
+.intro-strip__pause {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+@keyframes intro-marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 .intro-strip b {
   color: var(--accent);
@@ -376,15 +389,6 @@ button:focus-visible {
   padding: 40px;
   min-height: 405px;
 }
-.featured-visual::before {
-  content: "OPS / CLI / SYSTEMS";
-  font: 10px var(--font-mono);
-  color: #96aba5;
-  letter-spacing: 0.14em;
-  position: absolute;
-  left: 25px;
-  top: 23px;
-}
 .terminal {
   width: min(100%, 490px);
   box-shadow: 0 30px 85px rgba(0, 0, 0, 0.4);
@@ -421,9 +425,6 @@ button:focus-visible {
 .terminal__body .dim {
   color: #718780;
 }
-.terminal__body .good {
-  color: #ebbd74;
-}
 .featured-copy {
   display: flex;
   flex-direction: column;
@@ -459,22 +460,6 @@ button:focus-visible {
   color: #b6b4ad;
   line-height: 1.9;
 }
-.project-arrow {
-  width: 49px;
-  height: 49px;
-  border: 1px solid #858b83;
-  display: grid;
-  place-items: center;
-  font-size: 23px;
-  flex: none;
-}
-.project-arrow:hover {
-  background: var(--paper);
-  color: var(--ink);
-}
-.project-list {
-  margin-top: 22px;
-}
 /* Selected works accordion */
 .project-accordion__hint {
   margin: 0 0 24px;
@@ -502,11 +487,7 @@ button:focus-visible {
   color: var(--text);
   text-align: left;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    color 0.2s;
 }
-.project-accordion__trigger:hover,
 .project-accordion__trigger[aria-expanded="true"] {
   background: var(--canvas-2);
 }
@@ -529,17 +510,34 @@ button:focus-visible {
   line-height: 1.6;
 }
 .project-accordion__icon {
-  display: grid;
-  place-items: center;
   width: 34px;
   height: 34px;
   border: 1px solid var(--hairline);
-  font-size: 24px;
-  font-weight: 400;
   color: var(--accent-hover);
 }
 .project-accordion__panel {
   margin-bottom: 24px;
+}
+.project-accordion__reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--motion-expand) var(--motion-easing),
+    opacity var(--motion-expand) var(--motion-easing),
+    visibility 0s var(--motion-expand);
+}
+.project-accordion__reveal[aria-hidden="false"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.project-accordion__clip {
+  min-height: 0;
+  /* Clip at the animated outer edge; fractional tracks can be shorter mid-transition. */
 }
 .project-accordion__repository {
   display: inline-flex;
@@ -550,9 +548,6 @@ button:focus-visible {
   white-space: nowrap;
   font-size: 12px;
 }
-.project-accordion__repository:hover {
-  color: var(--accent-hover);
-}
 .project-accordion__panel .project-bottom {
   flex-wrap: wrap;
   gap: 16px;
@@ -560,9 +555,6 @@ button:focus-visible {
 }
 .project-accordion__panel .techline {
   max-width: 240px;
-}
-.project-visual::before {
-  content: none;
 }
 .project-visual__caption {
   position: absolute;
@@ -607,40 +599,6 @@ button:focus-visible {
 .project-visual__note {
   margin-top: 24px;
   font-size: 10px;
-}
-.project-row {
-  border-bottom: 1px solid var(--hairline);
-  display: grid;
-  grid-template-columns: 90px 1fr 1fr 40px;
-  align-items: center;
-  gap: 22px;
-  padding: 25px 0;
-  transition:
-    padding 0.2s,
-    color 0.2s;
-}
-.project-row:hover {
-  padding-left: 12px;
-  color: #e8ad9e;
-}
-.project-row__nr {
-  font: 12px var(--font-mono);
-  color: var(--accent);
-}
-.project-row h3 {
-  font-size: clamp(22px, 2.25vw, 33px);
-  font-weight: 550;
-  letter-spacing: -0.025em;
-  margin: 0;
-}
-.project-row p {
-  font-size: 13px;
-  color: var(--muted);
-  margin: 0;
-}
-.project-row .arr {
-  font-size: 24px;
-  text-align: right;
 }
 /* About preview / paper contrast */
 .about-band {
@@ -854,9 +812,6 @@ button:focus-visible {
   border-bottom: 1px solid #e8a59a;
   padding-bottom: 9px;
 }
-.contact-links a:hover {
-  border-color: #fff;
-}
 .site-footer {
   background: #101010;
   padding: 30px 0;
@@ -868,9 +823,6 @@ button:focus-visible {
   gap: 30px;
   font: 11px var(--font-mono);
   letter-spacing: 0.03em;
-}
-.footer-inner a:hover {
-  color: #fff;
 }
 /* Internal pages */
 .page-hero {
@@ -900,17 +852,6 @@ button:focus-visible {
   font: 750 clamp(38px, 5vw, 78px)/1 var(--font-display);
   letter-spacing: -0.045em;
   margin: 25px 0 28px;
-}
-.intro-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 70px;
-}
-.intro-columns p {
-  font-size: 17px;
-  line-height: 1.8;
-  color: #b9b6af;
-  margin: 0 0 25px;
 }
 .about-page-split {
   display: grid;
@@ -946,7 +887,7 @@ button:focus-visible {
 .chrono-row p {
   font-size: 14px;
   line-height: 1.6;
-  color: var(--muted);
+  color: var(--muted-on-paper);
   margin: 0;
 }
 .project-entry {
@@ -1003,7 +944,7 @@ button:focus-visible {
   gap: 24px;
   margin-top: 55px;
 }
-.collection-link {
+.writing-collection {
   background: #232321;
   border-top: 2px solid var(--accent);
   padding: 35px;
@@ -1011,25 +952,17 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: background 0.2s;
 }
-.collection-link:hover {
-  background: #2b2b29;
-}
-.collection-link h2 {
+.writing-collection h2 {
   font: 750 clamp(30px, 4vw, 60px)/1 var(--font-display);
   letter-spacing: -0.04em;
   margin: 20px 0;
 }
-.collection-link p {
+.writing-collection p {
   line-height: 1.65;
   color: var(--muted);
   font-size: 15px;
   max-width: 390px;
-}
-.collection-link .arr {
-  align-self: end;
-  font-size: 26px;
 }
 
 /* Shared application accessibility and image layout. */

@@ -22,6 +22,7 @@ describe("contact form", () => {
     await userEvent.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
     expect(screen.getByLabelText("Nome completo")).toHaveFocus();
     expect(screen.getByLabelText("E-mail")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("E-mail")).toHaveAccessibleDescription("Preencha este campo.");
     expect(screen.getByRole("alert")).toHaveTextContent("Revise os campos");
     expect(send).not.toHaveBeenCalled();
   });
@@ -70,5 +71,69 @@ describe("contact form", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(/Confira sua conexão/);
     expect(screen.getByRole("button", { name: /Enviar mensagem/ })).toBeEnabled();
     expect(screen.getByLabelText("E-mail")).toHaveValue("ana@example.com");
+  });
+
+  it("associates server field errors, restores focus and allows a successful retry", async () => {
+    const send = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json(
+          {
+            error: "Revise o e-mail informado.",
+            fields: { email: "Use um endereço de e-mail válido.", unexpected: "Ignored" },
+          },
+          { status: 400 },
+        ),
+      )
+      .mockResolvedValueOnce(Response.json({ message: "Mensagem aceita para envio." }));
+    vi.stubGlobal("fetch", send);
+    render(<ContactForm />);
+    const user = await fill();
+    await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
+    const email = screen.getByLabelText("E-mail");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Revise o e-mail informado.");
+    expect(email).toBeEnabled();
+    expect(email).toHaveFocus();
+    expect(email).toHaveAttribute("aria-invalid", "true");
+    expect(email).toHaveAccessibleDescription("Use um endereço de e-mail válido.");
+    expect(screen.getByLabelText("Mensagem")).toHaveValue("Vamos conversar sobre um novo projeto.");
+
+    await user.clear(email);
+    await user.type(email, "ana.silva@example.com");
+    await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
+    expect(await screen.findByRole("status")).toHaveTextContent("Mensagem aceita para envio.");
+    expect(email).toHaveAttribute("aria-invalid", "false");
+    expect(email).not.toHaveAttribute("aria-describedby");
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(send.mock.calls[1][1].body).email).toBe("ana.silva@example.com");
+  });
+
+  it.each(["null", "not-json", "{}"])(
+    "keeps the form recoverable when the response is %s",
+    async (body) => {
+      vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(body, { status: 200 })));
+      render(<ContactForm />);
+      const user = await fill();
+      await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
+      expect(await screen.findByRole("alert")).toHaveTextContent("Não foi possível enviar.");
+      expect(screen.getByRole("form")).toHaveAttribute("aria-busy", "false");
+      expect(screen.getByRole("button", { name: /Enviar mensagem/ })).toBeEnabled();
+      expect(screen.getByLabelText("Mensagem")).toHaveValue(
+        "Vamos conversar sobre um novo projeto.",
+      );
+    },
+  );
+
+  it("recovers from a request timeout without clearing the draft", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new DOMException("Timed out", "TimeoutError")),
+    );
+    render(<ContactForm />);
+    const user = await fill();
+    await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Confira sua conexão");
+    expect(screen.getByRole("form")).toHaveAttribute("aria-busy", "false");
+    expect(screen.getByLabelText("Mensagem")).toHaveValue("Vamos conversar sobre um novo projeto.");
   });
 });

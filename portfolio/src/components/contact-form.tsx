@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   contactLimits,
   validateContact,
@@ -19,11 +19,15 @@ export default function ContactForm() {
   const [phase, setPhase] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [feedback, setFeedback] = useState("");
   const submitting = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  function focusError(form: HTMLFormElement, invalid: ContactErrors) {
-    const field = Object.keys(invalid)[0];
-    if (field) (form.elements.namedItem(field) as HTMLInputElement | null)?.focus();
-  }
+  // Server validation arrives while inputs are disabled. Focus after React re-enables them.
+  useEffect(() => {
+    const field = Object.keys(errors)[0];
+    if (phase === "error" && field) {
+      (formRef.current?.elements.namedItem(field) as HTMLElement | null)?.focus();
+    }
+  }, [errors, phase]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,7 +40,6 @@ export default function ContactForm() {
       setErrors(result.errors);
       setPhase("error");
       setFeedback("Revise os campos indicados antes de enviar.");
-      focusError(form, result.errors);
       return;
     }
     setErrors({});
@@ -49,14 +52,18 @@ export default function ContactForm() {
         body: JSON.stringify({ ...result.message, website: data.website }),
         signal: AbortSignal.timeout(25_000),
       });
-      const body = await response.json();
+      const payload: unknown = await response.json();
+      const body = (payload && typeof payload === "object" ? payload : {}) as {
+        message?: unknown;
+        error?: unknown;
+        fields?: Partial<Record<ContactField, unknown>>;
+      };
       if (!response.ok || typeof body.message !== "string") {
         const invalid: ContactErrors = {};
         for (const field of [...fields.map((entry) => entry.name), "message"] as ContactField[]) {
           if (typeof body.fields?.[field] === "string") invalid[field] = body.fields[field];
         }
         setErrors(invalid);
-        focusError(form, invalid);
         throw new Error(
           typeof body.error === "string"
             ? body.error
@@ -80,6 +87,7 @@ export default function ContactForm() {
 
   return (
     <form
+      ref={formRef}
       method="post"
       action="/api/contact"
       className="contact-form"
@@ -89,7 +97,7 @@ export default function ContactForm() {
       aria-busy={phase === "sending"}
     >
       <p className="contact-form__intro">
-        Conte um pouco sobre sua ideia. Todos os campos são obrigatórios.
+        Conte o que você precisa resolver e como posso contribuir. Todos os campos são obrigatórios.
       </p>
       <div className="contact-form__fields">
         {fields.map(({ name, label, type, autoComplete }) => (

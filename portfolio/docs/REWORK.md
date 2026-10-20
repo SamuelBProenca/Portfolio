@@ -61,7 +61,6 @@ src/types/project-progress.ts              Tipos de plano, tarefas, referências
 src/content/project-progress/octocards.ts   Plano editorial com evidências
 src/content/project-progress/index.ts       Fonte local assíncrona
 src/lib/project-progress.ts                Cálculo e integridade das dependências
-src/lib/github/project-progress.ts         Adaptador puro de snapshots de issues
 src/components/project-progress/
   EngineeringProgress.tsx                  Resumo compacto
   ProjectPlan.tsx                          Grupos e navegação de dependências
@@ -71,7 +70,7 @@ src/components/project-progress/
 src/app/projetos/octocards/page.tsx         Demonstração detalhada
 ```
 
-O adaptador GitHub não faz sincronização hoje. Uma fonte futura pode implementar `ProjectProgressSource.load` e fornecer o mesmo `ProjectPlan` sem reescrever os componentes. Um issue fechado só é tratado como concluído quando `state_reason` informa `completed`; estados ativos exigem rótulos explícitos. Issues encerrados como `not_planned` são sinalizados para revisão, nunca como entrega concluída.
+A fonte atual usa o plano local revisado. O adaptador experimental de snapshots de issues foi removido na limpeza de 20/10/2026 porque não era consumido pela aplicação. Não há sincronização automática com o GitHub.
 
 ## Configuração para envio real
 

@@ -1,0 +1,214 @@
+/* Shared interaction rules: paint and transforms keep surrounding content in place. */
+.desktop-nav a,
+.mobile-panel a {
+  position: relative;
+  transition: color var(--motion-duration) var(--motion-easing);
+}
+.desktop-nav a::after,
+.mobile-panel a::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -8px;
+  height: 2px;
+  background: var(--accent-hover);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-selection) var(--motion-easing);
+  pointer-events: none;
+}
+.mobile-panel a::after {
+  bottom: 0;
+}
+.desktop-nav a[aria-current],
+.mobile-panel a[aria-current] {
+  color: var(--text);
+}
+.desktop-nav a[aria-current]::after,
+.mobile-panel a[aria-current]::after,
+.desktop-nav a:focus-visible::after,
+.mobile-panel a:focus-visible::after {
+  transform: scaleX(1);
+}
+/* Entering links need a starting value too, including first paint and mobile disclosure. */
+@starting-style {
+  .desktop-nav a[aria-current]::after,
+  .mobile-panel a[aria-current]::after {
+    transform: scaleX(0);
+  }
+}
+
+/* The fill and base share a text color with sufficient contrast at every point. */
+.button-primary,
+.contact-outline,
+.contact-form__submit {
+  position: relative;
+  isolation: isolate;
+  transition: transform var(--motion-duration) var(--motion-easing);
+}
+.button-primary::before,
+.contact-outline::before,
+.contact-form__submit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--interaction-fill);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-selection) var(--motion-easing);
+  pointer-events: none;
+}
+.button-primary {
+  --interaction-fill: var(--accent-fill);
+}
+.contact-outline {
+  --interaction-fill: var(--surface);
+}
+.contact-form__submit {
+  --interaction-fill: var(--paper-soft);
+}
+.button-primary:focus-visible::before,
+.contact-outline:focus-visible::before,
+.contact-form__submit:enabled:focus-visible::before {
+  transform: scaleX(1);
+}
+.button-primary:active,
+.contact-outline:active,
+.contact-form__submit:enabled:active,
+.menu-toggle:active {
+  transform: translateY(1px);
+}
+.button-primary:active::before,
+.contact-outline:active::before,
+.contact-form__submit:enabled:active::before {
+  transform: scaleX(1);
+}
+.menu-toggle,
+.intro-strip__pause,
+.project-accordion__trigger,
+.project-plan summary {
+  transition: background-color var(--motion-duration) var(--motion-easing);
+  -webkit-tap-highlight-color: transparent;
+}
+.menu-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  transition:
+    background-color var(--motion-duration) var(--motion-easing),
+    transform var(--motion-duration) var(--motion-easing);
+}
+.menu-toggle:focus-visible,
+.menu-toggle:active,
+.intro-strip__pause:focus-visible,
+.intro-strip__pause:active,
+.project-accordion__trigger:focus-visible,
+.project-accordion__trigger:active,
+.project-plan summary:focus-visible,
+.project-plan summary:active {
+  background-color: var(--canvas-2);
+}
+.project-accordion__icon {
+  position: relative;
+}
+.project-accordion__icon::before,
+.project-accordion__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.project-accordion__icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  transition:
+    transform var(--motion-selection) var(--motion-easing),
+    opacity var(--motion-selection) var(--motion-easing);
+}
+[aria-expanded="true"] .project-accordion__icon::after {
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 0;
+}
+
+:is(.text-link, .button-secondary, .project-accordion__repository) .arr,
+.project-accordion__repository > span {
+  display: inline-block;
+  transition: transform var(--motion-duration) var(--motion-easing);
+}
+.text-link,
+.button-secondary,
+.project-accordion__repository,
+.project-entry__detail,
+.project-entry a.arr,
+.contact-links a,
+.site-footer a {
+  transition:
+    color var(--motion-duration) var(--motion-easing),
+    border-color var(--motion-duration) var(--motion-easing);
+}
+.text-link:focus-visible .arr,
+.button-secondary:focus-visible .arr,
+.project-accordion__repository:focus-visible > span {
+  transform: translateX(4px);
+}
+.contact-links a:focus-visible {
+  border-color: currentColor;
+}
+.paper-link:focus-visible {
+  outline-color: var(--accent);
+}
+.project-entry a.arr {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .desktop-nav a:hover::after,
+  .mobile-panel a:hover::after {
+    transform: scaleX(1);
+  }
+  .button-primary:hover::before,
+  .contact-outline:hover::before,
+  .contact-form__submit:enabled:hover::before {
+    transform: scaleX(1);
+  }
+  .menu-toggle:hover,
+  .intro-strip__pause:hover,
+  .project-accordion__trigger:hover,
+  .project-plan summary:hover {
+    background-color: var(--canvas-2);
+  }
+  .text-link:hover .arr,
+  .button-secondary:hover .arr,
+  .project-accordion__repository:hover > span {
+    transform: translateX(4px);
+  }
+  .button-secondary:hover,
+  .project-accordion__repository:hover,
+  .project-entry__detail:hover,
+  .project-entry a.arr:hover,
+  .site-footer a:hover {
+    color: var(--accent-hover);
+  }
+  .contact-links a:hover {
+    border-color: currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button-primary:active,
+  .contact-outline:active,
+  .contact-form__submit:enabled:active,
+  .menu-toggle:active,
+  .text-link .arr,
+  .button-secondary .arr,
+  .project-accordion__repository > span {
+    transform: none !important;
+  }
+}

@@ -12,7 +12,10 @@ const navigation = [
 ] as const;
 
 function HeaderContents({ pathname }: { pathname: string }) {
-  const [open, setOpen] = useState(false);
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const open = openPath === pathname;
+  // Reset the disclosure on navigation without remounting the animated links.
+  if (openPath !== null && openPath !== pathname) setOpenPath(null);
   const toggle = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -23,7 +26,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 761px)");
     const closeOnDesktop = () => {
-      if (desktop.matches) setOpen(false);
+      if (desktop.matches) setOpenPath(null);
     };
     desktop.addEventListener("change", closeOnDesktop);
     return () => desktop.removeEventListener("change", closeOnDesktop);
@@ -33,7 +36,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
     if (!open) return;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(false);
+        setOpenPath(null);
         toggle.current?.focus();
       }
     };
@@ -42,7 +45,17 @@ function HeaderContents({ pathname }: { pathname: string }) {
   }, [open]);
 
   const links = navigation.map(({ href, label }) => (
-    <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined}>
+    <Link
+      href={href}
+      key={href}
+      aria-current={
+        pathname === href
+          ? "page"
+          : href !== "/" && pathname.startsWith(`${href}/`)
+            ? "location"
+            : undefined
+      }
+    >
       {label}
     </Link>
   ));
@@ -73,7 +86,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
               aria-expanded={open}
               aria-controls="mobile-panel"
               data-menu-toggle
-              onClick={() => setOpen((value) => !value)}
+              onClick={() => setOpenPath((value) => (value === pathname ? null : pathname))}
               ref={toggle}
             >
               {open ? "✕" : "☰"}
@@ -86,7 +99,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
           aria-label="Menu para celular"
           data-mobile-panel
           onClick={(event) => {
-            if ((event.target as HTMLElement).closest("a")) setOpen(false);
+            if ((event.target as HTMLElement).closest("a")) setOpenPath(null);
           }}
         >
           {links}
@@ -99,5 +112,5 @@ function HeaderContents({ pathname }: { pathname: string }) {
 
 export default function SiteHeader() {
   const pathname = usePathname();
-  return <HeaderContents key={pathname} pathname={pathname} />;
+  return <HeaderContents pathname={pathname} />;
 }

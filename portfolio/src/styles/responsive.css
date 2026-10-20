@@ -86,9 +86,7 @@
     font-size: 9px;
   }
   .intro-strip {
-    gap: 17px 27px;
     font-size: 10px;
-    justify-content: flex-start;
   }
   .work-section {
     padding: 82px 0;
@@ -146,16 +144,6 @@
   }
   .project-accordion__panel .featured-copy {
     padding: 30px 24px;
-  }
-  .project-row {
-    grid-template-columns: 35px 1fr 24px;
-    gap: 10px;
-  }
-  .project-row p {
-    display: none;
-  }
-  .project-row h3 {
-    font-size: 24px;
   }
   .about-band {
     padding: 80px 0;
@@ -244,10 +232,6 @@
   .content-section {
     padding: 60px 0 80px;
   }
-  .intro-columns {
-    grid-template-columns: 1fr;
-    gap: 3px;
-  }
   .about-page-split {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -288,7 +272,7 @@
 }
 @media (max-width: 380px) {
   .hero-title {
-    font-size: 64px;
+    font-size: clamp(54px, 16.8vw, 64px);
   }
   .hero-actions {
     gap: 15px;
@@ -312,6 +296,29 @@
   *:after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  .intro-strip__track {
+    animation: none !important;
+    display: block;
+    width: auto;
+  }
+  .intro-strip {
+    padding: 22px 0;
+  }
+  .intro-strip__group {
+    min-width: 0;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+  .intro-strip__group li {
+    gap: 20px;
+  }
+  .intro-strip__group[aria-hidden="true"],
+  .intro-strip__pause {
+    display: none;
   }
 }
 @media (max-width: 760px) {

@@ -28,7 +28,7 @@ export const selectedProjects = [
   {
     id: "opscli",
     title: "OpsCLI",
-    summary: "Uma proposta de automação para rotinas operacionais.",
+    summary: "Verificações e logs em uma CLI. Proposta documentada.",
     category: "Automação operacional / Proposta documentada",
     headline: "Menos repetição. Mais organização.",
     technologies: "Batch / CLI / Logs",
@@ -55,7 +55,7 @@ export const selectedProjects = [
     headline: "Do repositório para o portfólio.",
     technologies: "TypeScript / Node.js / Express / API GitHub",
     description:
-      "API que transforma informações de repositórios do GitHub em dados estruturados para cards de portfólio. Oferece consultas individuais ou em lote e separa rotas, controllers, serviços e tipos em um backend TypeScript com Express.",
+      "API que reúne dados de repositórios do GitHub para montar cards de portfólio, com consultas individuais ou em lote. O backend TypeScript com Express separa rotas, controllers, serviços e tipos para organizar a integração e sua evolução.",
     repository: "https://github.com/SamuelBProenca/OctoCards",
     visual: {
       kind: "api",
@@ -76,7 +76,7 @@ export const selectedProjects = [
     headline: "Entender o padrão. Exercitar a decisão.",
     technologies: "TypeScript / POO / Design Patterns",
     description:
-      "Coleção de exercícios e implementações em TypeScript para estudar responsabilidades e composição de objetos. O código está organizado por padrões como Adapter, Builder, Decorator, Factory, Observer e Singleton, acompanhado de desafios no README.",
+      "Estudo prático de como distribuir responsabilidades e compor objetos em TypeScript. Reúne exercícios de Adapter, Builder, Decorator, Factory, Observer e Singleton, com desafios no README para exercitar as decisões por trás de cada padrão.",
     repository: "https://github.com/SamuelBProenca/DesignPatternsDojo",
     visual: {
       kind: "patterns",

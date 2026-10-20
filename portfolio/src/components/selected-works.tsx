@@ -59,66 +59,73 @@ export default function SelectedWorks({ projects }: { projects: readonly Selecte
                 </span>
                 <span className="project-accordion__title">{project.title}</span>
                 <span className="project-accordion__summary">{project.summary}</span>
-                <span className="project-accordion__icon" aria-hidden="true">
-                  {expanded ? "−" : "+"}
-                </span>
+                <span className="project-accordion__icon" aria-hidden="true" />
               </button>
             </h3>
-            <div id={panelId} role="region" aria-labelledby={triggerId} hidden={!expanded}>
-              <div className="featured project-accordion__panel">
-                <div
-                  className={`featured-visual project-visual project-visual--${project.visual.kind}`}
-                  aria-hidden="true"
-                >
-                  <span className="project-visual__caption">{project.visual.caption}</span>
-                  <div className="terminal">
-                    <div className="terminal__bar">
-                      <i />
-                      <i />
-                      <i />
-                      <span>{project.visual.label}</span>
+            <div
+              className="project-accordion__reveal"
+              id={panelId}
+              role="region"
+              aria-labelledby={triggerId}
+              aria-hidden={!expanded}
+              inert={!expanded}
+            >
+              <div className="project-accordion__clip">
+                <div className="featured project-accordion__panel">
+                  <div
+                    className={`featured-visual project-visual project-visual--${project.visual.kind}`}
+                    aria-hidden="true"
+                  >
+                    <span className="project-visual__caption">{project.visual.caption}</span>
+                    <div className="terminal">
+                      <div className="terminal__bar">
+                        <i />
+                        <i />
+                        <i />
+                        <span>{project.visual.label}</span>
+                      </div>
+                      <div className="terminal__body">
+                        {project.visual.kind === "api" && (
+                          <div className="project-visual__endpoint">GET /api/cards/:repo</div>
+                        )}
+                        <div className="project-visual__lines">
+                          {project.visual.lines.map((line) => (
+                            <div key={line}>{line}</div>
+                          ))}
+                        </div>
+                        <div className="dim project-visual__note">
+                          {project.visual.kind === "terminal"
+                            ? "[ ESCOPO DOCUMENTADO ]"
+                            : project.visual.kind === "api"
+                              ? "GitHub → JSON → Portfólio"
+                              : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]"}
+                        </div>
+                      </div>
                     </div>
-                    <div className="terminal__body">
-                      {project.visual.kind === "api" && (
-                        <div className="project-visual__endpoint">GET /api/cards/:repo</div>
+                  </div>
+                  <div className="featured-copy">
+                    <div>
+                      <span className="project-type">{project.category}</span>
+                      <h4>{project.headline}</h4>
+                      <p>{project.description}</p>
+                    </div>
+                    <div className="project-bottom">
+                      <span className="techline">{project.technologies}</span>
+                      {project.detailsHref && (
+                        <Link className="project-accordion__repository" href={project.detailsHref}>
+                          Ver plano técnico <span aria-hidden="true">→</span>
+                        </Link>
                       )}
-                      <div className="project-visual__lines">
-                        {project.visual.lines.map((line) => (
-                          <div key={line}>{line}</div>
-                        ))}
-                      </div>
-                      <div className="dim project-visual__note">
-                        {project.visual.kind === "terminal"
-                          ? "[ ESCOPO DOCUMENTADO ]"
-                          : project.visual.kind === "api"
-                            ? "GitHub → JSON → Portfólio"
-                            : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]"}
-                      </div>
+                      <a
+                        className="project-accordion__repository"
+                        href={project.repository}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Ver repositório de ${project.title} no GitHub`}
+                      >
+                        Ver no GitHub <span aria-hidden="true">↗</span>
+                      </a>
                     </div>
-                  </div>
-                </div>
-                <div className="featured-copy">
-                  <div>
-                    <span className="project-type">{project.category}</span>
-                    <h4>{project.headline}</h4>
-                    <p>{project.description}</p>
-                  </div>
-                  <div className="project-bottom">
-                    <span className="techline">{project.technologies}</span>
-                    {project.detailsHref && (
-                      <Link className="project-accordion__repository" href={project.detailsHref}>
-                        Ver plano técnico <span aria-hidden="true">→</span>
-                      </Link>
-                    )}
-                    <a
-                      className="project-accordion__repository"
-                      href={project.repository}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Ver repositório de ${project.title} no GitHub`}
-                    >
-                      Ver no GitHub <span aria-hidden="true">↗</span>
-                    </a>
                   </div>
                 </div>
               </div>

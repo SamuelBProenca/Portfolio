@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import PageHero from "@/components/page-hero";
 import { writingCollections } from "@/content/writing";
 
@@ -16,7 +15,7 @@ export default function WritingPage() {
         eyebrow="Escrita / Arquivo em construção"
         title="IDEIAS"
         accent="EM CURSO."
-        description="Há textos que procuram explicar como algo funciona. Outros procuram investigar possibilidades. Quero manter essas conversas distintas, sem perder a liberdade de pensar."
+        description="Estou preparando textos sobre decisões de engenharia e aprendizados dos projetos, além de um espaço para ensaios e hipóteses. Conheça os temas das futuras publicações."
       />
       <section className="content-section">
         <div className="container">
@@ -26,27 +25,26 @@ export default function WritingPage() {
           </div>
           <div className="writing-collections">
             {writingCollections.map((collection) => (
-              <Link
-                className="collection-link"
-                href={`#${collection.id}`}
+              <article
+                className="writing-collection"
                 id={collection.id}
+                aria-labelledby={`${collection.id}-title`}
                 key={collection.id}
               >
                 <div>
                   <span className="writing-category">{collection.category}</span>
-                  <h2>{collection.title}</h2>
+                  <h2 id={`${collection.id}-title`}>{collection.title}</h2>
                   <p>{collection.description}</p>
                 </div>
-                <span className="arr">↗</span>
-              </Link>
+                <span className="writing-label">Publicações em preparação</span>
+              </article>
             ))}
           </div>
           <div className="empty-editorial">
-            <h3>Ainda sem publicações nesta primeira versão.</h3>
+            <h3>Os primeiros textos estão em preparação.</h3>
             <p>
-              O design das coleções está pronto. A listagem de artigos, os filtros por tema, páginas
-              de leitura e pesquisa serão construídos depois, usando conteúdo efetivamente escrito e
-              revisado.
+              Ainda não há artigos publicados. Este espaço vai reunir o que aprendo ao construir,
+              revisar e investigar — com contexto, fontes e espaço para perguntas.
             </p>
           </div>
         </div>
