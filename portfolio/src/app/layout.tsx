@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
 import MotionControl from "@/components/motion-control";
+import PointerInput from "@/components/pointer-input";
 import "@/styles/styles.css";
 import "@/styles/responsive.css";
 import "@/styles/rework.css";
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <main id="conteudo">{children}</main>
         <SiteFooter />
         <MotionControl />
+        <PointerInput />
       </body>
     </html>
   );

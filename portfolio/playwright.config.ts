@@ -17,6 +17,14 @@ export default defineConfig({
       name: "desktop-chromium",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 1000 } },
     },
+    {
+      name: "desktop-touch-chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 1000 },
+        hasTouch: true,
+      },
+    },
     { name: "mobile-chromium", use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" } },
   ],
   webServer: process.env.PLAYWRIGHT_BASE_URL

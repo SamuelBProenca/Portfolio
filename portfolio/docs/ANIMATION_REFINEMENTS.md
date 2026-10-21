@@ -1,5 +1,17 @@
 # Refinamento de animações
 
+## Atualização de 21/10/2026: mouse em desktops com touch
+
+O domínio principal informado pelo proprietário é `https://www.samuelproenca.com/`. A PR #8 foi integrada à `main` para disponibilizar as animações dessa revisão em produção.
+
+A inspeção desse domínio também reproduziu um bloqueio de hover: em um desktop emulado com touch e mouse, `:hover` estava ativo, mas a condição `(hover: hover) and (pointer: fine)` impedia o preenchimento e os sublinhados. Esse cenário reproduzível não confirma o hardware do proprietário.
+
+As regras agora respondem ao dispositivo usado no evento de ponteiro. O componente compartilhado `PointerInput` registra mouse, toque ou caneta em `data-input`, inclusive após alternar os dispositivos. O hover fica desabilitado durante o toque para evitar estados presos; foco por teclado, pressão e movimento reduzido continuam disponíveis. As animações permanecem em CSS, sem dependências novas, loops de JavaScript ou alterações de layout.
+
+Arquivos desta correção: `src/components/pointer-input.tsx`, `src/app/layout.tsx`, `src/styles/interactions.css`, `playwright.config.ts`, `tests/e2e/desktop-pointer.spec.ts` e este relatório. A configuração do Playwright acrescenta um desktop com touch aos perfis existentes.
+
+Validação local contra o servidor de produção: **66 testes de unidade/integração aprovados; 97 testes de navegador aprovados e 8 ignorados conforme o dispositivo**. Os dois novos cenários verificam frames intermediários reais do preenchimento e sublinhado com mouse, incluindo ponteiro principal coarse, e a alternância toque → mouse sem hover preso. A suíte completa também valida faixa contínua, acordeão nas duas direções, teclado, movimento reduzido, contraste, geometria e ausência de overflow. TypeScript, ESLint, Prettier e build de produção passaram. O build emitiu apenas um aviso sobre um `package-lock.json` externo ao repositório, ignorado pelo Next.js.
+
 ## Atualização: movimento visível e preferência do navegador
 
 A revisão seguinte reproduziu o comportamento instantâneo ao emular `prefers-reduced-motion: reduce`: as regras existentes reduziam as transições a 0,01ms e removiam a animação da faixa. Isso é uma reprodução do sintoma, não uma confirmação da configuração do navegador do proprietário.
