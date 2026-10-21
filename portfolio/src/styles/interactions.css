@@ -211,47 +211,45 @@
   min-width: 44px;
   min-height: 44px;
 }
-
-@media (hover: hover) and (pointer: fine) {
+:root:not([data-input="touch"])
   :is(
-      .text-link,
-      .button-secondary,
-      .project-accordion__repository,
-      .project-entry__detail,
-      .project-entry a.arr,
-      .contact-links a,
-      .site-footer a,
-      .project-plan a
-    ):hover::after {
-    transform: scaleX(1);
-  }
-  .desktop-nav a:hover::after,
-  .mobile-panel a:hover::after {
-    transform: scaleX(1);
-  }
-  .button-primary:hover::before,
-  .contact-outline:hover::before,
-  .contact-form__submit:enabled:hover::before {
-    transform: scaleX(1);
-  }
-  .menu-toggle:hover,
-  .intro-strip__pause:hover,
-  .project-accordion__trigger:hover,
-  .project-plan summary:hover {
-    background-color: var(--canvas-2);
-  }
-  .text-link:hover .arr,
-  .button-secondary:hover .arr,
-  .project-accordion__repository:hover > span {
-    transform: translateX(4px);
-  }
-  .button-secondary:hover,
-  .project-accordion__repository:hover,
-  .project-entry__detail:hover,
-  .project-entry a.arr:hover,
-  .site-footer a:hover {
-    color: var(--accent-hover);
-  }
+    .text-link,
+    .button-secondary,
+    .project-accordion__repository,
+    .project-entry__detail,
+    .project-entry a.arr,
+    .contact-links a,
+    .site-footer a,
+    .project-plan a
+  ):hover::after {
+  transform: scaleX(1);
+}
+:root:not([data-input="touch"]) .desktop-nav a:hover::after,
+:root:not([data-input="touch"]) .mobile-panel a:hover::after {
+  transform: scaleX(1);
+}
+:root:not([data-input="touch"]) .button-primary:hover::before,
+:root:not([data-input="touch"]) .contact-outline:hover::before,
+:root:not([data-input="touch"]) .contact-form__submit:enabled:hover::before {
+  transform: scaleX(1);
+}
+:root:not([data-input="touch"]) .menu-toggle:hover,
+:root:not([data-input="touch"]) .intro-strip__pause:hover,
+:root:not([data-input="touch"]) .project-accordion__trigger:hover,
+:root:not([data-input="touch"]) .project-plan summary:hover {
+  background-color: var(--canvas-2);
+}
+:root:not([data-input="touch"]) .text-link:hover .arr,
+:root:not([data-input="touch"]) .button-secondary:hover .arr,
+:root:not([data-input="touch"]) .project-accordion__repository:hover > span {
+  transform: translateX(4px);
+}
+:root:not([data-input="touch"]) .button-secondary:hover,
+:root:not([data-input="touch"]) .project-accordion__repository:hover,
+:root:not([data-input="touch"]) .project-entry__detail:hover,
+:root:not([data-input="touch"]) .project-entry a.arr:hover,
+:root:not([data-input="touch"]) .site-footer a:hover {
+  color: var(--accent-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
