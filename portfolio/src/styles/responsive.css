@@ -288,36 +288,37 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  html {
+  :root:not([data-motion="full"]) {
     scroll-behavior: auto;
   }
-  *,
-  *:before,
-  *:after {
+  :root:not([data-motion="full"]) *,
+  :root:not([data-motion="full"]) *:before,
+  :root:not([data-motion="full"]) *:after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
   }
-  .intro-strip__track {
+  :root:not([data-motion="full"]) .intro-strip__track {
     animation: none !important;
     display: block;
     width: auto;
+    will-change: auto;
   }
-  .intro-strip {
+  :root:not([data-motion="full"]) .intro-strip {
     padding: 22px 0;
   }
-  .intro-strip__group {
+  :root:not([data-motion="full"]) .intro-strip__group {
     min-width: 0;
     padding: 0;
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 20px;
   }
-  .intro-strip__group li {
+  :root:not([data-motion="full"]) .intro-strip__group li {
     gap: 20px;
   }
-  .intro-strip__group[aria-hidden="true"],
-  .intro-strip__pause {
+  :root:not([data-motion="full"]) .intro-strip__group[aria-hidden="true"],
+  :root:not([data-motion="full"]) .intro-strip__pause {
     display: none;
   }
 }

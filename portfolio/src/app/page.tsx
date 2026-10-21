@@ -49,9 +49,6 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="eyebrow" style={{ letterSpacing: ".08em" }}>
-              BACKEND &nbsp;/&nbsp; AUTOMAÇÃO &nbsp;/&nbsp; ARQUITETURA
-            </div>
           </div>
           <div className="hero-aside">
             <Image
