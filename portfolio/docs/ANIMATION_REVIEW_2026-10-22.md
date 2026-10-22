@@ -69,6 +69,8 @@ O teste de progresso foi ajustado para esperar a página de destino e o reposici
 
 A segunda execução no Linux ainda falhou nos três perfis, agora na asserção da posição real do documento: aguardar a navegação não resolveu o problema. O recálculo global agendado em `src/components/scroll-progress.tsx:33` usava `ScrollTrigger.refresh()` forçado durante a rolagem nativa. Ele foi substituído por `ScrollTrigger.refresh(true)`, que usa o agendamento seguro do GSAP em vez de forçar o recálculo imediatamente. O código da versão instalada adia esse recálculo enquanto há rolagem ativa. A regra de movimento, preenchimentos, sublinhados, marquee, cores e durações não foi alterada.
 
+Com essa correção, a suíte local completa passou novamente: 142 testes de navegador aprovados e 8 ignorados, além de 66 testes unitários, lint, TypeScript, formatação e build. A terceira execução do GitHub ficou presa na instalação das fontes pelo mirror `azure.archive.ubuntu.com`, antes de executar testes de navegador. Um dos runs duplicados foi cancelado para obter o log. A preparação do Chromium em `.github/workflows/ci.yml` agora troca somente esse mirror do runner pelo arquivo oficial `https://archive.ubuntu.com/ubuntu`; nenhuma etapa de validação foi removida.
+
 ## Referências consultadas
 
 - [ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/)
