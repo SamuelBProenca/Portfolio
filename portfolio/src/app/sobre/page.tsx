@@ -21,7 +21,7 @@ export default function AboutPage() {
       />
       <section className="content-section">
         <div className="container about-page-split">
-          <div className="about-page-portrait">
+          <div className="about-page-portrait" data-scroll-reveal>
             <Image
               src="/images/samuel-approved.webp"
               alt="Retrato de Samuel Proença"
@@ -63,7 +63,7 @@ export default function AboutPage() {
             <span className="section-index">ONDE APRENDI / ONDE APLICO</span>
           </div>
           <div className="chronology">
-            <div className="chrono-row">
+            <div className="chrono-row" data-scroll-reveal>
               <span>Hoje</span>
               <strong>Infraestrutura e automação</strong>
               <p>
@@ -71,7 +71,7 @@ export default function AboutPage() {
                 operação.
               </p>
             </div>
-            <div className="chrono-row">
+            <div className="chrono-row" data-scroll-reveal>
               <span>Formação</span>
               <strong>FATEC</strong>
               <p>

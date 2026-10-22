@@ -9,9 +9,9 @@
   --accent: #c94e37;
   --accent-hover: #e0654a;
   --accent-fill: #923827;
-  --motion-duration: 280ms;
-  --motion-selection: 500ms;
-  --motion-expand: 750ms;
+  --motion-duration: 300ms;
+  --motion-selection: 300ms;
+  --motion-expand: 300ms;
   --motion-easing: cubic-bezier(0.45, 0, 0.55, 1);
   --status-completed: #b4c5b1;
   --status-blocked: #e2b56d;

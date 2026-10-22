@@ -1,0 +1,678 @@
+commit a322b94ed791b4b77b506e71c5cdfe55f0867b19
+Date: 2026-10-20T17:32:03-03:00
+Subject: Fix visible motion and smooth portfolio transitions
+
+diff --git a/portfolio/docs/ANIMATION_REFINEMENTS.md b/portfolio/docs/ANIMATION_REFINEMENTS.md
+index bdb94b29fe81707387395e70721a9def7a2c031b..4b990e873367b6d58a8354eedb912fce8a9dab85 100644
+--- a/portfolio/docs/ANIMATION_REFINEMENTS.md
++++ b/portfolio/docs/ANIMATION_REFINEMENTS.md
+@@ -1,5 +1,19 @@
+ # Refinamento de animações
+ 
++## Atualização: movimento visível e preferência do navegador
++
++A revisão seguinte reproduziu o comportamento instantâneo ao emular `prefers-reduced-motion: reduce`: as regras existentes reduziam as transições a 0,01ms e removiam a animação da faixa. Isso é uma reprodução do sintoma, não uma confirmação da configuração do navegador do proprietário.
++
++O novo `MotionControl`, no layout compartilhado, oferece **Ativar animações** quando essa preferência está presente. A escolha explícita aplica `data-motion="full"`, persiste no armazenamento local, funciona entre páginas e pode ser desfeita em **Reduzir movimento**. Se o armazenamento estiver bloqueado, o controle continua funcionando durante a visita. A preferência do sistema permanece sendo o padrão.
++
++O preenchimento e os sublinhados usam 500ms com `cubic-bezier(0.45, 0, 0.55, 1)`, evitando que quase toda a mudança aconteça no início. A cor do preenchimento principal foi escurecida para tornar a progressão mais perceptível mantendo o contraste. O acordeão usa 750ms; a faixa de Backend, Automação, Arquitetura e Infraestrutura usa um loop linear de 24 segundos. O rótulo estático duplicado dentro da hero foi removido.
++
++Validação atual: **66 testes de unidade/integração aprovados**, **61 testes de navegador aprovados e 5 ignorados por dispositivo**. TypeScript, ESLint, Prettier, build de produção e verificação de whitespace passaram. Os novos testes verificam a preferência do sistema, ativação explícita, persistência, restauração, armazenamento indisponível e estados intermediários reais do preenchimento sob movimento reduzido. A inspeção visual confirmou o preenchimento intermediário em desktop e a faixa no mobile sem overflow horizontal.
++
++Arquivos novos desta revisão: `src/components/motion-control.tsx`, `tests/unit/motion-control.test.tsx` e `tests/e2e/motion-preference.spec.ts`. A integração fica em `src/app/layout.tsx`; as condições de movimento reduzido nos três arquivos de estilos agora respeitam a escolha explícita.
++
++## Registro da implementação anterior
++
+ Implementação e validação local em 20/10/2026. A inspeção incluiu os componentes atuais, estilos e tokens, testes, `AGENTS.md` e os guias locais do Next.js. “Reader” foi confirmado pelo proprietário como a navegação do cabeçalho.
+ 
+ ## Alterações
+diff --git a/portfolio/src/app/layout.tsx b/portfolio/src/app/layout.tsx
+index f2cf64ca6c78ae190720372db302e949532a4c0e..656103ae8a02102a8bd025ae6a016cde90672e27 100644
+--- a/portfolio/src/app/layout.tsx
++++ b/portfolio/src/app/layout.tsx
+@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
+ import type { ReactNode } from "react";
+ import SiteHeader from "@/components/site-header";
+ import SiteFooter from "@/components/site-footer";
++import MotionControl from "@/components/motion-control";
+ import "@/styles/styles.css";
+ import "@/styles/responsive.css";
+ import "@/styles/rework.css";
+@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
+         <SiteHeader />
+         <main id="conteudo">{children}</main>
+         <SiteFooter />
++        <MotionControl />
+       </body>
+     </html>
+   );
+diff --git a/portfolio/src/app/page.tsx b/portfolio/src/app/page.tsx
+index 02b182574f400505c5bd6caab5e011885ba31d29..060124130b3e63fd067b2c6aa2c0aa91436442c1 100644
+--- a/portfolio/src/app/page.tsx
++++ b/portfolio/src/app/page.tsx
+@@ -49,9 +49,6 @@ export default function HomePage() {
+                 </Link>
+               </div>
+             </div>
+-            <div className="eyebrow" style={{ letterSpacing: ".08em" }}>
+-              BACKEND &nbsp;/&nbsp; AUTOMAÇÃO &nbsp;/&nbsp; ARQUITETURA
+-            </div>
+           </div>
+           <div className="hero-aside">
+             <Image
+diff --git a/portfolio/src/components/intro-strip.tsx b/portfolio/src/components/intro-strip.tsx
+index 66ef2ed79bdbd696ddc2b33fa85ac8ef33270f75..68050cee67d4985ade0058aca73c342c3197d340 100644
+--- a/portfolio/src/components/intro-strip.tsx
++++ b/portfolio/src/components/intro-strip.tsx
+@@ -2,12 +2,7 @@
+ 
+ import { useState } from "react";
+ 
+-const specialties = [
+-  "Design de sistemas",
+-  "Engenharia backend",
+-  "Automação operacional",
+-  "Infraestrutura",
+-] as const;
++const specialties = ["Backend", "Automação", "Arquitetura", "Infraestrutura"] as const;
+ 
+ export default function IntroStrip() {
+   const [paused, setPaused] = useState(false);
+diff --git a/portfolio/src/components/motion-control.tsx b/portfolio/src/components/motion-control.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..a4af17e0c526c4ce78fa8e4f88d61db5532464aa
+--- /dev/null
++++ b/portfolio/src/components/motion-control.tsx
+@@ -0,0 +1,64 @@
++"use client";
++
++import { useEffect, useSyncExternalStore } from "react";
++
++const preferenceKey = "portfolio:full-motion";
++const preferenceEvent = "portfolio:motion-change";
++let memoryPreference = false;
++
++function getMotionMode() {
++  let fullMotion = memoryPreference;
++  try {
++    fullMotion = window.localStorage.getItem(preferenceKey) === "true";
++  } catch {
++    // The control still works for this visit when browser storage is unavailable.
++  }
++  if (fullMotion) return "full";
++  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "reduced" : "system";
++}
++
++function subscribe(listener: () => void) {
++  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
++  media.addEventListener("change", listener);
++  window.addEventListener("storage", listener);
++  window.addEventListener(preferenceEvent, listener);
++  return () => {
++    media.removeEventListener("change", listener);
++    window.removeEventListener("storage", listener);
++    window.removeEventListener(preferenceEvent, listener);
++  };
++}
++
++export default function MotionControl() {
++  const mode = useSyncExternalStore(subscribe, getMotionMode, () => "system");
++
++  useEffect(() => {
++    document.documentElement.dataset.motion = mode === "full" ? "full" : "system";
++    return () => {
++      delete document.documentElement.dataset.motion;
++    };
++  }, [mode]);
++
++  function toggleMotion() {
++    memoryPreference = mode !== "full";
++    try {
++      if (memoryPreference) window.localStorage.setItem(preferenceKey, "true");
++      else window.localStorage.removeItem(preferenceKey);
++    } catch {
++      // Keep the in-memory choice when storage is blocked.
++    }
++    window.dispatchEvent(new Event(preferenceEvent));
++  }
++
++  if (mode === "system") return null;
++  return (
++    <button
++      className="contact-outline motion-control"
++      type="button"
++      aria-pressed={mode === "full"}
++      onClick={toggleMotion}
++    >
++      {mode === "full" ? "Reduzir movimento" : "Ativar animações"}
++    </button>
++  );
++}
+diff --git a/portfolio/src/styles/interactions.css b/portfolio/src/styles/interactions.css
+index 50e1f4d155ea7b1c20eddc6f9287c08ba35fa604..16bd36b7e5984c9c2f3c1fed233b28e7304a687b 100644
+--- a/portfolio/src/styles/interactions.css
++++ b/portfolio/src/styles/interactions.css
+@@ -63,7 +63,7 @@
+   --interaction-fill: var(--accent-fill);
+ }
+ .contact-outline {
+-  --interaction-fill: var(--surface);
++  --interaction-fill: var(--accent-fill);
+ }
+ .contact-form__submit {
+   --interaction-fill: var(--paper-soft);
+@@ -149,14 +149,58 @@
+     color var(--motion-duration) var(--motion-easing),
+     border-color var(--motion-duration) var(--motion-easing);
+ }
++:is(
++  .text-link,
++  .button-secondary,
++  .project-accordion__repository,
++  .project-entry__detail,
++  .project-entry a.arr,
++  .contact-links a,
++  .site-footer a,
++  .project-plan a
++) {
++  position: relative;
++  border-bottom-color: transparent;
++  text-decoration: none;
++}
++:is(
++  .text-link,
++  .button-secondary,
++  .project-accordion__repository,
++  .project-entry__detail,
++  .project-entry a.arr,
++  .contact-links a,
++  .site-footer a,
++  .project-plan a
++)::after {
++  content: "";
++  position: absolute;
++  inset-inline: 0;
++  bottom: -1px;
++  height: 2px;
++  background: currentColor;
++  transform: scaleX(0);
++  transform-origin: left;
++  transition: transform var(--motion-selection) var(--motion-easing);
++  pointer-events: none;
++}
++:is(
++    .text-link,
++    .button-secondary,
++    .project-accordion__repository,
++    .project-entry__detail,
++    .project-entry a.arr,
++    .contact-links a,
++    .site-footer a,
++    .project-plan a
++  ):is(:focus-visible, :active)::after {
++  transform: scaleX(1);
++}
+ .text-link:focus-visible .arr,
+ .button-secondary:focus-visible .arr,
+ .project-accordion__repository:focus-visible > span {
+   transform: translateX(4px);
+ }
+-.contact-links a:focus-visible {
+-  border-color: currentColor;
+-}
+ .paper-link:focus-visible {
+   outline-color: var(--accent);
+ }
+@@ -169,6 +213,18 @@
+ }
+ 
+ @media (hover: hover) and (pointer: fine) {
++  :is(
++      .text-link,
++      .button-secondary,
++      .project-accordion__repository,
++      .project-entry__detail,
++      .project-entry a.arr,
++      .contact-links a,
++      .site-footer a,
++      .project-plan a
++    ):hover::after {
++    transform: scaleX(1);
++  }
+   .desktop-nav a:hover::after,
+   .mobile-panel a:hover::after {
+     transform: scaleX(1);
+@@ -196,19 +252,16 @@
+   .site-footer a:hover {
+     color: var(--accent-hover);
+   }
+-  .contact-links a:hover {
+-    border-color: currentColor;
+-  }
+ }
+ 
+ @media (prefers-reduced-motion: reduce) {
+-  .button-primary:active,
+-  .contact-outline:active,
+-  .contact-form__submit:enabled:active,
+-  .menu-toggle:active,
+-  .text-link .arr,
+-  .button-secondary .arr,
+-  .project-accordion__repository > span {
++  :root:not([data-motion="full"]) .button-primary:active,
++  :root:not([data-motion="full"]) .contact-outline:active,
++  :root:not([data-motion="full"]) .contact-form__submit:enabled:active,
++  :root:not([data-motion="full"]) .menu-toggle:active,
++  :root:not([data-motion="full"]) .text-link .arr,
++  :root:not([data-motion="full"]) .button-secondary .arr,
++  :root:not([data-motion="full"]) .project-accordion__repository > span {
+     transform: none !important;
+   }
+ }
+diff --git a/portfolio/src/styles/responsive.css b/portfolio/src/styles/responsive.css
+index 468d14d9593bd9ea506a66c3a1d07f08a15dc8e4..9044c5055c5f7b30a3a8b9e6e8f62d06f72c3f4a 100644
+--- a/portfolio/src/styles/responsive.css
++++ b/portfolio/src/styles/responsive.css
+@@ -288,36 +288,37 @@
+   }
+ }
+ @media (prefers-reduced-motion: reduce) {
+-  html {
++  :root:not([data-motion="full"]) {
+     scroll-behavior: auto;
+   }
+-  *,
+-  *:before,
+-  *:after {
++  :root:not([data-motion="full"]) *,
++  :root:not([data-motion="full"]) *:before,
++  :root:not([data-motion="full"]) *:after {
+     animation-duration: 0.01ms !important;
+     transition-duration: 0.01ms !important;
+     transition-delay: 0s !important;
+   }
+-  .intro-strip__track {
++  :root:not([data-motion="full"]) .intro-strip__track {
+     animation: none !important;
+     display: block;
+     width: auto;
++    will-change: auto;
+   }
+-  .intro-strip {
++  :root:not([data-motion="full"]) .intro-strip {
+     padding: 22px 0;
+   }
+-  .intro-strip__group {
++  :root:not([data-motion="full"]) .intro-strip__group {
+     min-width: 0;
+     padding: 0;
+     flex-wrap: wrap;
+     justify-content: flex-start;
+     gap: 20px;
+   }
+-  .intro-strip__group li {
++  :root:not([data-motion="full"]) .intro-strip__group li {
+     gap: 20px;
+   }
+-  .intro-strip__group[aria-hidden="true"],
+-  .intro-strip__pause {
++  :root:not([data-motion="full"]) .intro-strip__group[aria-hidden="true"],
++  :root:not([data-motion="full"]) .intro-strip__pause {
+     display: none;
+   }
+ }
+diff --git a/portfolio/src/styles/rework.css b/portfolio/src/styles/rework.css
+index ed93958e944e7cc85cbe61deb630ba0a8f809af7..99e9b89a828fedc2d269da6b389e664cf2936640 100644
+--- a/portfolio/src/styles/rework.css
++++ b/portfolio/src/styles/rework.css
+@@ -458,8 +458,8 @@ details[open] > summary > .plan-toggle {
+   }
+ }
+ @media (prefers-reduced-motion: reduce) {
+-  .project-plan details::details-content,
+-  .project-plan .plan-toggle {
++  :root:not([data-motion="full"]) .project-plan details::details-content,
++  :root:not([data-motion="full"]) .project-plan .plan-toggle {
+     transition: none;
+   }
+ }
+diff --git a/portfolio/src/styles/styles.css b/portfolio/src/styles/styles.css
+index 3ec4e7416816009ad06a27c2a04d2ed6624ba602..7dcdb5398a34ea2f9b55c06ab44d2a35da0820a3 100644
+--- a/portfolio/src/styles/styles.css
++++ b/portfolio/src/styles/styles.css
+@@ -264,9 +264,6 @@ button:focus-visible {
+ .button-secondary .arr {
+   font-size: 21px;
+ }
+-.hero-copy > .eyebrow:last-child {
+-  margin-top: 45px;
+-}
+ .hero-aside {
+   position: relative;
+   min-height: 660px;
+@@ -310,7 +307,8 @@ button:focus-visible {
+ .intro-strip__track {
+   display: flex;
+   width: max-content;
+-  animation: intro-marquee 38s linear infinite;
++  animation: intro-marquee 24s linear infinite;
++  will-change: transform;
+ }
+ .intro-strip__track[data-paused="true"] {
+   animation-play-state: paused;
+@@ -354,6 +352,17 @@ button:focus-visible {
+   color: var(--accent);
+   font-weight: 400;
+ }
++.contact-outline.motion-control {
++  position: fixed;
++  right: max(16px, env(safe-area-inset-right));
++  bottom: max(16px, env(safe-area-inset-bottom));
++  z-index: 40;
++  min-height: 44px;
++  background-color: var(--canvas);
++  color: var(--text);
++  border-color: var(--muted);
++  cursor: pointer;
++}
+ /* Work */
+ .work-section {
+   padding: 115px 0 125px;
+diff --git a/portfolio/src/styles/tokens.css b/portfolio/src/styles/tokens.css
+index 5aa703e0c3a4dc89d0af56281ad2837d104bda21..f1f241abe2ba923721c5078a7e5e582ed259ed6b 100644
+--- a/portfolio/src/styles/tokens.css
++++ b/portfolio/src/styles/tokens.css
+@@ -8,11 +8,11 @@
+   --paper-soft: #dedbd3;
+   --accent: #c94e37;
+   --accent-hover: #e0654a;
+-  --accent-fill: #b24430;
++  --accent-fill: #923827;
+   --motion-duration: 280ms;
+-  --motion-selection: 320ms;
+-  --motion-expand: 440ms;
+-  --motion-easing: cubic-bezier(0.2, 0.65, 0.3, 1);
++  --motion-selection: 500ms;
++  --motion-expand: 750ms;
++  --motion-easing: cubic-bezier(0.45, 0, 0.55, 1);
+   --status-completed: #b4c5b1;
+   --status-blocked: #e2b56d;
+   --text: #f2f0ea;
+diff --git a/portfolio/tests/e2e/fluidity.spec.ts b/portfolio/tests/e2e/fluidity.spec.ts
+index 9324e0d81d246146943bc007ffcae7edd4119875..39821fdf9449e8973d6fce0d7910f1f4985b5a92 100644
+--- a/portfolio/tests/e2e/fluidity.spec.ts
++++ b/portfolio/tests/e2e/fluidity.spec.ts
+@@ -1,5 +1,72 @@
+ import { expect, test } from "@playwright/test";
+ 
++test("text links draw only a thin underline with 500ms hover and keyboard feedback", async ({
++  page,
++  isMobile,
++}) => {
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  for (const route of [
++    {
++      path: "/",
++      selectors: [
++        ".button-secondary",
++        ".work-section .text-link",
++        ".project-accordion__repository",
++        ".contact-links a",
++        ".site-footer a",
++      ],
++    },
++    { path: "/projetos", selectors: [".project-entry__detail"] },
++    { path: "/projetos/octocards", selectors: [".project-plan__source a"] },
++  ]) {
++    await page.goto(route.path);
++    for (const selector of route.selectors) {
++      const link = page.locator(selector).first();
++      await link.scrollIntoViewIfNeeded();
++      const scale = () =>
++        link.evaluate(
++          (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::after").transform).a,
++        );
++      await expect.poll(scale).toBe(0);
++      const geometry = () =>
++        link.evaluate((element) => {
++          const bounds = element.getBoundingClientRect();
++          return {
++            x: bounds.x + scrollX,
++            y: bounds.y + scrollY,
++            width: bounds.width,
++            height: bounds.height,
++          };
++        });
++      const before = await geometry();
++      const style = await link.evaluate((element) => {
++        const underline = getComputedStyle(element, "::after");
++        return {
++          height: parseFloat(underline.height),
++          duration: parseFloat(underline.transitionDuration),
++          origin: underline.transformOrigin,
++        };
++      });
++      expect(style.height).toBe(2);
++      expect(style.duration).toBe(0.5);
++      expect(style.origin).toMatch(/^0px /);
++      if (isMobile) {
++        await page.keyboard.press("Tab");
++        await link.focus();
++      } else {
++        await link.hover();
++      }
++      await expect.poll(scale, { intervals: [16] }).toBeGreaterThan(0);
++      expect(await scale()).toBeLessThan(1);
++      await expect.poll(scale).toBe(1);
++      expect(await geometry()).toEqual(before);
++      await page.mouse.move(0, 0);
++      await link.evaluate((element: HTMLElement) => element.blur());
++      await expect.poll(scale).toBe(0);
++    }
++  }
++});
++
+ test("accordion height and opacity progress in both directions without exposing closing links", async ({
+   page,
+ }) => {
+@@ -16,7 +83,7 @@ test("accordion height and opacity progress in both directions without exposing
+       const inert = panel.inert;
+       const frames: { height: number; opacity: number }[] = [];
+       const start = performance.now();
+-      while (performance.now() - start < 550) {
++      while (performance.now() - start < 850) {
+         await new Promise(requestAnimationFrame);
+         frames.push({
+           height: panel.getBoundingClientRect().height,
+diff --git a/portfolio/tests/e2e/interactions.spec.ts b/portfolio/tests/e2e/interactions.spec.ts
+index 73f05fcdef62a689183b492b46ae0fe38a3d8cd9..41b6a9eae0baf1f87f99a386876f479bff7a52e6 100644
+--- a/portfolio/tests/e2e/interactions.spec.ts
++++ b/portfolio/tests/e2e/interactions.spec.ts
+@@ -57,7 +57,7 @@ test("navigation underlines animate on hover and keyboard focus without moving l
+     origin: getComputedStyle(element, "::after").transformOrigin,
+   }));
+   expect(transition.duration).toBeGreaterThanOrEqual(0.2);
+-  expect(transition.duration).toBeLessThanOrEqual(0.35);
++  expect(transition.duration).toBeLessThanOrEqual(0.5);
+   expect(transition.origin).toMatch(/^0px /);
+   await link.hover();
+   await expect.poll(transform).toBe("matrix(1, 0, 0, 1, 0, 0)");
+diff --git a/portfolio/tests/e2e/motion-preference.spec.ts b/portfolio/tests/e2e/motion-preference.spec.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..5c7289bc9a609ea933099ddb9b677ab00bb43c69
+--- /dev/null
++++ b/portfolio/tests/e2e/motion-preference.spec.ts
+@@ -0,0 +1,89 @@
++import { expect, test } from "@playwright/test";
++
++test("explicit opt-in restores real animation under a reduced-motion browser and survives navigation", async ({
++  page,
++  isMobile,
++}) => {
++  await page.emulateMedia({ reducedMotion: "reduce" });
++  await page.goto("/");
++  const track = page.locator(".intro-strip__track");
++  expect(await track.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
++  await page.getByRole("button", { name: "Ativar animações" }).click();
++  await expect(page.locator("html")).toHaveAttribute("data-motion", "full");
++  await expect(page.getByRole("button", { name: "Pausar faixa de especialidades" })).toBeVisible();
++  const motion = await track.evaluate(async (element) => {
++    const before = new DOMMatrixReadOnly(getComputedStyle(element).transform).m41;
++    for (let index = 0; index < 20; index++) await new Promise(requestAnimationFrame);
++    return { before, after: new DOMMatrixReadOnly(getComputedStyle(element).transform).m41 };
++  });
++  expect(motion.after).toBeLessThan(motion.before - 1);
++  const action = page.locator(".button-primary");
++  await action.scrollIntoViewIfNeeded();
++  if (isMobile) {
++    await page.keyboard.press("Tab");
++    await action.focus();
++  } else {
++    await action.hover();
++  }
++  const progress = await action.evaluate(async (element) => {
++    const frames: { elapsed: number; scale: number }[] = [];
++    const start = performance.now();
++    while (performance.now() - start < 560) {
++      await new Promise(requestAnimationFrame);
++      frames.push({
++        elapsed: performance.now() - start,
++        scale: new DOMMatrixReadOnly(getComputedStyle(element, "::before").transform).a,
++      });
++    }
++    return frames;
++  });
++  expect(
++    progress.some(
++      (frame) => frame.elapsed > 100 && frame.elapsed < 250 && frame.scale > 0 && frame.scale < 0.8,
++    ),
++  ).toBe(true);
++  expect(progress.at(-1)!.scale).toBe(1);
++  await page.goto("/sobre");
++  await expect(page.locator("html")).toHaveAttribute("data-motion", "full");
++  await page.reload();
++  await expect(page.locator("html")).toHaveAttribute("data-motion", "full");
++  await page.getByRole("button", { name: "Reduzir movimento" }).click();
++  await expect(page.locator("html")).toHaveAttribute("data-motion", "system");
++  expect(await page.evaluate(() => localStorage.getItem("portfolio:full-motion"))).toBeNull();
++  await page.goto("/");
++  await expect
++    .poll(() => track.evaluate((element) => getComputedStyle(element).animationName))
++    .toBe("none");
++});
++
++test("motion opt-in works during the visit when browser storage is blocked", async ({ page }) => {
++  await page.emulateMedia({ reducedMotion: "reduce" });
++  await page.addInitScript(() => {
++    for (const method of ["getItem", "setItem", "removeItem"]) {
++      Object.defineProperty(Storage.prototype, method, {
++        value: () => {
++          throw new DOMException("Storage blocked", "SecurityError");
++        },
++      });
++    }
++  });
++  await page.goto("/");
++  await page.getByRole("button", { name: "Ativar animações" }).click();
++  await expect(page.locator("html")).toHaveAttribute("data-motion", "full");
++  await expect
++    .poll(() =>
++      page
++        .locator(".intro-strip__track")
++        .evaluate((element) => getComputedStyle(element).animationName),
++    )
++    .toBe("intro-marquee");
++  await page.getByRole("button", { name: "Reduzir movimento" }).click();
++  await expect(page.locator("html")).toHaveAttribute("data-motion", "system");
++  await expect
++    .poll(() =>
++      page
++        .locator(".intro-strip__track")
++        .evaluate((element) => getComputedStyle(element).animationName),
++    )
++    .toBe("none");
++});
+diff --git a/portfolio/tests/unit/intro-strip.test.tsx b/portfolio/tests/unit/intro-strip.test.tsx
+index 8c7860e179ca6d9274495b700f3c4eff682ea0f8..dc98e7407b337de40db4e0045b1355e3d8ebcc5b 100644
+--- a/portfolio/tests/unit/intro-strip.test.tsx
++++ b/portfolio/tests/unit/intro-strip.test.tsx
+@@ -8,6 +8,11 @@ describe("specialty marquee", () => {
+     render(<IntroStrip />);
+     const strip = screen.getByRole("region", { name: "Especialidades" });
+     expect(within(strip).getAllByRole("listitem")).toHaveLength(4);
++    expect(
++      within(strip)
++        .getAllByRole("listitem")
++        .map((item) => item.textContent),
++    ).toEqual(["Backend+", "Automação+", "Arquitetura+", "Infraestrutura+"]);
+     expect(within(strip).getAllByRole("list")).toHaveLength(1);
+     const groups = strip.querySelectorAll("ul");
+     expect(groups).toHaveLength(2);
+diff --git a/portfolio/tests/unit/motion-control.test.tsx b/portfolio/tests/unit/motion-control.test.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..a66228838d82ed400782763b28f467a77cc66e61
+--- /dev/null
++++ b/portfolio/tests/unit/motion-control.test.tsx
+@@ -0,0 +1,62 @@
++import { act, render, screen } from "@testing-library/react";
++import userEvent from "@testing-library/user-event";
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import MotionControl from "@/components/motion-control";
++
++let media: MediaQueryList;
++beforeEach(() => {
++  localStorage.clear();
++  media = Object.assign(new EventTarget(), { matches: true }) as MediaQueryList;
++  vi.stubGlobal(
++    "matchMedia",
++    vi.fn(() => media),
++  );
++});
++afterEach(() => {
++  vi.unstubAllGlobals();
++  localStorage.clear();
++});
++
++describe("motion preference", () => {
++  it("leaves normal animation enabled without adding a preference button", () => {
++    Object.defineProperty(media, "matches", { value: false });
++    render(<MotionControl />);
++    expect(screen.queryByRole("button")).not.toBeInTheDocument();
++    expect(document.documentElement).toHaveAttribute("data-motion", "system");
++  });
++
++  it("lets a reduced-motion visitor opt in, persist the choice and restore the system setting", async () => {
++    const user = userEvent.setup();
++    render(<MotionControl />);
++    const button = screen.getByRole("button", { name: "Ativar animações" });
++    expect(button).toHaveAttribute("aria-pressed", "false");
++    await user.tab();
++    await user.keyboard("{Enter}");
++    expect(document.documentElement).toHaveAttribute("data-motion", "full");
++    expect(localStorage.getItem("portfolio:full-motion")).toBe("true");
++    expect(button).toHaveAccessibleName("Reduzir movimento");
++    expect(button).toHaveAttribute("aria-pressed", "true");
++    await user.keyboard(" ");
++    expect(document.documentElement).toHaveAttribute("data-motion", "system");
++    expect(localStorage.getItem("portfolio:full-motion")).toBeNull();
++  });
++
++  it("restores a previous explicit choice", async () => {
++    localStorage.setItem("portfolio:full-motion", "true");
++    render(<MotionControl />);
++    expect(document.documentElement).toHaveAttribute("data-motion", "full");
++    await userEvent.click(screen.getByRole("button", { name: "Reduzir movimento" }));
++    expect(document.documentElement).toHaveAttribute("data-motion", "system");
++  });
++
++  it("reacts when the system preference changes during a visit", () => {
++    Object.defineProperty(media, "matches", { value: false, configurable: true });
++    render(<MotionControl />);
++    expect(screen.queryByRole("button")).not.toBeInTheDocument();
++    act(() => {
++      Object.defineProperty(media, "matches", { value: true });
++      media.dispatchEvent(new Event("change"));
++    });
++    expect(screen.getByRole("button", { name: "Ativar animações" })).toBeVisible();
++  });
++});

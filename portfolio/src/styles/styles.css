@@ -43,6 +43,41 @@ button:focus-visible {
   height: 4px;
   background: var(--accent);
 }
+.scroll-progress__track {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 4px;
+  z-index: 110;
+  background: var(--surface);
+  pointer-events: none;
+  visibility: hidden;
+}
+.scroll-progress__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+@media (forced-colors: none) {
+  html[data-scroll-progress="ready"] {
+    /* Retain the scrollbar gutter so enhancement cannot change the page width. */
+    scrollbar-color: transparent transparent;
+  }
+  html[data-scroll-progress="ready"]::-webkit-scrollbar,
+  html[data-scroll-progress="ready"]::-webkit-scrollbar-track,
+  html[data-scroll-progress="ready"]::-webkit-scrollbar-thumb,
+  html[data-scroll-progress="ready"]::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  html[data-scroll-progress="ready"]::-webkit-scrollbar-button {
+    display: none;
+  }
+  html[data-scroll-progress="ready"] .scroll-progress__track {
+    visibility: visible;
+  }
+}
 .site-header {
   position: relative;
   z-index: 20;
@@ -351,17 +386,6 @@ button:focus-visible {
 .intro-strip b {
   color: var(--accent);
   font-weight: 400;
-}
-.contact-outline.motion-control {
-  position: fixed;
-  right: max(16px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
-  z-index: 40;
-  min-height: 44px;
-  background-color: var(--canvas);
-  color: var(--text);
-  border-color: var(--muted);
-  cursor: pointer;
 }
 /* Work */
 .work-section {

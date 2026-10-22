@@ -27,6 +27,7 @@ export default function ProjectsPage() {
           {projects.map((project) => (
             <article
               className="project-entry"
+              data-scroll-reveal
               id={"id" in project ? project.id : undefined}
               key={project.number}
             >
@@ -63,7 +64,7 @@ export default function ProjectsPage() {
               )}
             </article>
           ))}
-          <div className="empty-editorial">
+          <div className="empty-editorial" data-scroll-reveal>
             <h3>Conheça as decisões por trás do código.</h3>
             <p>
               O plano técnico do OctoCards reúne a base implementada, as evidências no código e as

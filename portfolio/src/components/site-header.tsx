@@ -62,7 +62,6 @@ function HeaderContents({ pathname }: { pathname: string }) {
 
   return (
     <>
-      <div className="topline" />
       <header className="site-header">
         <div className="container site-header__inner">
           <Link className="wordmark" href="/" aria-label="Samuel Proença — início">

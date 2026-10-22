@@ -11,7 +11,7 @@ export default function EngineeringProgress({ plan }: { plan: ProjectPlan }) {
           <span className="eyebrow">Progresso de engenharia</span>
           <span className="section-index">PROCESSO / PRÓXIMOS PASSOS</span>
         </div>
-        <div className="engineering-progress__layout">
+        <div className="engineering-progress__layout" data-scroll-reveal>
           <h2 id="engineering-progress-title">
             O que já existe.
             <br />O que vem a seguir.

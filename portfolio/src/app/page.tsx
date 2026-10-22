@@ -66,13 +66,13 @@ export default function HomePage() {
       <IntroStrip />
       <section id="projetos" className="work-section">
         <div className="container">
-          <div className="section-top">
+          <div className="section-top" data-scroll-reveal>
             <span className="eyebrow">Trabalhos selecionados</span>
             <span className="section-index">
               PROJETOS / 01—{String(selectedProjects.length).padStart(2, "0")}
             </span>
           </div>
-          <div className="work-intro">
+          <div className="work-intro" data-scroll-reveal>
             <h2 className="section-head">Cada projeto, um problema para resolver.</h2>
             <p>
               Automação de rotinas, integração de dados e estudo de arquitetura. Explore o contexto,
@@ -90,14 +90,14 @@ export default function HomePage() {
       <EngineeringProgress plan={octocardsPlan} />
       <section id="sobre" className="about-band">
         <div className="container">
-          <div className="section-top dark-rule">
+          <div className="section-top dark-rule" data-scroll-reveal>
             <span className="eyebrow" style={{ color: "#777" }}>
               A pessoa por trás do código
             </span>
             <span className="section-index">SOBRE / SAMUEL</span>
           </div>
           <div className="about-layout">
-            <div className="about-photo">
+            <div className="about-photo" data-scroll-reveal>
               <Image
                 src="/images/samuel-approved.webp"
                 alt="Retrato de Samuel Proença"
@@ -106,7 +106,7 @@ export default function HomePage() {
               />
               <span className="photo-caption">ALÉM DO TERMINAL / UM POUCO DE MIM</span>
             </div>
-            <div className="about-content">
+            <div className="about-content" data-scroll-reveal>
               <h2>
                 Antes de escrever código, <em>entendo o problema.</em>
               </h2>
@@ -145,19 +145,19 @@ export default function HomePage() {
           </div>
           <h2 className="section-head">Tecnologias são meios. Clareza é parte do trabalho.</h2>
           <div className="stack-rows">
-            <div className="stack-row">
+            <div className="stack-row" data-scroll-reveal>
               <h3>01 / Linguagens</h3>
               <p>TypeScript, JavaScript, Python, C#, PHP, Java</p>
             </div>
-            <div className="stack-row">
+            <div className="stack-row" data-scroll-reveal>
               <h3>02 / Backend</h3>
               <p>Node.js, APIs REST, SQL, arquitetura de serviços</p>
             </div>
-            <div className="stack-row">
+            <div className="stack-row" data-scroll-reveal>
               <h3>03 / Interfaces</h3>
               <p>React, Next.js, HTML, CSS, Tailwind</p>
             </div>
-            <div className="stack-row">
+            <div className="stack-row" data-scroll-reveal>
               <h3>04 / Infraestrutura</h3>
               <p>Redes, Linux, Git, Docker, PowerShell, automação</p>
             </div>
@@ -170,7 +170,7 @@ export default function HomePage() {
             <span className="eyebrow">Um espaço para pensar</span>
             <span className="section-index">ESCRITA / EM PREPARAÇÃO</span>
           </div>
-          <div className="writing-intro">
+          <div className="writing-intro" data-scroll-reveal>
             <h2 className="section-head">Nem tudo termina em código.</h2>
             <p>
               Um espaço reservado para textos sobre tecnologia, raciocínio, hipóteses e outros
@@ -178,7 +178,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="writing-cols">
-            <article className="writing-col">
+            <article className="writing-col" data-scroll-reveal>
               <span className="writing-category">01 / Engenharia</span>
               <h3>O que aprendo construindo.</h3>
               <p>
@@ -192,7 +192,7 @@ export default function HomePage() {
                 </span>
               </Link>
             </article>
-            <article className="writing-col">
+            <article className="writing-col" data-scroll-reveal>
               <span className="writing-category">02 / Ensaios & hipóteses</span>
               <h3>Ideias que ainda estão sendo pensadas.</h3>
               <p>
