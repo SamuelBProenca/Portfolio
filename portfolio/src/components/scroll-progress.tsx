@@ -30,7 +30,7 @@ export default function ScrollProgress() {
             refresh();
             // Recalculate section positions once the accordion's height settles.
             clearTimeout(settled);
-            settled = window.setTimeout(() => ScrollTrigger.refresh(), 100);
+            settled = window.setTimeout(() => ScrollTrigger.refresh(true), 100);
           });
         });
         cleanup = () => {

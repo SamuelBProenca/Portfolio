@@ -67,8 +67,11 @@ A primeira execução da [PR #10](https://github.com/SamuelBProenca/Portfolio/pu
 
 O teste de progresso foi ajustado para esperar a página de destino e o reposicionamento da rolagem, usar `Control+End`/`Control+Home` e conferir a posição real do documento antes de avaliar o indicador. Nenhum componente ou efeito foi alterado nessa correção. Os 18 testes locais de progresso passaram novamente, assim como ESLint e TypeScript. A suíte completa será reexecutada no GitHub antes da integração; os resultados remotos ficam vinculados à PR.
 
+A segunda execução no Linux ainda falhou nos três perfis, agora na asserção da posição real do documento: aguardar a navegação não resolveu o problema. O recálculo global agendado em `src/components/scroll-progress.tsx:33` usava `ScrollTrigger.refresh()` forçado durante a rolagem nativa. Ele foi substituído por `ScrollTrigger.refresh(true)`, que usa o agendamento seguro do GSAP em vez de forçar o recálculo imediatamente. O código da versão instalada adia esse recálculo enquanto há rolagem ativa. A regra de movimento, preenchimentos, sublinhados, marquee, cores e durações não foi alterada.
+
 ## Referências consultadas
 
 - [ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/)
+- [Agendamento seguro do recálculo](<https://gsap.com/docs/v3/Plugins/ScrollTrigger/static.refresh()/>)
 - [Preferências e limpeza com GSAP](<https://gsap.com/docs/v3/GSAP/gsap.matchMedia()/>)
 - Guias locais do Next.js instalado: `use-client.md` e `use-pathname.md`.
