@@ -56,8 +56,7 @@ test("navigation underlines animate on hover and keyboard focus without moving l
     duration: parseFloat(getComputedStyle(element, "::after").transitionDuration),
     origin: getComputedStyle(element, "::after").transformOrigin,
   }));
-  expect(transition.duration).toBeGreaterThanOrEqual(0.2);
-  expect(transition.duration).toBeLessThanOrEqual(0.5);
+  expect(transition.duration).toBe(0.3);
   expect(transition.origin).toMatch(/^0px /);
   await link.hover();
   await expect.poll(transform).toBe("matrix(1, 0, 0, 1, 0, 0)");

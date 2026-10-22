@@ -15,6 +15,9 @@ test("desktop mouse hover animates fills and navigation even with a coarse prima
     expect(await page.evaluate(() => matchMedia("(hover: hover)").matches)).toBe(false);
   }
   const action = page.locator(".button-primary");
+  expect(
+    await action.evaluate((element) => getComputedStyle(element, "::before").transitionDuration),
+  ).toBe("0.3s");
   await action.hover();
   await expect(page.locator("html")).toHaveAttribute("data-input", "mouse");
   const fill = await action.evaluate(async (element) => {
@@ -52,11 +55,12 @@ test("touch leaves no sticky hover and a subsequent mouse movement restores the 
   );
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-motion", "system");
   const action = page.locator(".button-primary");
   await action.evaluate((element) =>
     element.addEventListener("click", (event) => event.preventDefault()),
   );
+  await action.hover();
+  await expect(page.locator("html")).toHaveAttribute("data-input", "mouse");
   await action.tap();
   await expect(page.locator("html")).toHaveAttribute("data-input", "touch");
   await expect

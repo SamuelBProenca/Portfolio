@@ -37,7 +37,14 @@ jobs:
         working-directory: ${{ steps.app.outputs.directory }}
       - run: npm run build
         working-directory: ${{ steps.app.outputs.directory }}
-      - run: npx playwright install --with-deps chromium
+      - name: Install Chromium and system dependencies
+        shell: bash
+        run: |
+          # Avoid stalled font downloads from the runner image's Azure mirror.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
+          fi
+          npx playwright install --with-deps chromium
         working-directory: ${{ steps.app.outputs.directory }}
       - name: Browser tests against production server
         working-directory: ${{ steps.app.outputs.directory }}

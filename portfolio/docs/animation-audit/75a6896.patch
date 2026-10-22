@@ -1,0 +1,2541 @@
+commit 75a68966412cf8cc21ecc78565b45ca9a6612d07
+Date: 2026-10-20T17:03:55-03:00
+Subject: Polish portfolio interactions and copy; remove unused code
+
+diff --git a/portfolio/docs/ANIMATION_REFINEMENTS.md b/portfolio/docs/ANIMATION_REFINEMENTS.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..bdb94b29fe81707387395e70721a9def7a2c031b
+--- /dev/null
++++ b/portfolio/docs/ANIMATION_REFINEMENTS.md
+@@ -0,0 +1,66 @@
++# Refinamento de animações
++
++Implementação e validação local em 20/10/2026. A inspeção incluiu os componentes atuais, estilos e tokens, testes, `AGENTS.md` e os guias locais do Next.js. “Reader” foi confirmado pelo proprietário como a navegação do cabeçalho.
++
++## Alterações
++
++| Interação                       | Implementação                                                                                                                                                                                                                                                                      |
++| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| Accordion de projetos           | Expansão e recolhimento por CSS Grid de `0fr` a `1fr`, com altura intrínseca, opacidade e easing compartilhado em 440ms. O conteúdo permanece montado para permitir a animação de saída.                                                                                           |
++| Acessibilidade do accordion     | Painéis recolhidos recebem `aria-hidden` e `inert` imediatamente após a atualização de estado. Links em fechamento deixam de participar da navegação por teclado. A visibilidade visual termina depois da transição.                                                               |
++| Interrupção e conteúdo dinâmico | As transições CSS revertem a partir da posição atual, sem timers ou travas. A altura acompanha o conteúdo e a largura disponível, sem limites fixos em pixels. O recorte fica no contêiner externo para evitar uma faixa vazia durante a interpolação das linhas do grid.          |
++| Ícone do accordion              | A haste vertical gira e desaparece progressivamente, preservando os estados de mais e menos.                                                                                                                                                                                       |
++| Seleção no cabeçalho            | Os links permanecem montados ao trocar de rota, permitindo a transição real entre os estados. O sublinhado usa `scaleX`, origem à esquerda e 320ms; `@starting-style` também fornece um estado inicial na primeira renderização e ao abrir o menu mobile.                          |
++| Botões                          | O preenchimento usa um pseudo-elemento com `scaleX` de 0 a 1 e duração de 320ms, no lugar de animar `background-size`. Texto e setas ficam sobre o preenchimento, com cores e contraste preservados. Hover, foco, pressão e reversão continuam disponíveis conforme o dispositivo. |
++| Faixa de especialidades         | Duas cópias idênticas formam um track com movimento de `translateX(0)` a `translateX(-50%)`, linear, infinito e com período de 38 segundos. O conteúdo repetido fica oculto para tecnologia assistiva.                                                                             |
++| Pausa e movimento reduzido      | Um botão de 44px permite pausar e retomar a faixa sem reiniciar a posição, inclusive por teclado. Com movimento reduzido, a animação e a cópia são removidas; todos os temas aparecem em uma faixa estática que quebra linhas no mobile.                                           |
++
++As cores, a tipografia, os textos e a direção visual foram preservados. Não foram adicionadas dependências, medições de altura por JavaScript ou loops de animação no React. A alteração de altura do accordion exige layout durante a expansão; o preenchimento e a faixa usam transforms.
++
++## Verificações executadas
++
++| Comando/verificação                              | Resultado final                                                                                                                                             |
++| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| `npm run check`                                  | TypeScript, ESLint, Prettier e Vitest aprovados                                                                                                             |
++| Vitest                                           | 63 testes aprovados em 7 arquivos; antes desta etapa eram 59 em 6 arquivos                                                                                  |
++| `npm run build`                                  | Produção compilada com sucesso; 8 páginas geradas                                                                                                           |
++| `npm run test:e2e` contra o servidor de produção | 55 aprovados, 5 ignorados por dispositivo, nenhum falhando                                                                                                  |
++| `git diff --check`                               | Aprovado                                                                                                                                                    |
++| Inspeção visual                                  | Desktop em 1440px, mobile em 390px e 320px; preenchimento e accordion também inspecionados em estados intermediários                                        |
++| Geometria e loop                                 | Continuidade da faixa em 320/820/1440px, grupos idênticos, continuidade de pausa/retomada, ausência de overflow horizontal e geometria estável dos CTAs     |
++| Amostra de desempenho                            | Uma janela de 35 frames da faixa em movimento registrou 0 layouts e 35 recálculos de estilo no Chromium; não equivale a um benchmark completo de desempenho |
++
++Os novos testes de componente cobrem retenção dos painéis durante o fechamento, exclusão de conteúdo recolhido da interação, seleção repetida, conteúdo acessível sem duplicação e pausa/retomada por teclado. O teste de mudança de rota agora verifica que os links mantêm a identidade do DOM.
++
++Os seis novos cenários de navegador verificam altura e opacidade intermediárias nas duas direções, foco, interrupções rápidas, conteúdo dinâmico e redimensionamento, desenho progressivo da seleção, preenchimento progressivo e reverso, continuidade do loop e comportamento estático com movimento reduzido. Os testes de contraste e estados dos CTAs existentes foram adaptados para o novo pseudo-elemento.
++
++Os cinco casos ignorados são específicos a dispositivos: quatro verificações de hover/continuidade desktop no perfil mobile e o menu mobile no perfil desktop. A seleção e navegação touch continuam verificadas pela suíte.
++
++Na primeira execução, os testes detectaram uma largura incorreta da faixa estática no mobile, corrigida antes da validação final. Também foram corrigidos pontos do próprio teste: leitura de `inert` antes do commit do React, isolamento de overrides de timeline usados na inspeção do loop e seleção do botão pelo nome atualizado após pausar. Todas as falhas foram resolvidas; a suíte completa passou após a última alteração de CSS.
++
++## Arquivos desta etapa
++
++Todos os caminhos são relativos à pasta `portfolio/` do aplicativo:
++
++- `src/app/page.tsx`
++- `src/components/intro-strip.tsx` (novo)
++- `src/components/selected-works.tsx`
++- `src/components/site-header.tsx`
++- `src/styles/tokens.css`
++- `src/styles/styles.css`
++- `src/styles/responsive.css`
++- `src/styles/interactions.css`
++- `tests/unit/intro-strip.test.tsx` (novo)
++- `tests/unit/selected-works.test.tsx`
++- `tests/unit/site-header.test.tsx`
++- `tests/e2e/fluidity.spec.ts` (novo)
++- `tests/e2e/interactions.spec.ts`
++- `docs/ANIMATION_REFINEMENTS.md` (novo)
++
++## Limites
++
++Na revisão para commit, foram removidas 22 regras CSS sem consumidores, regras redundantes de interação, retratos antigos sem uso na aplicação e o adaptador experimental de issues do GitHub que só era chamado por seu próprio teste. A imagem aprovada atual e os arquivos históricos em `legacy/` foram preservados. O teste exclusivo do adaptador removido também saiu; a suíte atual tem 62 testes de unidade/integração.
++
++O Next.js continua emitindo o aviso já existente sobre `C:\Users\samue\package-lock.json`, externo ao repositório e ignorado. Isso não impediu build ou execução. O servidor de produção local usado nos testes foi encerrado ao final.
++
++A validação de navegador usa Chromium desktop e mobile emulado. Safari/WebKit, Firefox e dispositivos físicos não foram executados. Em navegadores sem suporte a `@starting-style`, a animação inicial do sublinhado pode não ocorrer; as transições de seleção em links já montados continuam disponíveis.
+diff --git a/portfolio/docs/REWORK.md b/portfolio/docs/REWORK.md
+index 51b6c68862ca4498d5d4a4ee2f77a919fe2dd43c..01aea613a3f483ad76dd773dab84a03c07e6f011 100644
+--- a/portfolio/docs/REWORK.md
++++ b/portfolio/docs/REWORK.md
+@@ -61,7 +61,6 @@ src/types/project-progress.ts              Tipos de plano, tarefas, referências
+ src/content/project-progress/octocards.ts   Plano editorial com evidências
+ src/content/project-progress/index.ts       Fonte local assíncrona
+ src/lib/project-progress.ts                Cálculo e integridade das dependências
+-src/lib/github/project-progress.ts         Adaptador puro de snapshots de issues
+ src/components/project-progress/
+   EngineeringProgress.tsx                  Resumo compacto
+   ProjectPlan.tsx                          Grupos e navegação de dependências
+@@ -71,7 +70,7 @@ src/components/project-progress/
+ src/app/projetos/octocards/page.tsx         Demonstração detalhada
+ ```
+ 
+-O adaptador GitHub não faz sincronização hoje. Uma fonte futura pode implementar `ProjectProgressSource.load` e fornecer o mesmo `ProjectPlan` sem reescrever os componentes. Um issue fechado só é tratado como concluído quando `state_reason` informa `completed`; estados ativos exigem rótulos explícitos. Issues encerrados como `not_planned` são sinalizados para revisão, nunca como entrega concluída.
++A fonte atual usa o plano local revisado. O adaptador experimental de snapshots de issues foi removido na limpeza de 20/10/2026 porque não era consumido pela aplicação. Não há sincronização automática com o GitHub.
+ 
+ ## Configuração para envio real
+ 
+diff --git a/portfolio/docs/UX_REFINEMENTS.md b/portfolio/docs/UX_REFINEMENTS.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..c0bab483ac2e02b040e9ca98033bca666effa5e6
+--- /dev/null
++++ b/portfolio/docs/UX_REFINEMENTS.md
+@@ -0,0 +1,96 @@
++# Refinamentos de experiência, conteúdo e testes
++
++Validação local em 20/10/2026.
++
++## Inspeção e convenções preservadas
++
++O aplicativo atual está em `portfolio/`; as versões em `legacy/` foram mantidas. A inspeção precedeu as alterações e incluiu `AGENTS.md`, os guias locais do Next.js para CSS, navegação e Vitest, componentes, conteúdo tipado, estilos, testes e os documentos de direção visual e fontes dos projetos.
++
++A arquitetura usa Next.js App Router, TypeScript, componentes compartilhados e arquivos de conteúdo separados. Os estilos globais seguem tokens de cor, fontes, composição editorial e breakpoints existentes. Foram preservados o fundo escuro, o contraste em papel, a cor terra, o retrato e a assinatura “MENOS RUÍDO. MAIS SISTEMA.”. Nenhuma dependência foi adicionada.
++
++Os testes seguem Vitest com jsdom e Testing Library em `tests/unit`, além de Playwright com Chromium desktop e emulação mobile em `tests/e2e`.
++
++## UI e interações
++
++- Navegação desktop e mobile: sublinhado com expansão a partir da esquerda e retração suave, ativado por hover ou foco de teclado. A marca permanece na página ativa. Páginas internas, como `/projetos/octocards`, identificam a seção Projetos com `aria-current="location"`; destinos exatos usam `page`.
++- CTA principal, contato do cabeçalho e envio do formulário: preenchimento da esquerda para a direita, foco visível e deslocamento visual de 1px ao pressionar. A cor do texto permanece estável; os contrastes do fundo inicial e do preenchimento foram verificados no navegador com mínimo de 4,5:1.
++- Links editoriais: a seta se desloca sem alterar o espaçamento nem a posição de elementos vizinhos. Menu, accordion e controles do plano técnico compartilham feedback visual e timing de 280ms.
++- As animações usam CSS e tokens compartilhados. Hover novo se aplica apenas a dispositivos com ponteiro preciso e suporte a hover. Estados ativos e foco permanecem disponíveis em touch e teclado.
++- A preferência por movimento reduzido desativa as transições perceptíveis e os deslocamentos decorativos. O sublinhado e o preenchimento continuam indicando estado.
++- O título da home foi ajustado para caber em 320px. O texto secundário da linha do tempo passou a usar uma cor legível sobre papel. O texto alternativo do retrato não faz mais referência à cor da camisa.
++- Os links de repositório na lista de projetos e o botão do menu têm área mínima de 44px. Cards da página Escrita passaram de links para si mesmos a blocos com nome acessível e status de futuras publicações; os IDs de âncora foram preservados.
++- O formulário agora restaura o foco no campo inválido depois que o React reabilita os campos após erro do servidor. Respostas JSON nulas ou sem a estrutura esperada geram feedback recuperável, preservando o rascunho.
++
++## Conteúdo
++
++As revisões abrangem a apresentação e os CTAs da home, introduções de trabalhos e escrita, descrições de OctoCards e Design Patterns Dojo, resumo de OpsCLI, páginas Projetos, Sobre e Escrita, seção de contato, instrução do formulário e descrição global dos metadados.
++
++| Antes                                                                                                                | Depois                                                                                                                                     | Motivo                                                                                                          |
++| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
++| “Desenvolvo ferramentas, automações e soluções backend a partir de problemas que precisam funcionar fora da teoria.” | “Desenvolvo APIs, ferramentas e automações para organizar dados e simplificar rotinas. Minha base em infraestrutura orienta cada decisão.” | Explicita entregas, benefícios e a base profissional já documentada.                                            |
++| “Projetos que existem por um motivo.”                                                                                | “Cada projeto, um problema para resolver.”                                                                                                 | Introduz o trabalho pelo problema; o texto de apoio orienta a leitura de contexto, código disponível e estágio. |
++| “Vamos construir algo bom.”                                                                                          | “Vamos falar do próximo projeto.”                                                                                                          | Faz um convite concreto, acompanhado de espaço para projetos e oportunidades em equipe.                         |
++| “Explorar a categoria”                                                                                               | “Conheça a proposta”                                                                                                                       | Alinha a expectativa à página de temas futuros, que ainda não contém artigos.                                   |
++| Promessa de futuras páginas para todos os projetos                                                                   | Convite para explorar o plano técnico existente do OctoCards                                                                               | Conduz a uma evidência disponível agora.                                                                        |
++
++Nenhuma experiência, certificação, cliente, resultado ou métrica foi acrescentada. OpsCLI continua identificado como proposta com README público e código indisponível; Design Patterns Dojo continua apresentado como estudo. Escrita continua sem artigos publicados. As decisões e etapas técnicas do plano do OctoCards não foram reescritas.
++
++## Testes e resultados
++
++Antes das alterações, `npm test` executou **36 testes em 5 arquivos**, todos aprovados. Depois das alterações, executou **59 testes em 6 arquivos**, todos aprovados: **23 casos adicionais**. Não foi medida cobertura percentual; o projeto não configura um provedor de cobertura.
++
++Cobertura funcional adicionada:
++
++- **Cabeçalho, 4 casos:** página inicial, destino exato, seção de página interna e rejeição de prefixos parecidos.
++- **Formulário, 5 casos:** associação de erro do servidor ao campo, foco e reenvio com sucesso; três respostas malformadas ou incompletas; timeout com preservação do rascunho. O teste de validação existente também verifica a descrição acessível.
++- **Validação compartilhada, 14 casos:** normalização Unicode, quebras de linha e caracteres de controle; limites exatos e excesso nos quatro campos; payloads inválidos; injeção de quebras em cabeçalhos; honeypot e tipos inesperados.
++- **Navegador, 7 cenários novos nos dois perfis:** título em 320/390/820/1440px; seção ativa e destino do CTA de Sobre; expansão e retração do sublinhado por hover e teclado; preenchimento, contraste e geometria dos CTAs; movimento reduzido; foco e reenvio após erro do servidor; âncoras e semântica das coleções de escrita.
++
++| Verificação executada                                              | Resultado final                                                                                           |
++| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
++| `npm run check`                                                    | Aprovado: TypeScript, ESLint, Prettier e Vitest                                                           |
++| `npm test` (incluído em `check`)                                   | 59 aprovados, nenhum falhando                                                                             |
++| `npm run build`                                                    | Build de produção aprovado; 8 páginas geradas                                                             |
++| `npm run test:e2e` com `PLAYWRIGHT_BASE_URL=http://127.0.0.1:3107` | 45 aprovados, 3 ignorados intencionalmente, nenhum falhando                                               |
++| `git diff --check`                                                 | Aprovado                                                                                                  |
++| Inspeção visual com Chromium                                       | Home e contato em desktop, tablet e mobile; Sobre e Escrita em mobile; correções finais revistas em 320px |
++
++Os três casos ignorados são dois testes de hover no perfil touch e o teste de menu mobile no perfil desktop. O navegador usou o servidor de produção iniciado com `node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3107`, encerrado após a validação.
++
++A primeira execução de navegador encontrou ambiguidade no seletor antigo de contato após a inclusão do CTA de Sobre. O seletor foi limitado ao cabeçalho, e a suíte completa passou na execução seguinte. A tentativa inicial de iniciar o servidor por `npm run start -- --hostname ... --port ...` perdeu as flags neste PowerShell/npm; a invocação direta do Next.js acima funcionou.
++
++## Arquivos alterados
++
++Todos os caminhos abaixo são relativos à pasta do aplicativo:
++
++| Arquivo                                        | Alteração                                                                             |
++| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
++| `src/app/layout.tsx`                           | Importação dos estilos compartilhados de interação e metadados                        |
++| `src/app/page.tsx`                             | Apresentação, introduções, CTAs e texto alternativo                                   |
++| `src/app/projetos/page.tsx`                    | Introdução e convite para o plano existente                                           |
++| `src/app/sobre/page.tsx`                       | Introdução, CTAs e texto alternativo                                                  |
++| `src/app/escrita/page.tsx`                     | Expectativas de publicação e coleções sem links para si mesmas                        |
++| `src/components/site-header.tsx`               | Estado de seção para rotas internas                                                   |
++| `src/components/contact-section.tsx`           | Convite de contato                                                                    |
++| `src/components/contact-form.tsx`              | Instruções, foco após erro e respostas inesperadas                                    |
++| `src/content/projects.ts`                      | Resumos e descrições com contexto e benefícios                                        |
++| `src/styles/tokens.css`                        | Tokens de timing, preenchimento e texto sobre papel                                   |
++| `src/styles/interactions.css` (novo)           | Interações compartilhadas, foco, touch e movimento reduzido                           |
++| `src/styles/styles.css`                        | Remoção de hovers conflitantes, estilos das coleções e legibilidade da linha do tempo |
++| `src/styles/responsive.css`                    | Título em telas estreitas                                                             |
++| `src/styles/rework.css`                        | Timing do plano e remoção de hover conflitante do envio                               |
++| `tests/unit/site-header.test.tsx`              | Regressões de navegação                                                               |
++| `tests/unit/contact-form.test.tsx`             | Erros, acessibilidade e recuperação                                                   |
++| `tests/unit/contact-validation.test.ts` (novo) | Validação compartilhada                                                               |
++| `tests/e2e/portfolio.spec.ts`                  | Seletor de contato limitado ao cabeçalho                                              |
++| `tests/e2e/interactions.spec.ts` (novo)        | Interações, acessibilidade e responsividade                                           |
++| `docs/UX_REFINEMENTS.md` (novo)                | Relatório desta implementação                                                         |
++
++As alterações de imagens já presentes no início da tarefa (`samuel-about.webp`, `samuel-approved.webp` e `samuel-reproved.webp`) foram preservadas sem edição dos arquivos binários.
++
++## Limites e próximos passos
++
++- O build e o servidor emitem um aviso sobre `C:\Users\samue\package-lock.json`, externo ao repositório e ignorado pelo Next.js. Isso não impediu build, execução ou testes. O arquivo externo e a configuração de publicação não foram alterados.
++- Os fluxos de sucesso, falha e reenvio de e-mail usam respostas simuladas nos testes. Não foi enviado e-mail real; a entrega continua dependendo das credenciais e da configuração de provedor já documentadas no projeto.
++- A validação de navegador cobre Chromium desktop e mobile emulado. Safari/WebKit, Firefox, dispositivos físicos e leitura manual com leitor de tela permanecem verificações complementares recomendadas.
++- A estabilidade geométrica dos controles foi testada; não foi executado um benchmark de desempenho ou uma auditoria completa de conformidade WCAG.
+diff --git a/portfolio/public/images/samuel-about.webp b/portfolio/public/images/samuel-about.webp
+deleted file mode 100644
+index 55000afd4467abac01c844c68d2e797e4bc7fd28..0000000000000000000000000000000000000000
+Binary files a/portfolio/public/images/samuel-about.webp and /dev/null differ
+diff --git a/portfolio/public/images/samuel-approved.webp b/portfolio/public/images/samuel-approved.webp
+index 362e2b343b751a034f883ab382202940f34e636c..55000afd4467abac01c844c68d2e797e4bc7fd28 100644
+Binary files a/portfolio/public/images/samuel-approved.webp and b/portfolio/public/images/samuel-approved.webp differ
+diff --git a/portfolio/public/images/samuel-hero.webp b/portfolio/public/images/samuel-hero.webp
+deleted file mode 100644
+index bb25e7491f0105ae63781104888b75d7e7601dd1..0000000000000000000000000000000000000000
+Binary files a/portfolio/public/images/samuel-hero.webp and /dev/null differ
+diff --git a/portfolio/public/images/samuel-original.webp b/portfolio/public/images/samuel-original.webp
+deleted file mode 100644
+index e64d947485da8ccd7617bfa3b709b612be4a455f..0000000000000000000000000000000000000000
+Binary files a/portfolio/public/images/samuel-original.webp and /dev/null differ
+diff --git a/portfolio/src/app/escrita/page.tsx b/portfolio/src/app/escrita/page.tsx
+index 57ae3c88080770d8024664dc2aeaab76b4f29ef0..200be2716e123244db9348eee407117e43808692 100644
+--- a/portfolio/src/app/escrita/page.tsx
++++ b/portfolio/src/app/escrita/page.tsx
+@@ -1,5 +1,4 @@
+ import type { Metadata } from "next";
+-import Link from "next/link";
+ import PageHero from "@/components/page-hero";
+ import { writingCollections } from "@/content/writing";
+ 
+@@ -16,7 +15,7 @@ export default function WritingPage() {
+         eyebrow="Escrita / Arquivo em construção"
+         title="IDEIAS"
+         accent="EM CURSO."
+-        description="Há textos que procuram explicar como algo funciona. Outros procuram investigar possibilidades. Quero manter essas conversas distintas, sem perder a liberdade de pensar."
++        description="Estou preparando textos sobre decisões de engenharia e aprendizados dos projetos, além de um espaço para ensaios e hipóteses. Conheça os temas das futuras publicações."
+       />
+       <section className="content-section">
+         <div className="container">
+@@ -26,27 +25,26 @@ export default function WritingPage() {
+           </div>
+           <div className="writing-collections">
+             {writingCollections.map((collection) => (
+-              <Link
+-                className="collection-link"
+-                href={`#${collection.id}`}
++              <article
++                className="writing-collection"
+                 id={collection.id}
++                aria-labelledby={`${collection.id}-title`}
+                 key={collection.id}
+               >
+                 <div>
+                   <span className="writing-category">{collection.category}</span>
+-                  <h2>{collection.title}</h2>
++                  <h2 id={`${collection.id}-title`}>{collection.title}</h2>
+                   <p>{collection.description}</p>
+                 </div>
+-                <span className="arr">↗</span>
+-              </Link>
++                <span className="writing-label">Publicações em preparação</span>
++              </article>
+             ))}
+           </div>
+           <div className="empty-editorial">
+-            <h3>Ainda sem publicações nesta primeira versão.</h3>
++            <h3>Os primeiros textos estão em preparação.</h3>
+             <p>
+-              O design das coleções está pronto. A listagem de artigos, os filtros por tema, páginas
+-              de leitura e pesquisa serão construídos depois, usando conteúdo efetivamente escrito e
+-              revisado.
++              Ainda não há artigos publicados. Este espaço vai reunir o que aprendo ao construir,
++              revisar e investigar — com contexto, fontes e espaço para perguntas.
+             </p>
+           </div>
+         </div>
+diff --git a/portfolio/src/app/layout.tsx b/portfolio/src/app/layout.tsx
+index c7f5d390671240dcecd57056a1311ca45a5102eb..f2cf64ca6c78ae190720372db302e949532a4c0e 100644
+--- a/portfolio/src/app/layout.tsx
++++ b/portfolio/src/app/layout.tsx
+@@ -5,10 +5,12 @@ import SiteFooter from "@/components/site-footer";
+ import "@/styles/styles.css";
+ import "@/styles/responsive.css";
+ import "@/styles/rework.css";
++import "@/styles/interactions.css";
+ 
+ export const metadata: Metadata = {
+   title: { default: "Samuel Proença — Engenharia de Software", template: "%s — Samuel Proença" },
+-  description: "Projetos de engenharia de software, automação, backend e ideias de Samuel Proença.",
++  description:
++    "Samuel Proença: desenvolvimento backend, APIs e automação com base em infraestrutura. Conheça os projetos, as decisões técnicas e minha trajetória.",
+ };
+ 
+ export const viewport: Viewport = { colorScheme: "dark", themeColor: "#141414" };
+diff --git a/portfolio/src/app/page.tsx b/portfolio/src/app/page.tsx
+index fe82a1bf28a42ba2e6f3b31445343a8f78497340..02b182574f400505c5bd6caab5e011885ba31d29 100644
+--- a/portfolio/src/app/page.tsx
++++ b/portfolio/src/app/page.tsx
+@@ -1,6 +1,7 @@
+ import Image from "next/image";
+ import Link from "next/link";
+ import SelectedWorks from "@/components/selected-works";
++import IntroStrip from "@/components/intro-strip";
+ import ContactSection from "@/components/contact-section";
+ import EngineeringProgress from "@/components/project-progress/EngineeringProgress";
+ import { octocardsPlan } from "@/content/project-progress";
+@@ -30,15 +31,21 @@ export default function HomePage() {
+                 </span>
+               </h1>
+               <p className="hero-description">
+-                Sou Samuel Proença. Desenvolvo ferramentas, automações e soluções backend a partir
+-                de problemas que precisam funcionar fora da teoria.
++                Sou Samuel Proença. Desenvolvo APIs, ferramentas e automações para organizar dados e
++                simplificar rotinas. Minha base em infraestrutura orienta cada decisão.
+               </p>
+               <div className="hero-actions">
+                 <Link className="button-primary" href="/projetos">
+-                  Conheça meu trabalho <span className="arr">↗</span>
++                  Explore meus projetos{" "}
++                  <span className="arr" aria-hidden="true">
++                    ↗
++                  </span>
+                 </Link>
+                 <Link className="button-secondary" href="/sobre">
+-                  Mais sobre mim <span className="arr">↗</span>
++                  Conheça minha trajetória{" "}
++                  <span className="arr" aria-hidden="true">
++                    ↗
++                  </span>
+                 </Link>
+               </div>
+             </div>
+@@ -49,7 +56,7 @@ export default function HomePage() {
+           <div className="hero-aside">
+             <Image
+               src="/images/samuel-approved.webp"
+-              alt="Samuel Proença usando camisa preta"
++              alt="Retrato de Samuel Proença"
+               preload
+               width={1122}
+               height={1402}
+@@ -59,15 +66,7 @@ export default function HomePage() {
+           </div>
+         </div>
+       </section>
+-      <div className="container intro-strip">
+-        <span>Design de sistemas</span>
+-        <b>+</b>
+-        <span>Engenharia backend</span>
+-        <b>+</b>
+-        <span>Automação operacional</span>
+-        <b>+</b>
+-        <span>Infraestrutura</span>
+-      </div>
++      <IntroStrip />
+       <section id="projetos" className="work-section">
+         <div className="container">
+           <div className="section-top">
+@@ -77,10 +76,10 @@ export default function HomePage() {
+             </span>
+           </div>
+           <div className="work-intro">
+-            <h2 className="section-head">Projetos que existem por um motivo.</h2>
++            <h2 className="section-head">Cada projeto, um problema para resolver.</h2>
+             <p>
+-              De rotinas legadas a APIs e ferramentas reutilizáveis. Aqui, a tecnologia é
+-              consequência do problema que precisamos resolver.
++              Automação de rotinas, integração de dados e estudo de arquitetura. Explore o contexto,
++              o código disponível e o estágio de cada projeto.
+             </p>
+           </div>
+           <SelectedWorks projects={selectedProjects} />
+@@ -104,7 +103,7 @@ export default function HomePage() {
+             <div className="about-photo">
+               <Image
+                 src="/images/samuel-approved.webp"
+-                alt="Samuel Proença usando camisa preta"
++                alt="Retrato de Samuel Proença"
+                 fill
+                 sizes="(max-width: 760px) 90vw, 45vw"
+               />
+@@ -186,11 +185,14 @@ export default function HomePage() {
+               <span className="writing-category">01 / Engenharia</span>
+               <h3>O que aprendo construindo.</h3>
+               <p>
+-                Estudos técnicos, decisões de arquitetura, observações sobre projetos e problemas
+-                que apareceram no trabalho.
++                Vou compartilhar estudos técnicos, decisões de arquitetura e aprendizados dos
++                projetos e da rotina de trabalho.
+               </p>
+               <Link className="text-link" href="/escrita#engenharia">
+-                Explorar a categoria <span className="arr">↗</span>
++                Conheça a proposta{" "}
++                <span className="arr" aria-hidden="true">
++                  ↗
++                </span>
+               </Link>
+             </article>
+             <article className="writing-col">
+@@ -201,12 +203,15 @@ export default function HomePage() {
+                 dos textos de caráter técnico.
+               </p>
+               <Link className="text-link" href="/escrita#ensaios">
+-                Explorar a categoria <span className="arr">↗</span>
++                Conheça a proposta{" "}
++                <span className="arr" aria-hidden="true">
++                  ↗
++                </span>
+               </Link>
+             </article>
+           </div>
+           <p className="writing-label" style={{ marginTop: "24px" }}>
+-            * Categorias estruturadas para publicações futuras. Nenhum artigo fictício foi criado.
++            Primeiros textos em preparação. As categorias apresentam os temas que pretendo explorar.
+           </p>
+         </div>
+       </section>
+diff --git a/portfolio/src/app/projetos/page.tsx b/portfolio/src/app/projetos/page.tsx
+index c5696bd1dba93fe2bc6a8bf7c76126a5b7078816..a2b5cc7a8150411bdc56cb8a79e08ae257137c00 100644
+--- a/portfolio/src/app/projetos/page.tsx
++++ b/portfolio/src/app/projetos/page.tsx
+@@ -16,7 +16,7 @@ export default function ProjectsPage() {
+         eyebrow="Projetos / Seleção"
+         title="MEU"
+         accent="TRABALHO."
+-        description="Soluções, experimentos e ferramentas. Mais importante que o nome da tecnologia é o problema que motivou cada projeto."
++        description="APIs, automação e estudos de arquitetura. Conheça o problema que orienta cada projeto, o que já está disponível e as decisões que sustentam sua evolução."
+       />
+       <section className="content-section">
+         <div className="container">
+@@ -64,11 +64,17 @@ export default function ProjectsPage() {
+             </article>
+           ))}
+           <div className="empty-editorial">
+-            <h3>Projetos com contexto, não apenas vitrines.</h3>
++            <h3>Conheça as decisões por trás do código.</h3>
+             <p>
+-              Na próxima etapa, cada projeto terá uma página própria com problema, restrições,
+-              arquitetura, alternativas consideradas, decisões, código e resultados verificáveis.
++              O plano técnico do OctoCards reúne a base implementada, as evidências no código e as
++              próximas etapas propostas de validação, confiabilidade e testes.
+             </p>
++            <Link className="text-link" href="/projetos/octocards">
++              Explore o plano do OctoCards{" "}
++              <span className="arr" aria-hidden="true">
++                ↗
++              </span>
++            </Link>
+           </div>
+         </div>
+       </section>
+diff --git a/portfolio/src/app/sobre/page.tsx b/portfolio/src/app/sobre/page.tsx
+index daa81a43e89d758cb7e584258c85082f4b21cbc3..2e53c03df0a8aa66292ffa2854f809cd8810bba0 100644
+--- a/portfolio/src/app/sobre/page.tsx
++++ b/portfolio/src/app/sobre/page.tsx
+@@ -17,14 +17,14 @@ export default function AboutPage() {
+         eyebrow="Sobre / Trajetória"
+         title="MAIS QUE"
+         accent="CÓDIGO."
+-        description="Não me interesso por tecnologia apenas pelo que ela permite construir, mas por aquilo que ela pode tornar mais simples, confiável e útil."
++        description="Da infraestrutura ao backend, meu foco é simplificar rotinas e construir ferramentas claras. A experiência com operações me ajuda a entender o problema antes de propor uma solução."
+       />
+       <section className="content-section">
+         <div className="container about-page-split">
+           <div className="about-page-portrait">
+             <Image
+               src="/images/samuel-approved.webp"
+-              alt="Samuel Proença usando camisa preta"
++              alt="Retrato de Samuel Proença"
+               loading="eager"
+               fill
+               sizes="(max-width: 760px) 90vw, 45vw"
+@@ -45,7 +45,10 @@ export default function AboutPage() {
+             </p>
+             <p style={{ marginTop: "30px" }}>
+               <Link className="text-link" href="/projetos">
+-                Ver projetos relacionados <span className="arr">↗</span>
++                Veja essa abordagem nos projetos{" "}
++                <span className="arr" aria-hidden="true">
++                  ↗
++                </span>
+               </Link>
+             </p>
+           </div>
+@@ -84,6 +87,14 @@ export default function AboutPage() {
+               </p>
+             </div>
+           </div>
++          <p style={{ marginTop: "36px" }}>
++            <Link className="text-link paper-link" href="/#contato">
++              Vamos conversar sobre sua equipe ou projeto
++              <span className="arr" aria-hidden="true">
++                ↗
++              </span>
++            </Link>
++          </p>
+         </div>
+       </section>
+     </>
+diff --git a/portfolio/src/components/contact-form.tsx b/portfolio/src/components/contact-form.tsx
+index 4b879938ff5f81846aaaa87cdd51865e4cee4964..07c251b6a1da2352b3de140ccd0c582508a7f603 100644
+--- a/portfolio/src/components/contact-form.tsx
++++ b/portfolio/src/components/contact-form.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import { useRef, useState, type FormEvent } from "react";
++import { useEffect, useRef, useState, type FormEvent } from "react";
+ import {
+   contactLimits,
+   validateContact,
+@@ -19,11 +19,15 @@ export default function ContactForm() {
+   const [phase, setPhase] = useState<"idle" | "sending" | "success" | "error">("idle");
+   const [feedback, setFeedback] = useState("");
+   const submitting = useRef(false);
++  const formRef = useRef<HTMLFormElement>(null);
+ 
+-  function focusError(form: HTMLFormElement, invalid: ContactErrors) {
+-    const field = Object.keys(invalid)[0];
+-    if (field) (form.elements.namedItem(field) as HTMLInputElement | null)?.focus();
+-  }
++  // Server validation arrives while inputs are disabled. Focus after React re-enables them.
++  useEffect(() => {
++    const field = Object.keys(errors)[0];
++    if (phase === "error" && field) {
++      (formRef.current?.elements.namedItem(field) as HTMLElement | null)?.focus();
++    }
++  }, [errors, phase]);
+ 
+   async function submit(event: FormEvent<HTMLFormElement>) {
+     event.preventDefault();
+@@ -36,7 +40,6 @@ export default function ContactForm() {
+       setErrors(result.errors);
+       setPhase("error");
+       setFeedback("Revise os campos indicados antes de enviar.");
+-      focusError(form, result.errors);
+       return;
+     }
+     setErrors({});
+@@ -49,14 +52,18 @@ export default function ContactForm() {
+         body: JSON.stringify({ ...result.message, website: data.website }),
+         signal: AbortSignal.timeout(25_000),
+       });
+-      const body = await response.json();
++      const payload: unknown = await response.json();
++      const body = (payload && typeof payload === "object" ? payload : {}) as {
++        message?: unknown;
++        error?: unknown;
++        fields?: Partial<Record<ContactField, unknown>>;
++      };
+       if (!response.ok || typeof body.message !== "string") {
+         const invalid: ContactErrors = {};
+         for (const field of [...fields.map((entry) => entry.name), "message"] as ContactField[]) {
+           if (typeof body.fields?.[field] === "string") invalid[field] = body.fields[field];
+         }
+         setErrors(invalid);
+-        focusError(form, invalid);
+         throw new Error(
+           typeof body.error === "string"
+             ? body.error
+@@ -80,6 +87,7 @@ export default function ContactForm() {
+ 
+   return (
+     <form
++      ref={formRef}
+       method="post"
+       action="/api/contact"
+       className="contact-form"
+@@ -89,7 +97,7 @@ export default function ContactForm() {
+       aria-busy={phase === "sending"}
+     >
+       <p className="contact-form__intro">
+-        Conte um pouco sobre sua ideia. Todos os campos são obrigatórios.
++        Conte o que você precisa resolver e como posso contribuir. Todos os campos são obrigatórios.
+       </p>
+       <div className="contact-form__fields">
+         {fields.map(({ name, label, type, autoComplete }) => (
+diff --git a/portfolio/src/components/contact-section.tsx b/portfolio/src/components/contact-section.tsx
+index b05ba0015b0d122e006331cd9844b4353f66da5c..d01b103f0fed02a6667d37c02ac4d0959724ad69 100644
+--- a/portfolio/src/components/contact-section.tsx
++++ b/portfolio/src/components/contact-section.tsx
+@@ -13,13 +13,16 @@ export default function ContactSection() {
+         <div className="contact-layout">
+           <div className="contact-section__copy">
+             <h2>
+-              Vamos
++              Vamos falar
+               <br />
+-              construir
++              do próximo
+               <br />
+-              algo bom.
++              projeto.
+             </h2>
+-            <p>Um projeto, uma oportunidade ou uma boa conversa sobre tecnologia.</p>
++            <p>
++              Tem um projeto em mente ou uma oportunidade na equipe? Conte o contexto e o que você
++              precisa construir.
++            </p>
+             <div className="contact-links contact-section__alternatives">
+               <a href="https://github.com/SamuelBProenca" target="_blank" rel="noopener noreferrer">
+                 GitHub ↗
+diff --git a/portfolio/src/components/intro-strip.tsx b/portfolio/src/components/intro-strip.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..66ef2ed79bdbd696ddc2b33fa85ac8ef33270f75
+--- /dev/null
++++ b/portfolio/src/components/intro-strip.tsx
+@@ -0,0 +1,45 @@
++"use client";
++
++import { useState } from "react";
++
++const specialties = [
++  "Design de sistemas",
++  "Engenharia backend",
++  "Automação operacional",
++  "Infraestrutura",
++] as const;
++
++export default function IntroStrip() {
++  const [paused, setPaused] = useState(false);
++  return (
++    <div className="container intro-strip" role="region" aria-label="Especialidades">
++      <div className="intro-strip__viewport">
++        <div className="intro-strip__track" data-paused={paused}>
++          {[false, true].map((duplicate) => (
++            <ul
++              className="intro-strip__group"
++              key={String(duplicate)}
++              aria-hidden={duplicate || undefined}
++            >
++              {specialties.map((specialty) => (
++                <li key={specialty}>
++                  <span>{specialty}</span>
++                  <b aria-hidden="true">+</b>
++                </li>
++              ))}
++            </ul>
++          ))}
++        </div>
++      </div>
++      <button
++        className="intro-strip__pause"
++        type="button"
++        aria-label={paused ? "Retomar faixa de especialidades" : "Pausar faixa de especialidades"}
++        aria-pressed={paused}
++        onClick={() => setPaused((value) => !value)}
++      >
++        <span aria-hidden="true">{paused ? "▶" : "Ⅱ"}</span>
++      </button>
++    </div>
++  );
++}
+diff --git a/portfolio/src/components/selected-works.tsx b/portfolio/src/components/selected-works.tsx
+index cd446814c1fc5c7a71fdafa9a1a752295bf93de6..a71a7f540a69bb6a15cf1b7bcb7af81e20ab3b28 100644
+--- a/portfolio/src/components/selected-works.tsx
++++ b/portfolio/src/components/selected-works.tsx
+@@ -59,66 +59,73 @@ export default function SelectedWorks({ projects }: { projects: readonly Selecte
+                 </span>
+                 <span className="project-accordion__title">{project.title}</span>
+                 <span className="project-accordion__summary">{project.summary}</span>
+-                <span className="project-accordion__icon" aria-hidden="true">
+-                  {expanded ? "−" : "+"}
+-                </span>
++                <span className="project-accordion__icon" aria-hidden="true" />
+               </button>
+             </h3>
+-            <div id={panelId} role="region" aria-labelledby={triggerId} hidden={!expanded}>
+-              <div className="featured project-accordion__panel">
+-                <div
+-                  className={`featured-visual project-visual project-visual--${project.visual.kind}`}
+-                  aria-hidden="true"
+-                >
+-                  <span className="project-visual__caption">{project.visual.caption}</span>
+-                  <div className="terminal">
+-                    <div className="terminal__bar">
+-                      <i />
+-                      <i />
+-                      <i />
+-                      <span>{project.visual.label}</span>
+-                    </div>
+-                    <div className="terminal__body">
+-                      {project.visual.kind === "api" && (
+-                        <div className="project-visual__endpoint">GET /api/cards/:repo</div>
+-                      )}
+-                      <div className="project-visual__lines">
+-                        {project.visual.lines.map((line) => (
+-                          <div key={line}>{line}</div>
+-                        ))}
++            <div
++              className="project-accordion__reveal"
++              id={panelId}
++              role="region"
++              aria-labelledby={triggerId}
++              aria-hidden={!expanded}
++              inert={!expanded}
++            >
++              <div className="project-accordion__clip">
++                <div className="featured project-accordion__panel">
++                  <div
++                    className={`featured-visual project-visual project-visual--${project.visual.kind}`}
++                    aria-hidden="true"
++                  >
++                    <span className="project-visual__caption">{project.visual.caption}</span>
++                    <div className="terminal">
++                      <div className="terminal__bar">
++                        <i />
++                        <i />
++                        <i />
++                        <span>{project.visual.label}</span>
+                       </div>
+-                      <div className="dim project-visual__note">
+-                        {project.visual.kind === "terminal"
+-                          ? "[ ESCOPO DOCUMENTADO ]"
+-                          : project.visual.kind === "api"
+-                            ? "GitHub → JSON → Portfólio"
+-                            : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]"}
++                      <div className="terminal__body">
++                        {project.visual.kind === "api" && (
++                          <div className="project-visual__endpoint">GET /api/cards/:repo</div>
++                        )}
++                        <div className="project-visual__lines">
++                          {project.visual.lines.map((line) => (
++                            <div key={line}>{line}</div>
++                          ))}
++                        </div>
++                        <div className="dim project-visual__note">
++                          {project.visual.kind === "terminal"
++                            ? "[ ESCOPO DOCUMENTADO ]"
++                            : project.visual.kind === "api"
++                              ? "GitHub → JSON → Portfólio"
++                              : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]"}
++                        </div>
+                       </div>
+                     </div>
+                   </div>
+-                </div>
+-                <div className="featured-copy">
+-                  <div>
+-                    <span className="project-type">{project.category}</span>
+-                    <h4>{project.headline}</h4>
+-                    <p>{project.description}</p>
+-                  </div>
+-                  <div className="project-bottom">
+-                    <span className="techline">{project.technologies}</span>
+-                    {project.detailsHref && (
+-                      <Link className="project-accordion__repository" href={project.detailsHref}>
+-                        Ver plano técnico <span aria-hidden="true">→</span>
+-                      </Link>
+-                    )}
+-                    <a
+-                      className="project-accordion__repository"
+-                      href={project.repository}
+-                      target="_blank"
+-                      rel="noopener noreferrer"
+-                      aria-label={`Ver repositório de ${project.title} no GitHub`}
+-                    >
+-                      Ver no GitHub <span aria-hidden="true">↗</span>
+-                    </a>
++                  <div className="featured-copy">
++                    <div>
++                      <span className="project-type">{project.category}</span>
++                      <h4>{project.headline}</h4>
++                      <p>{project.description}</p>
++                    </div>
++                    <div className="project-bottom">
++                      <span className="techline">{project.technologies}</span>
++                      {project.detailsHref && (
++                        <Link className="project-accordion__repository" href={project.detailsHref}>
++                          Ver plano técnico <span aria-hidden="true">→</span>
++                        </Link>
++                      )}
++                      <a
++                        className="project-accordion__repository"
++                        href={project.repository}
++                        target="_blank"
++                        rel="noopener noreferrer"
++                        aria-label={`Ver repositório de ${project.title} no GitHub`}
++                      >
++                        Ver no GitHub <span aria-hidden="true">↗</span>
++                      </a>
++                    </div>
+                   </div>
+                 </div>
+               </div>
+diff --git a/portfolio/src/components/site-header.tsx b/portfolio/src/components/site-header.tsx
+index 656616767a443c2f0e5759c53503caed41031178..a52d09e5623acb923e801a0bbc41673c50d22e3e 100644
+--- a/portfolio/src/components/site-header.tsx
++++ b/portfolio/src/components/site-header.tsx
+@@ -12,7 +12,10 @@ const navigation = [
+ ] as const;
+ 
+ function HeaderContents({ pathname }: { pathname: string }) {
+-  const [open, setOpen] = useState(false);
++  const [openPath, setOpenPath] = useState<string | null>(null);
++  const open = openPath === pathname;
++  // Reset the disclosure on navigation without remounting the animated links.
++  if (openPath !== null && openPath !== pathname) setOpenPath(null);
+   const toggle = useRef<HTMLButtonElement>(null);
+ 
+   useEffect(() => {
+@@ -23,7 +26,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
+   useEffect(() => {
+     const desktop = window.matchMedia("(min-width: 761px)");
+     const closeOnDesktop = () => {
+-      if (desktop.matches) setOpen(false);
++      if (desktop.matches) setOpenPath(null);
+     };
+     desktop.addEventListener("change", closeOnDesktop);
+     return () => desktop.removeEventListener("change", closeOnDesktop);
+@@ -33,7 +36,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
+     if (!open) return;
+     const closeOnEscape = (event: KeyboardEvent) => {
+       if (event.key === "Escape") {
+-        setOpen(false);
++        setOpenPath(null);
+         toggle.current?.focus();
+       }
+     };
+@@ -42,7 +45,17 @@ function HeaderContents({ pathname }: { pathname: string }) {
+   }, [open]);
+ 
+   const links = navigation.map(({ href, label }) => (
+-    <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined}>
++    <Link
++      href={href}
++      key={href}
++      aria-current={
++        pathname === href
++          ? "page"
++          : href !== "/" && pathname.startsWith(`${href}/`)
++            ? "location"
++            : undefined
++      }
++    >
+       {label}
+     </Link>
+   ));
+@@ -73,7 +86,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
+               aria-expanded={open}
+               aria-controls="mobile-panel"
+               data-menu-toggle
+-              onClick={() => setOpen((value) => !value)}
++              onClick={() => setOpenPath((value) => (value === pathname ? null : pathname))}
+               ref={toggle}
+             >
+               {open ? "✕" : "☰"}
+@@ -86,7 +99,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
+           aria-label="Menu para celular"
+           data-mobile-panel
+           onClick={(event) => {
+-            if ((event.target as HTMLElement).closest("a")) setOpen(false);
++            if ((event.target as HTMLElement).closest("a")) setOpenPath(null);
+           }}
+         >
+           {links}
+@@ -99,5 +112,5 @@ function HeaderContents({ pathname }: { pathname: string }) {
+ 
+ export default function SiteHeader() {
+   const pathname = usePathname();
+-  return <HeaderContents key={pathname} pathname={pathname} />;
++  return <HeaderContents pathname={pathname} />;
+ }
+diff --git a/portfolio/src/content/projects.ts b/portfolio/src/content/projects.ts
+index 6d2e75d1d32c692e6d29bbc9f7f0fb4a515c244e..e5038f37f1dab6de72708eb882bc8958611cb191 100644
+--- a/portfolio/src/content/projects.ts
++++ b/portfolio/src/content/projects.ts
+@@ -28,7 +28,7 @@ export const selectedProjects = [
+   {
+     id: "opscli",
+     title: "OpsCLI",
+-    summary: "Uma proposta de automação para rotinas operacionais.",
++    summary: "Verificações e logs em uma CLI. Proposta documentada.",
+     category: "Automação operacional / Proposta documentada",
+     headline: "Menos repetição. Mais organização.",
+     technologies: "Batch / CLI / Logs",
+@@ -55,7 +55,7 @@ export const selectedProjects = [
+     headline: "Do repositório para o portfólio.",
+     technologies: "TypeScript / Node.js / Express / API GitHub",
+     description:
+-      "API que transforma informações de repositórios do GitHub em dados estruturados para cards de portfólio. Oferece consultas individuais ou em lote e separa rotas, controllers, serviços e tipos em um backend TypeScript com Express.",
++      "API que reúne dados de repositórios do GitHub para montar cards de portfólio, com consultas individuais ou em lote. O backend TypeScript com Express separa rotas, controllers, serviços e tipos para organizar a integração e sua evolução.",
+     repository: "https://github.com/SamuelBProenca/OctoCards",
+     visual: {
+       kind: "api",
+@@ -76,7 +76,7 @@ export const selectedProjects = [
+     headline: "Entender o padrão. Exercitar a decisão.",
+     technologies: "TypeScript / POO / Design Patterns",
+     description:
+-      "Coleção de exercícios e implementações em TypeScript para estudar responsabilidades e composição de objetos. O código está organizado por padrões como Adapter, Builder, Decorator, Factory, Observer e Singleton, acompanhado de desafios no README.",
++      "Estudo prático de como distribuir responsabilidades e compor objetos em TypeScript. Reúne exercícios de Adapter, Builder, Decorator, Factory, Observer e Singleton, com desafios no README para exercitar as decisões por trás de cada padrão.",
+     repository: "https://github.com/SamuelBProenca/DesignPatternsDojo",
+     visual: {
+       kind: "patterns",
+diff --git a/portfolio/src/lib/github/project-progress.ts b/portfolio/src/lib/github/project-progress.ts
+deleted file mode 100644
+index 6483d9191cd012bbe4ea32ef75cfa766ac740d6e..0000000000000000000000000000000000000000
+--- a/portfolio/src/lib/github/project-progress.ts
++++ /dev/null
+@@ -1,34 +0,0 @@
+-import type { ProjectTask, TaskStatus } from "@/types/project-progress";
+-
+-// Pure adapter contract for a future GitHub source. No network calls or fake
+-// integrations run today; UI components consume the same ProjectTask shape.
+-export type GitHubIssueSnapshot = {
+-  number: number;
+-  title: string;
+-  body?: string | null;
+-  html_url: `https://github.com/${string}`;
+-  state: "open" | "closed";
+-  state_reason?: "completed" | "not_planned" | "reopened" | null;
+-  labels: readonly { name: string }[];
+-};
+-
+-export function adaptGitHubIssue(issue: GitHubIssueSnapshot): ProjectTask {
+-  let status: TaskStatus = "planned";
+-  if (issue.state === "closed" && issue.state_reason === "completed") status = "completed";
+-  else if (issue.state === "closed" && issue.state_reason === "not_planned") status = "blocked";
+-  else if (issue.state === "open") {
+-    if (issue.labels.some((label) => label.name === "status:blocked")) status = "blocked";
+-    else if (issue.labels.some((label) => label.name === "status:in-progress"))
+-      status = "in-progress";
+-  }
+-  return {
+-    id: `issue-${issue.number}`,
+-    title: issue.title,
+-    description:
+-      issue.state_reason === "not_planned"
+-        ? "Issue encerrada sem implementação; requer revisão do plano."
+-        : (issue.body ?? undefined),
+-    status,
+-    references: [{ kind: "issue", label: `Issue #${issue.number}`, url: issue.html_url }],
+-  };
+-}
+diff --git a/portfolio/src/styles/interactions.css b/portfolio/src/styles/interactions.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..50e1f4d155ea7b1c20eddc6f9287c08ba35fa604
+--- /dev/null
++++ b/portfolio/src/styles/interactions.css
+@@ -0,0 +1,214 @@
++/* Shared interaction rules: paint and transforms keep surrounding content in place. */
++.desktop-nav a,
++.mobile-panel a {
++  position: relative;
++  transition: color var(--motion-duration) var(--motion-easing);
++}
++.desktop-nav a::after,
++.mobile-panel a::after {
++  content: "";
++  position: absolute;
++  inset-inline: 0;
++  bottom: -8px;
++  height: 2px;
++  background: var(--accent-hover);
++  transform: scaleX(0);
++  transform-origin: left;
++  transition: transform var(--motion-selection) var(--motion-easing);
++  pointer-events: none;
++}
++.mobile-panel a::after {
++  bottom: 0;
++}
++.desktop-nav a[aria-current],
++.mobile-panel a[aria-current] {
++  color: var(--text);
++}
++.desktop-nav a[aria-current]::after,
++.mobile-panel a[aria-current]::after,
++.desktop-nav a:focus-visible::after,
++.mobile-panel a:focus-visible::after {
++  transform: scaleX(1);
++}
++/* Entering links need a starting value too, including first paint and mobile disclosure. */
++@starting-style {
++  .desktop-nav a[aria-current]::after,
++  .mobile-panel a[aria-current]::after {
++    transform: scaleX(0);
++  }
++}
++
++/* The fill and base share a text color with sufficient contrast at every point. */
++.button-primary,
++.contact-outline,
++.contact-form__submit {
++  position: relative;
++  isolation: isolate;
++  transition: transform var(--motion-duration) var(--motion-easing);
++}
++.button-primary::before,
++.contact-outline::before,
++.contact-form__submit::before {
++  content: "";
++  position: absolute;
++  inset: 0;
++  z-index: -1;
++  background: var(--interaction-fill);
++  transform: scaleX(0);
++  transform-origin: left;
++  transition: transform var(--motion-selection) var(--motion-easing);
++  pointer-events: none;
++}
++.button-primary {
++  --interaction-fill: var(--accent-fill);
++}
++.contact-outline {
++  --interaction-fill: var(--surface);
++}
++.contact-form__submit {
++  --interaction-fill: var(--paper-soft);
++}
++.button-primary:focus-visible::before,
++.contact-outline:focus-visible::before,
++.contact-form__submit:enabled:focus-visible::before {
++  transform: scaleX(1);
++}
++.button-primary:active,
++.contact-outline:active,
++.contact-form__submit:enabled:active,
++.menu-toggle:active {
++  transform: translateY(1px);
++}
++.button-primary:active::before,
++.contact-outline:active::before,
++.contact-form__submit:enabled:active::before {
++  transform: scaleX(1);
++}
++.menu-toggle,
++.intro-strip__pause,
++.project-accordion__trigger,
++.project-plan summary {
++  transition: background-color var(--motion-duration) var(--motion-easing);
++  -webkit-tap-highlight-color: transparent;
++}
++.menu-toggle {
++  min-width: 44px;
++  min-height: 44px;
++  transition:
++    background-color var(--motion-duration) var(--motion-easing),
++    transform var(--motion-duration) var(--motion-easing);
++}
++.menu-toggle:focus-visible,
++.menu-toggle:active,
++.intro-strip__pause:focus-visible,
++.intro-strip__pause:active,
++.project-accordion__trigger:focus-visible,
++.project-accordion__trigger:active,
++.project-plan summary:focus-visible,
++.project-plan summary:active {
++  background-color: var(--canvas-2);
++}
++.project-accordion__icon {
++  position: relative;
++}
++.project-accordion__icon::before,
++.project-accordion__icon::after {
++  content: "";
++  position: absolute;
++  top: 50%;
++  left: 50%;
++  width: 12px;
++  height: 1px;
++  background: currentColor;
++  transform: translate(-50%, -50%);
++}
++.project-accordion__icon::after {
++  transform: translate(-50%, -50%) rotate(90deg);
++  transition:
++    transform var(--motion-selection) var(--motion-easing),
++    opacity var(--motion-selection) var(--motion-easing);
++}
++[aria-expanded="true"] .project-accordion__icon::after {
++  transform: translate(-50%, -50%) rotate(0deg);
++  opacity: 0;
++}
++
++:is(.text-link, .button-secondary, .project-accordion__repository) .arr,
++.project-accordion__repository > span {
++  display: inline-block;
++  transition: transform var(--motion-duration) var(--motion-easing);
++}
++.text-link,
++.button-secondary,
++.project-accordion__repository,
++.project-entry__detail,
++.project-entry a.arr,
++.contact-links a,
++.site-footer a {
++  transition:
++    color var(--motion-duration) var(--motion-easing),
++    border-color var(--motion-duration) var(--motion-easing);
++}
++.text-link:focus-visible .arr,
++.button-secondary:focus-visible .arr,
++.project-accordion__repository:focus-visible > span {
++  transform: translateX(4px);
++}
++.contact-links a:focus-visible {
++  border-color: currentColor;
++}
++.paper-link:focus-visible {
++  outline-color: var(--accent);
++}
++.project-entry a.arr {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  min-width: 44px;
++  min-height: 44px;
++}
++
++@media (hover: hover) and (pointer: fine) {
++  .desktop-nav a:hover::after,
++  .mobile-panel a:hover::after {
++    transform: scaleX(1);
++  }
++  .button-primary:hover::before,
++  .contact-outline:hover::before,
++  .contact-form__submit:enabled:hover::before {
++    transform: scaleX(1);
++  }
++  .menu-toggle:hover,
++  .intro-strip__pause:hover,
++  .project-accordion__trigger:hover,
++  .project-plan summary:hover {
++    background-color: var(--canvas-2);
++  }
++  .text-link:hover .arr,
++  .button-secondary:hover .arr,
++  .project-accordion__repository:hover > span {
++    transform: translateX(4px);
++  }
++  .button-secondary:hover,
++  .project-accordion__repository:hover,
++  .project-entry__detail:hover,
++  .project-entry a.arr:hover,
++  .site-footer a:hover {
++    color: var(--accent-hover);
++  }
++  .contact-links a:hover {
++    border-color: currentColor;
++  }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  .button-primary:active,
++  .contact-outline:active,
++  .contact-form__submit:enabled:active,
++  .menu-toggle:active,
++  .text-link .arr,
++  .button-secondary .arr,
++  .project-accordion__repository > span {
++    transform: none !important;
++  }
++}
+diff --git a/portfolio/src/styles/responsive.css b/portfolio/src/styles/responsive.css
+index 157872d5dd0da72032378a6168f701a5048452a9..468d14d9593bd9ea506a66c3a1d07f08a15dc8e4 100644
+--- a/portfolio/src/styles/responsive.css
++++ b/portfolio/src/styles/responsive.css
+@@ -86,9 +86,7 @@
+     font-size: 9px;
+   }
+   .intro-strip {
+-    gap: 17px 27px;
+     font-size: 10px;
+-    justify-content: flex-start;
+   }
+   .work-section {
+     padding: 82px 0;
+@@ -147,16 +145,6 @@
+   .project-accordion__panel .featured-copy {
+     padding: 30px 24px;
+   }
+-  .project-row {
+-    grid-template-columns: 35px 1fr 24px;
+-    gap: 10px;
+-  }
+-  .project-row p {
+-    display: none;
+-  }
+-  .project-row h3 {
+-    font-size: 24px;
+-  }
+   .about-band {
+     padding: 80px 0;
+   }
+@@ -244,10 +232,6 @@
+   .content-section {
+     padding: 60px 0 80px;
+   }
+-  .intro-columns {
+-    grid-template-columns: 1fr;
+-    gap: 3px;
+-  }
+   .about-page-split {
+     grid-template-columns: 1fr;
+     gap: 40px;
+@@ -288,7 +272,7 @@
+ }
+ @media (max-width: 380px) {
+   .hero-title {
+-    font-size: 64px;
++    font-size: clamp(54px, 16.8vw, 64px);
+   }
+   .hero-actions {
+     gap: 15px;
+@@ -312,6 +296,29 @@
+   *:after {
+     animation-duration: 0.01ms !important;
+     transition-duration: 0.01ms !important;
++    transition-delay: 0s !important;
++  }
++  .intro-strip__track {
++    animation: none !important;
++    display: block;
++    width: auto;
++  }
++  .intro-strip {
++    padding: 22px 0;
++  }
++  .intro-strip__group {
++    min-width: 0;
++    padding: 0;
++    flex-wrap: wrap;
++    justify-content: flex-start;
++    gap: 20px;
++  }
++  .intro-strip__group li {
++    gap: 20px;
++  }
++  .intro-strip__group[aria-hidden="true"],
++  .intro-strip__pause {
++    display: none;
+   }
+ }
+ @media (max-width: 760px) {
+diff --git a/portfolio/src/styles/rework.css b/portfolio/src/styles/rework.css
+index df74e7e0054f0c380217daf2d0d7a8ae2cd36d09..ed93958e944e7cc85cbe61deb630ba0a8f809af7 100644
+--- a/portfolio/src/styles/rework.css
++++ b/portfolio/src/styles/rework.css
+@@ -157,7 +157,7 @@
+   color: var(--muted);
+   font-size: 22px;
+   text-align: center;
+-  transition: transform 180ms ease;
++  transition: transform var(--motion-duration) var(--motion-easing);
+ }
+ details[open] > summary > .plan-toggle {
+   transform: rotate(45deg);
+@@ -270,8 +270,8 @@ details[open] > summary > .plan-toggle {
+     block-size: 0;
+     overflow: clip;
+     transition:
+-      block-size 180ms ease,
+-      content-visibility 180ms allow-discrete;
++      block-size var(--motion-duration) var(--motion-easing),
++      content-visibility var(--motion-duration) allow-discrete;
+   }
+   .project-plan details[open]::details-content {
+     block-size: auto;
+@@ -374,9 +374,6 @@ details[open] > summary > .plan-toggle {
+   cursor: pointer;
+   font-weight: 700;
+ }
+-.contact-form__submit:hover {
+-  background: var(--paper-soft);
+-}
+ .contact-form__submit:disabled {
+   cursor: wait;
+   opacity: 0.75;
+diff --git a/portfolio/src/styles/styles.css b/portfolio/src/styles/styles.css
+index 49261c355708a28987101ce56d73e26b5ca939d1..3ec4e7416816009ad06a27c2a04d2ed6624ba602 100644
+--- a/portfolio/src/styles/styles.css
++++ b/portfolio/src/styles/styles.css
+@@ -96,7 +96,6 @@ button:focus-visible {
+ .desktop-nav a {
+   font-size: 13px;
+   color: #c9c6c0;
+-  transition: color 0.2s ease;
+ }
+ .desktop-nav a:hover,
+ .desktop-nav a[aria-current="page"] {
+@@ -115,10 +114,6 @@ button:focus-visible {
+   text-transform: uppercase;
+   white-space: nowrap;
+ }
+-.contact-outline:hover {
+-  background: var(--paper);
+-  color: var(--ink);
+-}
+ .menu-toggle {
+   border: 0;
+   background: none;
+@@ -151,10 +146,6 @@ button:focus-visible {
+   margin-right: 12px;
+   vertical-align: 1px;
+ }
+-.section-rule {
+-  height: 1px;
+-  background: var(--hairline);
+-}
+ .section-top {
+   display: flex;
+   justify-content: space-between;
+@@ -171,10 +162,6 @@ button:focus-visible {
+   color: var(--accent);
+   letter-spacing: 0.08em;
+ }
+-.section-meta {
+-  color: var(--muted);
+-  font-size: 12px;
+-}
+ .section-head {
+   font-size: clamp(42px, 6vw, 96px);
+   line-height: 0.97;
+@@ -190,10 +177,6 @@ button:focus-visible {
+   border-bottom: 1px solid currentColor;
+   padding-bottom: 8px;
+   font-size: 13px;
+-  transition: gap 0.2s;
+-}
+-.text-link:hover {
+-  gap: 24px;
+ }
+ .text-link .arr {
+   font-size: 22px;
+@@ -268,10 +251,6 @@ button:focus-visible {
+   font-size: 13px;
+   font-weight: 800;
+   letter-spacing: 0.015em;
+-  transition: background 0.2s;
+-}
+-.button-primary:hover {
+-  background: var(--accent-hover);
+ }
+ .button-secondary {
+   display: inline-flex;
+@@ -301,9 +280,6 @@ button:focus-visible {
+   object-fit: contain;
+   object-position: center;
+ }
+-.hero-aside:after {
+-  content: none;
+-}
+ .portrait-note {
+   position: absolute;
+   z-index: 2;
+@@ -314,29 +290,66 @@ button:focus-visible {
+   letter-spacing: 0.08em;
+   text-transform: uppercase;
+ }
+-.hero-sideword {
+-  position: absolute;
+-  z-index: 1;
+-  right: -3px;
+-  bottom: 12%;
+-  writing-mode: vertical-rl;
+-  transform: rotate(180deg);
+-  font-size: 10px;
+-  letter-spacing: 0.35em;
+-}
+ .intro-strip {
+   display: flex;
+-  justify-content: space-between;
+-  gap: 20px;
+-  flex-wrap: wrap;
++  align-items: center;
++  gap: 16px;
+   border-top: 1px solid var(--hairline);
+   border-bottom: 1px solid var(--hairline);
+-  padding: 22px 0;
++  padding: 7px 0;
+   color: #b8b4ad;
+   font: 11px var(--font-mono);
+   letter-spacing: 0.1em;
+   text-transform: uppercase;
+ }
++.intro-strip__viewport {
++  min-width: 0;
++  flex: 1;
++  overflow: hidden;
++}
++.intro-strip__track {
++  display: flex;
++  width: max-content;
++  animation: intro-marquee 38s linear infinite;
++}
++.intro-strip__track[data-paused="true"] {
++  animation-play-state: paused;
++}
++.intro-strip__group {
++  --strip-gap: clamp(28px, 3.2vw, 50px);
++  display: flex;
++  flex: none;
++  align-items: center;
++  justify-content: space-between;
++  gap: var(--strip-gap);
++  min-width: calc(min(100vw - 2 * var(--gutter), var(--wide)) - 60px);
++  list-style: none;
++  padding: 0 var(--strip-gap) 0 0;
++  margin: 0;
++}
++.intro-strip__group li {
++  display: flex;
++  align-items: center;
++  gap: var(--strip-gap);
++  white-space: nowrap;
++}
++.intro-strip__pause {
++  flex: none;
++  display: grid;
++  place-items: center;
++  width: 44px;
++  height: 44px;
++  padding: 0;
++  border: 1px solid var(--hairline);
++  background: transparent;
++  color: var(--text);
++  cursor: pointer;
++}
++@keyframes intro-marquee {
++  to {
++    transform: translateX(-50%);
++  }
++}
+ .intro-strip b {
+   color: var(--accent);
+   font-weight: 400;
+@@ -376,15 +389,6 @@ button:focus-visible {
+   padding: 40px;
+   min-height: 405px;
+ }
+-.featured-visual::before {
+-  content: "OPS / CLI / SYSTEMS";
+-  font: 10px var(--font-mono);
+-  color: #96aba5;
+-  letter-spacing: 0.14em;
+-  position: absolute;
+-  left: 25px;
+-  top: 23px;
+-}
+ .terminal {
+   width: min(100%, 490px);
+   box-shadow: 0 30px 85px rgba(0, 0, 0, 0.4);
+@@ -421,9 +425,6 @@ button:focus-visible {
+ .terminal__body .dim {
+   color: #718780;
+ }
+-.terminal__body .good {
+-  color: #ebbd74;
+-}
+ .featured-copy {
+   display: flex;
+   flex-direction: column;
+@@ -459,22 +460,6 @@ button:focus-visible {
+   color: #b6b4ad;
+   line-height: 1.9;
+ }
+-.project-arrow {
+-  width: 49px;
+-  height: 49px;
+-  border: 1px solid #858b83;
+-  display: grid;
+-  place-items: center;
+-  font-size: 23px;
+-  flex: none;
+-}
+-.project-arrow:hover {
+-  background: var(--paper);
+-  color: var(--ink);
+-}
+-.project-list {
+-  margin-top: 22px;
+-}
+ /* Selected works accordion */
+ .project-accordion__hint {
+   margin: 0 0 24px;
+@@ -502,11 +487,7 @@ button:focus-visible {
+   color: var(--text);
+   text-align: left;
+   cursor: pointer;
+-  transition:
+-    background 0.2s,
+-    color 0.2s;
+ }
+-.project-accordion__trigger:hover,
+ .project-accordion__trigger[aria-expanded="true"] {
+   background: var(--canvas-2);
+ }
+@@ -529,18 +510,35 @@ button:focus-visible {
+   line-height: 1.6;
+ }
+ .project-accordion__icon {
+-  display: grid;
+-  place-items: center;
+   width: 34px;
+   height: 34px;
+   border: 1px solid var(--hairline);
+-  font-size: 24px;
+-  font-weight: 400;
+   color: var(--accent-hover);
+ }
+ .project-accordion__panel {
+   margin-bottom: 24px;
+ }
++.project-accordion__reveal {
++  display: grid;
++  grid-template-rows: 0fr;
++  overflow: hidden;
++  opacity: 0;
++  visibility: hidden;
++  transition:
++    grid-template-rows var(--motion-expand) var(--motion-easing),
++    opacity var(--motion-expand) var(--motion-easing),
++    visibility 0s var(--motion-expand);
++}
++.project-accordion__reveal[aria-hidden="false"] {
++  grid-template-rows: 1fr;
++  opacity: 1;
++  visibility: visible;
++  transition-delay: 0s;
++}
++.project-accordion__clip {
++  min-height: 0;
++  /* Clip at the animated outer edge; fractional tracks can be shorter mid-transition. */
++}
+ .project-accordion__repository {
+   display: inline-flex;
+   align-items: center;
+@@ -550,9 +548,6 @@ button:focus-visible {
+   white-space: nowrap;
+   font-size: 12px;
+ }
+-.project-accordion__repository:hover {
+-  color: var(--accent-hover);
+-}
+ .project-accordion__panel .project-bottom {
+   flex-wrap: wrap;
+   gap: 16px;
+@@ -561,9 +556,6 @@ button:focus-visible {
+ .project-accordion__panel .techline {
+   max-width: 240px;
+ }
+-.project-visual::before {
+-  content: none;
+-}
+ .project-visual__caption {
+   position: absolute;
+   top: 24px;
+@@ -608,40 +600,6 @@ button:focus-visible {
+   margin-top: 24px;
+   font-size: 10px;
+ }
+-.project-row {
+-  border-bottom: 1px solid var(--hairline);
+-  display: grid;
+-  grid-template-columns: 90px 1fr 1fr 40px;
+-  align-items: center;
+-  gap: 22px;
+-  padding: 25px 0;
+-  transition:
+-    padding 0.2s,
+-    color 0.2s;
+-}
+-.project-row:hover {
+-  padding-left: 12px;
+-  color: #e8ad9e;
+-}
+-.project-row__nr {
+-  font: 12px var(--font-mono);
+-  color: var(--accent);
+-}
+-.project-row h3 {
+-  font-size: clamp(22px, 2.25vw, 33px);
+-  font-weight: 550;
+-  letter-spacing: -0.025em;
+-  margin: 0;
+-}
+-.project-row p {
+-  font-size: 13px;
+-  color: var(--muted);
+-  margin: 0;
+-}
+-.project-row .arr {
+-  font-size: 24px;
+-  text-align: right;
+-}
+ /* About preview / paper contrast */
+ .about-band {
+   background: var(--paper);
+@@ -854,9 +812,6 @@ button:focus-visible {
+   border-bottom: 1px solid #e8a59a;
+   padding-bottom: 9px;
+ }
+-.contact-links a:hover {
+-  border-color: #fff;
+-}
+ .site-footer {
+   background: #101010;
+   padding: 30px 0;
+@@ -869,9 +824,6 @@ button:focus-visible {
+   font: 11px var(--font-mono);
+   letter-spacing: 0.03em;
+ }
+-.footer-inner a:hover {
+-  color: #fff;
+-}
+ /* Internal pages */
+ .page-hero {
+   padding: 93px 0 78px;
+@@ -901,17 +853,6 @@ button:focus-visible {
+   letter-spacing: -0.045em;
+   margin: 25px 0 28px;
+ }
+-.intro-columns {
+-  display: grid;
+-  grid-template-columns: 1fr 1fr;
+-  gap: 70px;
+-}
+-.intro-columns p {
+-  font-size: 17px;
+-  line-height: 1.8;
+-  color: #b9b6af;
+-  margin: 0 0 25px;
+-}
+ .about-page-split {
+   display: grid;
+   grid-template-columns: 0.76fr 1.24fr;
+@@ -946,7 +887,7 @@ button:focus-visible {
+ .chrono-row p {
+   font-size: 14px;
+   line-height: 1.6;
+-  color: var(--muted);
++  color: var(--muted-on-paper);
+   margin: 0;
+ }
+ .project-entry {
+@@ -1003,7 +944,7 @@ button:focus-visible {
+   gap: 24px;
+   margin-top: 55px;
+ }
+-.collection-link {
++.writing-collection {
+   background: #232321;
+   border-top: 2px solid var(--accent);
+   padding: 35px;
+@@ -1011,26 +952,18 @@ button:focus-visible {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+-  transition: background 0.2s;
+-}
+-.collection-link:hover {
+-  background: #2b2b29;
+ }
+-.collection-link h2 {
++.writing-collection h2 {
+   font: 750 clamp(30px, 4vw, 60px)/1 var(--font-display);
+   letter-spacing: -0.04em;
+   margin: 20px 0;
+ }
+-.collection-link p {
++.writing-collection p {
+   line-height: 1.65;
+   color: var(--muted);
+   font-size: 15px;
+   max-width: 390px;
+ }
+-.collection-link .arr {
+-  align-self: end;
+-  font-size: 26px;
+-}
+ 
+ /* Shared application accessibility and image layout. */
+ .skip-link {
+diff --git a/portfolio/src/styles/tokens.css b/portfolio/src/styles/tokens.css
+index 714095a2028fbc28946a7d4cc707bdf388c99ec7..5aa703e0c3a4dc89d0af56281ad2837d104bda21 100644
+--- a/portfolio/src/styles/tokens.css
++++ b/portfolio/src/styles/tokens.css
+@@ -8,10 +8,16 @@
+   --paper-soft: #dedbd3;
+   --accent: #c94e37;
+   --accent-hover: #e0654a;
++  --accent-fill: #b24430;
++  --motion-duration: 280ms;
++  --motion-selection: 320ms;
++  --motion-expand: 440ms;
++  --motion-easing: cubic-bezier(0.2, 0.65, 0.3, 1);
+   --status-completed: #b4c5b1;
+   --status-blocked: #e2b56d;
+   --text: #f2f0ea;
+   --muted: #a6a49f;
++  --muted-on-paper: #575550;
+   --hairline: rgba(242, 240, 234, 0.19);
+   --hairline-dark: rgba(22, 22, 22, 0.2);
+   --gutter: clamp(22px, 5vw, 86px);
+diff --git a/portfolio/tests/e2e/fluidity.spec.ts b/portfolio/tests/e2e/fluidity.spec.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..9324e0d81d246146943bc007ffcae7edd4119875
+--- /dev/null
++++ b/portfolio/tests/e2e/fluidity.spec.ts
+@@ -0,0 +1,270 @@
++import { expect, test } from "@playwright/test";
++
++test("accordion height and opacity progress in both directions without exposing closing links", async ({
++  page,
++}) => {
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  await page.goto("/#projetos");
++  const item = page.locator(".project-accordion__item").first();
++  const samples = await item.evaluate(async (element) => {
++    const panel = element.querySelector<HTMLElement>(".project-accordion__reveal")!;
++    const trigger = element.querySelector<HTMLButtonElement>("button")!;
++    const initialHeight = panel.getBoundingClientRect().height;
++    async function toggle() {
++      trigger.click();
++      await new Promise(requestAnimationFrame);
++      const inert = panel.inert;
++      const frames: { height: number; opacity: number }[] = [];
++      const start = performance.now();
++      while (performance.now() - start < 550) {
++        await new Promise(requestAnimationFrame);
++        frames.push({
++          height: panel.getBoundingClientRect().height,
++          opacity: Number(getComputedStyle(panel).opacity),
++        });
++      }
++      return { inert, frames };
++    }
++    const close = await toggle();
++    const open = await toggle();
++    return { initialHeight, close, open };
++  });
++  for (const direction of [samples.close, samples.open]) {
++    expect(
++      direction.frames.some(
++        (frame) => frame.height > 1 && frame.height < samples.initialHeight - 1,
++      ),
++    ).toBe(true);
++    expect(direction.frames.some((frame) => frame.opacity > 0 && frame.opacity < 1)).toBe(true);
++  }
++  expect(samples.close.inert).toBe(true);
++  expect(samples.open.inert).toBe(false);
++  expect(samples.close.frames.at(-1)!.height).toBe(0);
++  expect(samples.open.frames.at(-1)!.height).toBeCloseTo(samples.initialHeight, 0);
++  const trigger = item.getByRole("button");
++  await trigger.click();
++  await page.keyboard.press("Tab");
++  await expect(page.getByRole("button", { name: /OctoCards/ })).toBeFocused();
++});
++
++test("accordion reverses interrupted transitions and accommodates content and viewport changes", async ({
++  page,
++}) => {
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  await page.goto("/#projetos");
++  await page.locator(".project-accordion").evaluate(async (element) => {
++    const buttons = element.querySelectorAll<HTMLButtonElement>(".project-accordion__trigger");
++    for (const index of [1, 0, 2, 0, 1, 1, 2]) {
++      buttons[index].click();
++      await new Promise(requestAnimationFrame);
++      await new Promise(requestAnimationFrame);
++    }
++  });
++  const panel = page.getByRole("region", { name: /Design Patterns Dojo/ });
++  await expect(page.locator(".project-accordion").getByRole("region")).toHaveCount(1);
++  await expect
++    .poll(() => panel.evaluate((element) => Number(getComputedStyle(element).opacity)))
++    .toBe(1);
++  await expect
++    .poll(() =>
++      page
++        .locator('.project-accordion__reveal[aria-hidden="true"]')
++        .evaluateAll((elements) =>
++          elements.every((element) => element.getBoundingClientRect().height === 0),
++        ),
++    )
++    .toBe(true);
++  const initialHeight = await panel.evaluate((element) => element.getBoundingClientRect().height);
++  await panel.locator(".featured-copy p").evaluate((element) => {
++    element.textContent += " Mais contexto sobre as decisões de engenharia.".repeat(90);
++  });
++  expect(await panel.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(
++    initialHeight,
++  );
++  await page.setViewportSize({ width: 320, height: 900 });
++  const geometry = await panel.evaluate((element) => ({
++    height: element.clientHeight,
++    contentHeight: element.querySelector<HTMLElement>(".project-accordion__clip")!.scrollHeight,
++  }));
++  expect(Math.abs(geometry.height - geometry.contentHeight)).toBeLessThanOrEqual(1);
++  expect(
++    await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
++  ).toBeLessThanOrEqual(1);
++});
++
++test("the selected navigation underline draws progressively when the route changes", async ({
++  page,
++  isMobile,
++}) => {
++  test.skip(
++    isMobile,
++    "Mobile disclosure entry is covered by the current-section test; route continuity is visible on desktop.",
++  );
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  await page.goto("/");
++  const link = page.locator('.desktop-nav a[href="/projetos"]');
++  await link.evaluate((element) => {
++    const target = element as HTMLElement & { samples: number[] };
++    target.samples = [];
++    const observer = new MutationObserver(() => {
++      if (!target.hasAttribute("aria-current")) return;
++      observer.disconnect();
++      const start = performance.now();
++      function sample() {
++        target.samples.push(new DOMMatrixReadOnly(getComputedStyle(target, "::after").transform).a);
++        if (performance.now() - start < 450) requestAnimationFrame(sample);
++      }
++      sample();
++    });
++    observer.observe(target, { attributes: true, attributeFilter: ["aria-current"] });
++  });
++  await page.getByRole("link", { name: "Explore meus projetos" }).click();
++  await expect(link).toHaveAttribute("aria-current", "page");
++  await expect
++    .poll(() =>
++      link.evaluate((element) =>
++        (element as HTMLElement & { samples: number[] }).samples.some(
++          (value) => value > 0 && value < 1,
++        ),
++      ),
++    )
++    .toBe(true);
++  await expect
++    .poll(() =>
++      link.evaluate(
++        (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::after").transform).a,
++      ),
++    )
++    .toBe(1);
++  const bounds = await link.evaluate((element) => ({
++    underline: parseFloat(getComputedStyle(element, "::after").width),
++    link: element.getBoundingClientRect().width,
++  }));
++  expect(bounds.underline).toBeCloseTo(bounds.link, 1);
++});
++
++test("button fills progress and reverse with transforms while preserving their text", async ({
++  page,
++  isMobile,
++}) => {
++  test.skip(isMobile, "Touch uses press and keyboard feedback, with hover intentionally disabled.");
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  await page.goto("/");
++  const button = page.locator(".button-primary");
++  const color = await button.evaluate((element) => getComputedStyle(element).color);
++  const scale = () =>
++    button.evaluate(
++      (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::before").transform).a,
++    );
++  await button.hover();
++  await expect.poll(scale, { intervals: [16] }).toBeGreaterThan(0);
++  expect(await scale()).toBeLessThan(1);
++  await expect.poll(scale).toBe(1);
++  await page.mouse.move(0, 0);
++  await expect.poll(scale, { intervals: [16] }).toBeLessThan(1);
++  expect(await scale()).toBeGreaterThan(0);
++  await expect.poll(scale).toBe(0);
++  expect(await button.evaluate((element) => getComputedStyle(element).color)).toBe(color);
++});
++
++test("marquee repeats seamlessly at every viewport and pauses without resetting position", async ({
++  page,
++}) => {
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  await page.goto("/");
++  for (const width of [320, 820, 1440]) {
++    await page.setViewportSize({ width, height: 1000 });
++    const geometry = await page.locator(".intro-strip__track").evaluate(async (element) => {
++      const animation = element.getAnimations()[0];
++      animation.pause();
++      await animation.ready;
++      const timing = animation.effect!.getTiming();
++      const duration = Number(timing.duration);
++      animation.currentTime = 0;
++      const groups = element.querySelectorAll<HTMLElement>("ul");
++      const initial = groups[0].getBoundingClientRect();
++      const viewport = element.parentElement!.clientWidth;
++      animation.currentTime = duration - 0.01;
++      const next = groups[1].getBoundingClientRect();
++      animation.currentTime = duration;
++      const reset = groups[0].getBoundingClientRect();
++      animation.play();
++      return {
++        duration,
++        easing: timing.easing,
++        iterations: timing.iterations,
++        firstWidth: initial.width,
++        nextWidth: next.width,
++        viewport,
++        seamDelta: next.left - initial.left,
++        resetDelta: reset.left - initial.left,
++      };
++    });
++    expect(geometry.easing).toBe("linear");
++    expect(geometry.iterations).toBe(Infinity);
++    expect(geometry.firstWidth).toBe(geometry.nextWidth);
++    expect(geometry.firstWidth).toBeGreaterThanOrEqual(geometry.viewport);
++    expect(Math.abs(geometry.seamDelta)).toBeLessThan(1);
++    expect(Math.abs(geometry.resetDelta)).toBeLessThan(1);
++    expect(
++      await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),
++    ).toBeLessThanOrEqual(1);
++  }
++  // Timeline seeking above intentionally uses WAAPI play-state overrides.
++  // Reload before verifying that the real UI controls the CSS animation.
++  await page.reload();
++  const button = page.getByRole("button", { name: "Pausar faixa de especialidades" });
++  await button.click();
++  const paused = await page.locator(".intro-strip__track").evaluate(async (element) => {
++    const animation = element.getAnimations()[0];
++    await animation.ready;
++    const before = Number(animation.currentTime);
++    await new Promise(requestAnimationFrame);
++    await new Promise(requestAnimationFrame);
++    return { before, after: Number(animation.currentTime), state: animation.playState };
++  });
++  expect(paused.state).toBe("paused");
++  expect(paused.before).toBe(paused.after);
++  await page.getByRole("button", { name: "Retomar faixa de especialidades" }).click();
++  await expect
++    .poll(() =>
++      page
++        .locator(".intro-strip__track")
++        .evaluate((element) => Number(element.getAnimations()[0].currentTime)),
++    )
++    .toBeGreaterThan(paused.after);
++});
++
++test("reduced motion shows the full static strip and changes accordion state immediately", async ({
++  page,
++}) => {
++  await page.emulateMedia({ reducedMotion: "reduce" });
++  await page.setViewportSize({ width: 320, height: 900 });
++  await page.goto("/");
++  const strip = page.getByRole("region", { name: "Especialidades" });
++  await expect(strip.getByRole("button")).toHaveCount(0);
++  await expect(strip.getByRole("listitem")).toHaveCount(4);
++  expect(
++    await strip
++      .locator(".intro-strip__track")
++      .evaluate((element) => getComputedStyle(element).animationName),
++  ).toBe("none");
++  const viewport = await strip
++    .locator(".intro-strip__viewport")
++    .evaluate((element) => ({ client: element.clientWidth, content: element.scrollWidth }));
++  expect(viewport.content).toBeLessThanOrEqual(viewport.client);
++  const trigger = page.getByRole("button", { name: /OpsCLI/ });
++  await trigger.click();
++  const panel = page.locator(".project-accordion__reveal").first();
++  await expect
++    .poll(() => panel.evaluate((element) => element.getBoundingClientRect().height))
++    .toBe(0);
++  expect(
++    await panel.evaluate((element) =>
++      Math.max(...getComputedStyle(element).transitionDuration.split(",").map(parseFloat)),
++    ),
++  ).toBeLessThanOrEqual(0.01);
++  expect(await panel.evaluate((element) => getComputedStyle(element).transitionDelay)).toBe("0s");
++  await trigger.press("Enter");
++  await expect(page.getByRole("region", { name: /OpsCLI/ })).toBeVisible();
++});
+diff --git a/portfolio/tests/e2e/interactions.spec.ts b/portfolio/tests/e2e/interactions.spec.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..73f05fcdef62a689183b492b46ae0fe38a3d8cd9
+--- /dev/null
++++ b/portfolio/tests/e2e/interactions.spec.ts
+@@ -0,0 +1,233 @@
++import { expect, test } from "@playwright/test";
++
++test("the hero headline stays within the canvas at narrow, tablet and desktop widths", async ({
++  page,
++}) => {
++  for (const width of [320, 390, 820, 1440]) {
++    await page.setViewportSize({ width, height: 1000 });
++    await page.goto("/");
++    const right = await page.locator(".hero-title > span:last-child").evaluate((element) => {
++      const range = document.createRange();
++      range.selectNodeContents(element);
++      return range.getBoundingClientRect().right;
++    });
++    expect(right).toBeLessThanOrEqual(width);
++  }
++});
++
++test("project details identify the parent navigation section on desktop and touch", async ({
++  page,
++  isMobile,
++}) => {
++  await page.goto("/projetos/octocards");
++  if (isMobile) await page.getByRole("button", { name: "Abrir menu" }).tap();
++  const navigation = page.getByRole("navigation", {
++    name: isMobile ? "Menu para celular" : "Menu principal",
++  });
++  const current = navigation.getByRole("link", { name: "Projetos", exact: true });
++  await expect(current).toHaveAttribute("aria-current", "location");
++  await expect(navigation.locator("[aria-current]")).toHaveCount(1);
++  await expect
++    .poll(() => current.evaluate((element) => getComputedStyle(element, "::after").transform))
++    .toBe("matrix(1, 0, 0, 1, 0, 0)");
++  await navigation.getByRole("link", { name: "Sobre", exact: true }).click();
++  await expect(page).toHaveURL(/\/sobre$/);
++  await page.getByRole("link", { name: "Vamos conversar sobre sua equipe ou projeto" }).click();
++  await expect(page).toHaveURL(/\/#contato$/);
++  await expect(page.getByRole("form", { name: "Formulário de contato" })).toBeInViewport();
++});
++
++test("navigation underlines animate on hover and keyboard focus without moving links", async ({
++  page,
++  isMobile,
++}) => {
++  test.skip(
++    isMobile,
++    "Hover is reserved for fine pointers; touch navigation is tested separately.",
++  );
++  await page.goto("/");
++  const navigation = page.getByRole("navigation", { name: "Menu principal" });
++  const link = navigation.getByRole("link", { name: "Sobre", exact: true });
++  const transform = () =>
++    link.evaluate((element) => getComputedStyle(element, "::after").transform);
++  await expect.poll(transform).toBe("matrix(0, 0, 0, 1, 0, 0)");
++  const box = await link.boundingBox();
++  const transition = await link.evaluate((element) => ({
++    duration: parseFloat(getComputedStyle(element, "::after").transitionDuration),
++    origin: getComputedStyle(element, "::after").transformOrigin,
++  }));
++  expect(transition.duration).toBeGreaterThanOrEqual(0.2);
++  expect(transition.duration).toBeLessThanOrEqual(0.35);
++  expect(transition.origin).toMatch(/^0px /);
++  await link.hover();
++  await expect.poll(transform).toBe("matrix(1, 0, 0, 1, 0, 0)");
++  expect(await link.boundingBox()).toEqual(box);
++  await page.mouse.move(0, 0);
++  await expect.poll(transform).toBe("matrix(0, 0, 0, 1, 0, 0)");
++  await navigation.getByRole("link", { name: "Projetos", exact: true }).focus();
++  await page.keyboard.press("Tab");
++  await expect(link).toBeFocused();
++  await expect.poll(transform).toBe("matrix(1, 0, 0, 1, 0, 0)");
++  expect(await link.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe("solid");
++  await page.keyboard.press("Tab");
++  await expect.poll(transform).toBe("matrix(0, 0, 0, 1, 0, 0)");
++  await expect
++    .poll(() =>
++      navigation
++        .getByRole("link", { name: "Início", exact: true })
++        .evaluate((element) => getComputedStyle(element, "::after").transform),
++    )
++    .toBe("matrix(1, 0, 0, 1, 0, 0)");
++});
++
++test("CTA fills maintain contrast and geometry through hover, focus and press", async ({
++  page,
++  isMobile,
++}) => {
++  test.skip(isMobile, "Fine-pointer hover states are intentionally disabled on touch.");
++  await page.goto("/");
++  for (const selector of [".button-primary", ".contact-outline", ".contact-form__submit"]) {
++    const button = page.locator(selector);
++    await button.scrollIntoViewIfNeeded();
++    const box = await button.boundingBox();
++    const colors = await button.evaluate((element) => {
++      const style = getComputedStyle(element);
++      const luminance = (color: string) => {
++        const channels = color
++          .match(/[\d.]+/g)!
++          .slice(0, 3)
++          .map(Number)
++          .map((value) => {
++            const channel = value / 255;
++            return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
++          });
++        return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
++      };
++      const text = luminance(style.color);
++      return {
++        text: style.color,
++        ratios: [style.backgroundColor, getComputedStyle(element, "::before").backgroundColor].map(
++          (color) => {
++            // The header is transparent over the canvas.
++            const background = luminance(
++              color === "rgba(0, 0, 0, 0)"
++                ? getComputedStyle(document.body).backgroundColor
++                : color,
++            );
++            return (Math.max(text, background) + 0.05) / (Math.min(text, background) + 0.05);
++          },
++        ),
++      };
++    });
++    for (const ratio of colors.ratios) expect(ratio).toBeGreaterThanOrEqual(4.5);
++    await button.hover();
++    await expect
++      .poll(() => button.evaluate((element) => getComputedStyle(element, "::before").transform))
++      .toBe("matrix(1, 0, 0, 1, 0, 0)");
++    expect(await button.evaluate((element) => getComputedStyle(element).color)).toBe(colors.text);
++    expect(await button.boundingBox()).toEqual(box);
++    await page.mouse.down();
++    await expect
++      .poll(() => button.evaluate((element) => getComputedStyle(element).transform))
++      .toBe("matrix(1, 0, 0, 1, 0, 1)");
++    await page.mouse.move(0, 0);
++    await page.mouse.up();
++    await button.evaluate((element: HTMLElement) => element.blur());
++    await expect
++      .poll(() => button.evaluate((element) => getComputedStyle(element, "::before").transform))
++      .toBe("matrix(0, 0, 0, 1, 0, 0)");
++    await page.keyboard.press("Tab");
++    await button.focus();
++    await expect
++      .poll(() => button.evaluate((element) => getComputedStyle(element, "::before").transform))
++      .toBe("matrix(1, 0, 0, 1, 0, 0)");
++    expect(await button.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe(
++      "solid",
++    );
++    await button.evaluate((element: HTMLElement) => element.blur());
++  }
++});
++
++test("reduced motion preserves state feedback without animated movement", async ({ page }) => {
++  await page.emulateMedia({ reducedMotion: "reduce" });
++  await page.goto("/");
++  const durations = await page
++    .locator(".button-primary, .contact-outline, .contact-form__submit, .text-link .arr")
++    .evaluateAll((elements) =>
++      elements.map((element) => getComputedStyle(element).transitionDuration),
++    );
++  for (const durationsList of durations) {
++    for (const duration of durationsList.split(","))
++      expect(parseFloat(duration)).toBeLessThanOrEqual(0.01);
++  }
++  expect(
++    await page
++      .locator(".desktop-nav a")
++      .first()
++      .evaluate((element) => parseFloat(getComputedStyle(element, "::after").transitionDuration)),
++  ).toBeLessThanOrEqual(0.01);
++  expect(
++    await page.locator("html").evaluate((element) => getComputedStyle(element).scrollBehavior),
++  ).toBe("auto");
++  const action = page.locator(".button-primary");
++  await page.keyboard.press("Tab");
++  await action.focus();
++  await expect
++    .poll(() => action.evaluate((element) => getComputedStyle(element, "::before").transform))
++    .toBe("matrix(1, 0, 0, 1, 0, 0)");
++  expect(
++    await action.locator(".arr").evaluate((element) => getComputedStyle(element).transform),
++  ).toBe("none");
++});
++
++test("server field errors restore focus after pending inputs are enabled and allow retry", async ({
++  page,
++}) => {
++  let attempts = 0;
++  await page.route("**/api/contact", async (route) => {
++    attempts++;
++    await route.fulfill({
++      status: attempts === 1 ? 400 : 200,
++      contentType: "application/json",
++      body: JSON.stringify(
++        attempts === 1
++          ? { error: "Revise o e-mail.", fields: { email: "Confira o endereço informado." } }
++          : { message: "Mensagem aceita para envio." },
++      ),
++    });
++  });
++  await page.goto("/#contato");
++  const form = page.getByRole("form", { name: "Formulário de contato" });
++  await form.getByLabel("Nome completo").fill("Ana Silva");
++  const email = form.getByLabel("E-mail", { exact: true });
++  await email.fill("ana@example.com");
++  await form.getByLabel("Assunto").fill("Novo projeto");
++  await form.getByLabel("Mensagem", { exact: true }).fill("Vamos conversar sobre um novo projeto.");
++  await form.getByRole("button", { name: /Enviar mensagem/ }).click();
++  await expect(email).toBeFocused();
++  await expect(email).toHaveAccessibleDescription("Confira o endereço informado.");
++  await expect(form.getByRole("alert")).toHaveText("Revise o e-mail.");
++  await email.fill("ana.silva@example.com");
++  await form.getByRole("button", { name: /Enviar mensagem/ }).click();
++  await expect(form.getByRole("status")).toHaveText("Mensagem aceita para envio.");
++  await expect(email).not.toHaveAttribute("aria-describedby");
++  expect(attempts).toBe(2);
++});
++
++test("writing previews keep bookmarked categories without suggesting available articles", async ({
++  page,
++}) => {
++  for (const id of ["engenharia", "ensaios"]) {
++    await page.goto(`/escrita#${id}`);
++    const collection = page.locator(`#${id}`);
++    await expect(collection).toBeInViewport();
++    await expect(collection).toHaveAccessibleName(
++      id === "engenharia" ? "Engenharia & prática" : "Ensaios & hipóteses",
++    );
++    await expect(collection.getByText("Publicações em preparação")).toBeVisible();
++    await expect(collection.getByRole("link")).toHaveCount(0);
++    await expect(
++      page.getByText("Ainda não há artigos publicados.", { exact: false }),
++    ).toBeVisible();
++  }
++});
+diff --git a/portfolio/tests/e2e/portfolio.spec.ts b/portfolio/tests/e2e/portfolio.spec.ts
+index 63eebb6cf4293e1e26c72f27bc5c10d72b2a8d70..996f3739227a457e782534b6fddb41f28a43a8d1 100644
+--- a/portfolio/tests/e2e/portfolio.spec.ts
++++ b/portfolio/tests/e2e/portfolio.spec.ts
+@@ -113,7 +113,10 @@ test("contact actions expose working email, GitHub and section destinations", as
+       "false",
+     );
+   } else {
+-    await page.getByRole("link", { name: /Vamos conversar/ }).click();
++    await page
++      .locator(".site-header")
++      .getByRole("link", { name: /Vamos conversar/ })
++      .click();
+   }
+   await expect(page).toHaveURL(/\/#contato$/);
+   await expect(contact).toBeInViewport();
+diff --git a/portfolio/tests/unit/contact-form.test.tsx b/portfolio/tests/unit/contact-form.test.tsx
+index f8de5d78c6216be7c80a71ca55b651cf4b7694f5..c6931a1d3b99ac7145cf299714bdff574c60b9be 100644
+--- a/portfolio/tests/unit/contact-form.test.tsx
++++ b/portfolio/tests/unit/contact-form.test.tsx
+@@ -22,6 +22,7 @@ describe("contact form", () => {
+     await userEvent.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
+     expect(screen.getByLabelText("Nome completo")).toHaveFocus();
+     expect(screen.getByLabelText("E-mail")).toHaveAttribute("aria-invalid", "true");
++    expect(screen.getByLabelText("E-mail")).toHaveAccessibleDescription("Preencha este campo.");
+     expect(screen.getByRole("alert")).toHaveTextContent("Revise os campos");
+     expect(send).not.toHaveBeenCalled();
+   });
+@@ -71,4 +72,68 @@ describe("contact form", () => {
+     expect(screen.getByRole("button", { name: /Enviar mensagem/ })).toBeEnabled();
+     expect(screen.getByLabelText("E-mail")).toHaveValue("ana@example.com");
+   });
++
++  it("associates server field errors, restores focus and allows a successful retry", async () => {
++    const send = vi
++      .fn()
++      .mockResolvedValueOnce(
++        Response.json(
++          {
++            error: "Revise o e-mail informado.",
++            fields: { email: "Use um endereço de e-mail válido.", unexpected: "Ignored" },
++          },
++          { status: 400 },
++        ),
++      )
++      .mockResolvedValueOnce(Response.json({ message: "Mensagem aceita para envio." }));
++    vi.stubGlobal("fetch", send);
++    render(<ContactForm />);
++    const user = await fill();
++    await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
++    const email = screen.getByLabelText("E-mail");
++    expect(await screen.findByRole("alert")).toHaveTextContent("Revise o e-mail informado.");
++    expect(email).toBeEnabled();
++    expect(email).toHaveFocus();
++    expect(email).toHaveAttribute("aria-invalid", "true");
++    expect(email).toHaveAccessibleDescription("Use um endereço de e-mail válido.");
++    expect(screen.getByLabelText("Mensagem")).toHaveValue("Vamos conversar sobre um novo projeto.");
++
++    await user.clear(email);
++    await user.type(email, "ana.silva@example.com");
++    await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
++    expect(await screen.findByRole("status")).toHaveTextContent("Mensagem aceita para envio.");
++    expect(email).toHaveAttribute("aria-invalid", "false");
++    expect(email).not.toHaveAttribute("aria-describedby");
++    expect(send).toHaveBeenCalledTimes(2);
++    expect(JSON.parse(send.mock.calls[1][1].body).email).toBe("ana.silva@example.com");
++  });
++
++  it.each(["null", "not-json", "{}"])(
++    "keeps the form recoverable when the response is %s",
++    async (body) => {
++      vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(body, { status: 200 })));
++      render(<ContactForm />);
++      const user = await fill();
++      await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
++      expect(await screen.findByRole("alert")).toHaveTextContent("Não foi possível enviar.");
++      expect(screen.getByRole("form")).toHaveAttribute("aria-busy", "false");
++      expect(screen.getByRole("button", { name: /Enviar mensagem/ })).toBeEnabled();
++      expect(screen.getByLabelText("Mensagem")).toHaveValue(
++        "Vamos conversar sobre um novo projeto.",
++      );
++    },
++  );
++
++  it("recovers from a request timeout without clearing the draft", async () => {
++    vi.stubGlobal(
++      "fetch",
++      vi.fn().mockRejectedValue(new DOMException("Timed out", "TimeoutError")),
++    );
++    render(<ContactForm />);
++    const user = await fill();
++    await user.click(screen.getByRole("button", { name: /Enviar mensagem/ }));
++    expect(await screen.findByRole("alert")).toHaveTextContent("Confira sua conexão");
++    expect(screen.getByRole("form")).toHaveAttribute("aria-busy", "false");
++    expect(screen.getByLabelText("Mensagem")).toHaveValue("Vamos conversar sobre um novo projeto.");
++  });
+ });
+diff --git a/portfolio/tests/unit/contact-validation.test.ts b/portfolio/tests/unit/contact-validation.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..dba9c6ee081ee4e9120f1da70581cbc78b84c99b
+--- /dev/null
++++ b/portfolio/tests/unit/contact-validation.test.ts
+@@ -0,0 +1,64 @@
++import { describe, expect, it } from "vitest";
++import { contactLimits, validateContact } from "@/lib/contact/validation";
++
++const valid = {
++  name: "Ana Silva",
++  email: "ana@example.com",
++  subject: "Novo projeto",
++  message: "Vamos conversar sobre um projeto.",
++};
++
++describe("shared contact validation", () => {
++  it("normalizes accents, line endings and control characters before submission", () => {
++    expect(
++      validateContact({
++        ...valid,
++        name: "  Jose\u0301 Silva  ",
++        message: "  Primeira linha.\r\nSegunda\u0000 linha.  ",
++      }),
++    ).toEqual({
++      ok: true,
++      message: { ...valid, name: "José Silva", message: "Primeira linha.\nSegunda linha." },
++    });
++  });
++
++  it.each(Object.entries(contactLimits))(
++    "accepts the exact %s length limit and rejects excess",
++    (field, limit) => {
++      const value = field === "email" ? `${"a".repeat(limit - 12)}@example.com` : "a".repeat(limit);
++      expect(validateContact({ ...valid, [field]: value }).ok).toBe(true);
++      const result = validateContact({ ...valid, [field]: `a${value}` });
++      expect(result.ok).toBe(false);
++      if (!result.ok)
++        expect(result.errors).toHaveProperty(field, `Use no máximo ${limit} caracteres.`);
++    },
++  );
++
++  it.each([null, [], "text", 42])("rejects a non-object payload: %s", (input) => {
++    expect(validateContact(input)).toMatchObject({ ok: false, spam: false });
++  });
++
++  it.each(["name", "subject", "email"])("rejects header line breaks in %s", (field) => {
++    const result = validateContact({
++      ...valid,
++      [field]: `${valid[field as keyof typeof valid]}\r\nInjected`,
++    });
++    expect(result.ok).toBe(false);
++    if (!result.ok)
++      expect(result.errors[field as keyof typeof valid]).toBe("Use apenas uma linha neste campo.");
++  });
++
++  it("accepts empty honeypots but rejects filled or malformed ones", () => {
++    expect(validateContact({ ...valid, website: "  " }).ok).toBe(true);
++    for (const website of ["https://spam.example", true, {}]) {
++      expect(validateContact({ ...valid, website })).toEqual({ ok: false, errors: {}, spam: true });
++    }
++  });
++
++  it("reports every invalid field when values have unexpected types", () => {
++    const result = validateContact({ name: [], email: null, subject: true, message: 123 });
++    expect(result.ok).toBe(false);
++    if (!result.ok)
++      expect(Object.keys(result.errors)).toEqual(["name", "email", "subject", "message"]);
++  });
++});
+diff --git a/portfolio/tests/unit/intro-strip.test.tsx b/portfolio/tests/unit/intro-strip.test.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..8c7860e179ca6d9274495b700f3c4eff682ea0f8
+--- /dev/null
++++ b/portfolio/tests/unit/intro-strip.test.tsx
+@@ -0,0 +1,34 @@
++import { render, screen, within } from "@testing-library/react";
++import userEvent from "@testing-library/user-event";
++import { describe, expect, it } from "vitest";
++import IntroStrip from "@/components/intro-strip";
++
++describe("specialty marquee", () => {
++  it("exposes specialties once to assistive technology and hides the looping copy", () => {
++    render(<IntroStrip />);
++    const strip = screen.getByRole("region", { name: "Especialidades" });
++    expect(within(strip).getAllByRole("listitem")).toHaveLength(4);
++    expect(within(strip).getAllByRole("list")).toHaveLength(1);
++    const groups = strip.querySelectorAll("ul");
++    expect(groups).toHaveLength(2);
++    expect(groups[1]).toHaveAttribute("aria-hidden", "true");
++    expect(groups[1].textContent).toBe(groups[0].textContent);
++  });
++
++  it("pauses and resumes with the keyboard without replacing the animated track", async () => {
++    const user = userEvent.setup();
++    render(<IntroStrip />);
++    const button = screen.getByRole("button", { name: "Pausar faixa de especialidades" });
++    const track = document.querySelector(".intro-strip__track");
++    await user.tab();
++    expect(button).toHaveFocus();
++    await user.keyboard("{Enter}");
++    expect(button).toHaveAttribute("aria-pressed", "true");
++    expect(button).toHaveAccessibleName("Retomar faixa de especialidades");
++    expect(track).toHaveAttribute("data-paused", "true");
++    await user.keyboard(" ");
++    expect(button).toHaveAttribute("aria-pressed", "false");
++    expect(track).toHaveAttribute("data-paused", "false");
++    expect(document.querySelector(".intro-strip__track")).toBe(track);
++  });
++});
+diff --git a/portfolio/tests/unit/project-progress.test.ts b/portfolio/tests/unit/project-progress.test.ts
+index 2f51f06d3354a42be991cffb2f9c6ee4764b2e4c..420f73360fbb99e8a6c2d5c9354d683439cef49f 100644
+--- a/portfolio/tests/unit/project-progress.test.ts
++++ b/portfolio/tests/unit/project-progress.test.ts
+@@ -6,7 +6,6 @@ import {
+   validatePlan,
+ } from "@/lib/project-progress";
+ import { octocardsPlan } from "@/content/project-progress";
+-import { adaptGitHubIssue, type GitHubIssueSnapshot } from "@/lib/github/project-progress";
+ 
+ describe("project progress", () => {
+   it("counts only leaf tasks and marks only evidenced OctoCards work complete", () => {
+@@ -56,27 +55,4 @@ describe("project progress", () => {
+       }),
+     ).toThrow("Cyclic");
+   });
+-  it("requires explicit GitHub evidence for completion and active statuses", () => {
+-    const issue: GitHubIssueSnapshot = {
+-      number: 7,
+-      title: "Validation",
+-      html_url: "https://github.com/example/repo/issues/7",
+-      state: "closed",
+-      labels: [],
+-    };
+-    expect(adaptGitHubIssue(issue).status).toBe("planned");
+-    expect(adaptGitHubIssue({ ...issue, state_reason: "completed" }).status).toBe("completed");
+-    expect(adaptGitHubIssue({ ...issue, state_reason: "not_planned" }).status).toBe("blocked");
+-    expect(
+-      adaptGitHubIssue({ ...issue, state: "open", labels: [{ name: "status:in-progress" }] })
+-        .status,
+-    ).toBe("in-progress");
+-    expect(
+-      adaptGitHubIssue({ ...issue, state: "open", labels: [{ name: "status:blocked" }] }).status,
+-    ).toBe("blocked");
+-    expect(adaptGitHubIssue(issue).references?.[0]).toMatchObject({
+-      kind: "issue",
+-      url: issue.html_url,
+-    });
+-  });
+ });
+diff --git a/portfolio/tests/unit/selected-works.test.tsx b/portfolio/tests/unit/selected-works.test.tsx
+index d1081796387c71bcbad9bacc968353aea9023c04..b50a0d09ca4e7f612f62a0ad3238a3022a6a4a81 100644
+--- a/portfolio/tests/unit/selected-works.test.tsx
++++ b/portfolio/tests/unit/selected-works.test.tsx
+@@ -5,6 +5,37 @@ import SelectedWorks from "@/components/selected-works";
+ import { selectedProjects } from "@/content/projects";
+ 
+ describe("selected works accordion", () => {
++  it("keeps closing panels mounted for animation but excludes their content from interaction", async () => {
++    const user = userEvent.setup();
++    render(<SelectedWorks projects={selectedProjects} />);
++    const first = screen.getByRole("button", { name: /OpsCLI/ });
++    const panel = screen.getByRole("region", { name: /OpsCLI/ });
++    await user.click(first);
++    expect(panel).toBeInTheDocument();
++    expect(panel).not.toHaveAttribute("hidden");
++    expect(panel).toHaveAttribute("aria-hidden", "true");
++    expect(panel).toHaveAttribute("inert");
++    expect(screen.queryByRole("link", { name: /OpsCLI/ })).not.toBeInTheDocument();
++    await user.keyboard("{Enter}");
++    expect(screen.getByRole("region", { name: /OpsCLI/ })).toBe(panel);
++    expect(panel).not.toHaveAttribute("inert");
++    expect(panel).toHaveAttribute("aria-hidden", "false");
++  });
++
++  it("honors the last selection after repeated toggles", async () => {
++    const user = userEvent.setup();
++    render(<SelectedWorks projects={selectedProjects} />);
++    const first = screen.getByRole("button", { name: /OpsCLI/ });
++    const second = screen.getByRole("button", { name: /OctoCards/ });
++    await user.click(second);
++    await user.click(first);
++    await user.click(first);
++    await user.click(second);
++    expect(screen.getAllByRole("region")).toHaveLength(1);
++    expect(second).toHaveAttribute("aria-expanded", "true");
++    expect(first).toHaveAttribute("aria-expanded", "false");
++  });
++
+   it("starts with OpsCLI expanded and keeps other project links hidden", () => {
+     render(<SelectedWorks projects={selectedProjects} />);
+     const first = screen.getByRole("button", { name: /OpsCLI/ });
+diff --git a/portfolio/tests/unit/site-header.test.tsx b/portfolio/tests/unit/site-header.test.tsx
+index 8ff0c518f8c4032c7495b52cf4d0356ce69f3c0e..2af9a08579adb3f149a007014f3a5cc9bdc07868 100644
+--- a/portfolio/tests/unit/site-header.test.tsx
++++ b/portfolio/tests/unit/site-header.test.tsx
+@@ -30,6 +30,29 @@ beforeEach(() => {
+ });
+ 
+ describe("site navigation", () => {
++  it.each([
++    ["/projetos/octocards", "Projetos", "location"],
++    ["/projetos", "Projetos", "page"],
++    ["/", "Início", "page"],
++  ])("identifies the current page or parent section at %s", (pathname, label, current) => {
++    route.pathname = pathname;
++    render(<SiteHeader />);
++    for (const name of ["Menu principal", "Menu para celular"]) {
++      const navigation = screen.getByRole("navigation", { name });
++      expect(within(navigation).getByRole("link", { name: label })).toHaveAttribute(
++        "aria-current",
++        current,
++      );
++      expect(navigation.querySelectorAll("[aria-current]")).toHaveLength(1);
++    }
++  });
++
++  it("does not mark similarly prefixed routes as the current section", () => {
++    route.pathname = "/projetos-arquivados";
++    render(<SiteHeader />);
++    expect(document.querySelectorAll("[aria-current]")).toHaveLength(0);
++  });
++
+   it("exposes an accessible toggle that opens and closes its associated mobile menu", async () => {
+     const user = userEvent.setup();
+     render(<SiteHeader />);
+@@ -82,9 +105,13 @@ describe("site navigation", () => {
+   it("updates the current-page link and closes the menu after a route change", async () => {
+     const user = userEvent.setup();
+     const { rerender } = render(<SiteHeader />);
++    const originalNavigation = screen.getByRole("navigation", { name: "Menu principal" });
++    const originalLink = within(originalNavigation).getByRole("link", { name: "Sobre" });
+     await user.click(screen.getByRole("button", { name: "Abrir menu" }));
+     route.pathname = "/sobre";
+     rerender(<SiteHeader />);
++    expect(screen.getByRole("navigation", { name: "Menu principal" })).toBe(originalNavigation);
++    expect(within(originalNavigation).getByRole("link", { name: "Sobre" })).toBe(originalLink);
+ 
+     expect(screen.getByRole("button", { name: "Abrir menu" })).toHaveAttribute(
+       "aria-expanded",

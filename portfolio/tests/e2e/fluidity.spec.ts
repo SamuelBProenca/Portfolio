@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("text links draw only a thin underline with 500ms hover and keyboard feedback", async ({
+test("text links draw only a thin underline with 300ms hover and keyboard feedback", async ({
   page,
   isMobile,
 }) => {
@@ -22,7 +22,18 @@ test("text links draw only a thin underline with 500ms hover and keyboard feedba
     await page.goto(route.path);
     for (const selector of route.selectors) {
       const link = page.locator(selector).first();
-      await link.scrollIntoViewIfNeeded();
+      await link.evaluate((element) =>
+        element.scrollIntoView({ block: "center", behavior: "instant" }),
+      );
+      // Measure underline stability after the section's separate entrance has finished.
+      await expect
+        .poll(() =>
+          link.evaluate((element) => {
+            const section = element.closest("[data-scroll-reveal]");
+            return section ? Number(getComputedStyle(section).opacity) : 1;
+          }),
+        )
+        .toBe(1);
       const scale = () =>
         link.evaluate(
           (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::after").transform).a,
@@ -48,7 +59,7 @@ test("text links draw only a thin underline with 500ms hover and keyboard feedba
         };
       });
       expect(style.height).toBe(2);
-      expect(style.duration).toBe(0.5);
+      expect(style.duration).toBe(0.3);
       expect(style.origin).toMatch(/^0px /);
       if (isMobile) {
         await page.keyboard.press("Tab");
@@ -73,6 +84,11 @@ test("accordion height and opacity progress in both directions without exposing 
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/#projetos");
   const item = page.locator(".project-accordion__item").first();
+  expect(
+    await item
+      .locator(".project-accordion__reveal")
+      .evaluate((element) => parseFloat(getComputedStyle(element).transitionDuration)),
+  ).toBe(0.3);
   const samples = await item.evaluate(async (element) => {
     const panel = element.querySelector<HTMLElement>(".project-accordion__reveal")!;
     const trigger = element.querySelector<HTMLButtonElement>("button")!;
@@ -83,7 +99,7 @@ test("accordion height and opacity progress in both directions without exposing 
       const inert = panel.inert;
       const frames: { height: number; opacity: number }[] = [];
       const start = performance.now();
-      while (performance.now() - start < 850) {
+      while (performance.now() - start < 450) {
         await new Promise(requestAnimationFrame);
         frames.push({
           height: panel.getBoundingClientRect().height,

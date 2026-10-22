@@ -1,0 +1,276 @@
+commit 6503c83baee0caf1373de5cc1a75e577d0465464
+Date: 2026-10-21T16:41:31-03:00
+Subject: fix: animate desktop hover across mouse and touch inputs
+
+diff --git a/portfolio/docs/ANIMATION_REFINEMENTS.md b/portfolio/docs/ANIMATION_REFINEMENTS.md
+index 4b990e873367b6d58a8354eedb912fce8a9dab85..cbec00168c9211b48696ba371e6ee8b1fda154ab 100644
+--- a/portfolio/docs/ANIMATION_REFINEMENTS.md
++++ b/portfolio/docs/ANIMATION_REFINEMENTS.md
+@@ -1,5 +1,17 @@
+ # Refinamento de animações
+ 
++## Atualização de 21/10/2026: mouse em desktops com touch
++
++O domínio principal informado pelo proprietário é `https://www.samuelproenca.com/`. A PR #8 foi integrada à `main` para disponibilizar as animações dessa revisão em produção.
++
++A inspeção desse domínio também reproduziu um bloqueio de hover: em um desktop emulado com touch e mouse, `:hover` estava ativo, mas a condição `(hover: hover) and (pointer: fine)` impedia o preenchimento e os sublinhados. Esse cenário reproduzível não confirma o hardware do proprietário.
++
++As regras agora respondem ao dispositivo usado no evento de ponteiro. O componente compartilhado `PointerInput` registra mouse, toque ou caneta em `data-input`, inclusive após alternar os dispositivos. O hover fica desabilitado durante o toque para evitar estados presos; foco por teclado, pressão e movimento reduzido continuam disponíveis. As animações permanecem em CSS, sem dependências novas, loops de JavaScript ou alterações de layout.
++
++Arquivos desta correção: `src/components/pointer-input.tsx`, `src/app/layout.tsx`, `src/styles/interactions.css`, `playwright.config.ts`, `tests/e2e/desktop-pointer.spec.ts` e este relatório. A configuração do Playwright acrescenta um desktop com touch aos perfis existentes.
++
++Validação local contra o servidor de produção: **66 testes de unidade/integração aprovados; 97 testes de navegador aprovados e 8 ignorados conforme o dispositivo**. Os dois novos cenários verificam frames intermediários reais do preenchimento e sublinhado com mouse, incluindo ponteiro principal coarse, e a alternância toque → mouse sem hover preso. A suíte completa também valida faixa contínua, acordeão nas duas direções, teclado, movimento reduzido, contraste, geometria e ausência de overflow. TypeScript, ESLint, Prettier e build de produção passaram. O build emitiu apenas um aviso sobre um `package-lock.json` externo ao repositório, ignorado pelo Next.js.
++
+ ## Atualização: movimento visível e preferência do navegador
+ 
+ A revisão seguinte reproduziu o comportamento instantâneo ao emular `prefers-reduced-motion: reduce`: as regras existentes reduziam as transições a 0,01ms e removiam a animação da faixa. Isso é uma reprodução do sintoma, não uma confirmação da configuração do navegador do proprietário.
+diff --git a/portfolio/playwright.config.ts b/portfolio/playwright.config.ts
+index adecc5e4bebc49a8fd96460ef0123cf88a1fe07a..070f643a30afd7cdadeee81f84023aa3762b778f 100644
+--- a/portfolio/playwright.config.ts
++++ b/portfolio/playwright.config.ts
+@@ -17,6 +17,14 @@ export default defineConfig({
+       name: "desktop-chromium",
+       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 1000 } },
+     },
++    {
++      name: "desktop-touch-chromium",
++      use: {
++        ...devices["Desktop Chrome"],
++        viewport: { width: 1440, height: 1000 },
++        hasTouch: true,
++      },
++    },
+     { name: "mobile-chromium", use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" } },
+   ],
+   webServer: process.env.PLAYWRIGHT_BASE_URL
+diff --git a/portfolio/src/app/layout.tsx b/portfolio/src/app/layout.tsx
+index 656103ae8a02102a8bd025ae6a016cde90672e27..24a5a7bbce379995987bb9805dd83567533b50bd 100644
+--- a/portfolio/src/app/layout.tsx
++++ b/portfolio/src/app/layout.tsx
+@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
+ import SiteHeader from "@/components/site-header";
+ import SiteFooter from "@/components/site-footer";
+ import MotionControl from "@/components/motion-control";
++import PointerInput from "@/components/pointer-input";
+ import "@/styles/styles.css";
+ import "@/styles/responsive.css";
+ import "@/styles/rework.css";
+@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
+         <main id="conteudo">{children}</main>
+         <SiteFooter />
+         <MotionControl />
++        <PointerInput />
+       </body>
+     </html>
+   );
+diff --git a/portfolio/src/components/pointer-input.tsx b/portfolio/src/components/pointer-input.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..8dc724a3ef76e081883ae1c9be6fa7a42341bcf4
+--- /dev/null
++++ b/portfolio/src/components/pointer-input.tsx
+@@ -0,0 +1,23 @@
++"use client";
++
++import { useEffect } from "react";
++
++export default function PointerInput() {
++  useEffect(() => {
++    const root = document.documentElement;
++    function updateInput(event: PointerEvent) {
++      if (!["mouse", "touch", "pen"].includes(event.pointerType)) return;
++      // Hybrid desktops may report a coarse primary pointer even while using a mouse.
++      if (root.dataset.input !== event.pointerType) root.dataset.input = event.pointerType;
++    }
++    window.addEventListener("pointermove", updateInput, { passive: true });
++    window.addEventListener("pointerdown", updateInput, { passive: true });
++    return () => {
++      window.removeEventListener("pointermove", updateInput);
++      window.removeEventListener("pointerdown", updateInput);
++      delete root.dataset.input;
++    };
++  }, []);
++
++  return null;
++}
+diff --git a/portfolio/src/styles/interactions.css b/portfolio/src/styles/interactions.css
+index 16bd36b7e5984c9c2f3c1fed233b28e7304a687b..e9be07ab17e92da24e72fb0f9d1585ae18a97020 100644
+--- a/portfolio/src/styles/interactions.css
++++ b/portfolio/src/styles/interactions.css
+@@ -211,47 +211,45 @@
+   min-width: 44px;
+   min-height: 44px;
+ }
+-
+-@media (hover: hover) and (pointer: fine) {
++:root:not([data-input="touch"])
+   :is(
+-      .text-link,
+-      .button-secondary,
+-      .project-accordion__repository,
+-      .project-entry__detail,
+-      .project-entry a.arr,
+-      .contact-links a,
+-      .site-footer a,
+-      .project-plan a
+-    ):hover::after {
+-    transform: scaleX(1);
+-  }
+-  .desktop-nav a:hover::after,
+-  .mobile-panel a:hover::after {
+-    transform: scaleX(1);
+-  }
+-  .button-primary:hover::before,
+-  .contact-outline:hover::before,
+-  .contact-form__submit:enabled:hover::before {
+-    transform: scaleX(1);
+-  }
+-  .menu-toggle:hover,
+-  .intro-strip__pause:hover,
+-  .project-accordion__trigger:hover,
+-  .project-plan summary:hover {
+-    background-color: var(--canvas-2);
+-  }
+-  .text-link:hover .arr,
+-  .button-secondary:hover .arr,
+-  .project-accordion__repository:hover > span {
+-    transform: translateX(4px);
+-  }
+-  .button-secondary:hover,
+-  .project-accordion__repository:hover,
+-  .project-entry__detail:hover,
+-  .project-entry a.arr:hover,
+-  .site-footer a:hover {
+-    color: var(--accent-hover);
+-  }
++    .text-link,
++    .button-secondary,
++    .project-accordion__repository,
++    .project-entry__detail,
++    .project-entry a.arr,
++    .contact-links a,
++    .site-footer a,
++    .project-plan a
++  ):hover::after {
++  transform: scaleX(1);
++}
++:root:not([data-input="touch"]) .desktop-nav a:hover::after,
++:root:not([data-input="touch"]) .mobile-panel a:hover::after {
++  transform: scaleX(1);
++}
++:root:not([data-input="touch"]) .button-primary:hover::before,
++:root:not([data-input="touch"]) .contact-outline:hover::before,
++:root:not([data-input="touch"]) .contact-form__submit:enabled:hover::before {
++  transform: scaleX(1);
++}
++:root:not([data-input="touch"]) .menu-toggle:hover,
++:root:not([data-input="touch"]) .intro-strip__pause:hover,
++:root:not([data-input="touch"]) .project-accordion__trigger:hover,
++:root:not([data-input="touch"]) .project-plan summary:hover {
++  background-color: var(--canvas-2);
++}
++:root:not([data-input="touch"]) .text-link:hover .arr,
++:root:not([data-input="touch"]) .button-secondary:hover .arr,
++:root:not([data-input="touch"]) .project-accordion__repository:hover > span {
++  transform: translateX(4px);
++}
++:root:not([data-input="touch"]) .button-secondary:hover,
++:root:not([data-input="touch"]) .project-accordion__repository:hover,
++:root:not([data-input="touch"]) .project-entry__detail:hover,
++:root:not([data-input="touch"]) .project-entry a.arr:hover,
++:root:not([data-input="touch"]) .site-footer a:hover {
++  color: var(--accent-hover);
+ }
+ 
+ @media (prefers-reduced-motion: reduce) {
+diff --git a/portfolio/tests/e2e/desktop-pointer.spec.ts b/portfolio/tests/e2e/desktop-pointer.spec.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..79703d1167fbefa5294e46ee1b937ff2b5fb14e9
+--- /dev/null
++++ b/portfolio/tests/e2e/desktop-pointer.spec.ts
+@@ -0,0 +1,86 @@
++import { expect, test } from "@playwright/test";
++
++test("desktop mouse hover animates fills and navigation even with a coarse primary pointer", async ({
++  page,
++  isMobile,
++}, testInfo) => {
++  test.skip(
++    isMobile,
++    "Desktop layout regression; touch-to-mouse switching is verified separately.",
++  );
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  await page.goto("/");
++  if (testInfo.project.use.hasTouch) {
++    expect(await page.evaluate(() => matchMedia("(pointer: coarse)").matches)).toBe(true);
++    expect(await page.evaluate(() => matchMedia("(hover: hover)").matches)).toBe(false);
++  }
++  const action = page.locator(".button-primary");
++  await action.hover();
++  await expect(page.locator("html")).toHaveAttribute("data-input", "mouse");
++  const fill = await action.evaluate(async (element) => {
++    const samples: number[] = [];
++    for (let index = 0; index < 40; index++) {
++      await new Promise(requestAnimationFrame);
++      samples.push(new DOMMatrixReadOnly(getComputedStyle(element, "::before").transform).a);
++    }
++    return samples;
++  });
++  expect(fill.some((value) => value > 0 && value < 1)).toBe(true);
++  expect(fill.at(-1)).toBe(1);
++  const link = page
++    .getByRole("navigation", { name: "Menu principal" })
++    .getByRole("link", { name: "Sobre", exact: true });
++  await link.hover();
++  const underline = await link.evaluate(async (element) => {
++    const samples: number[] = [];
++    for (let index = 0; index < 40; index++) {
++      await new Promise(requestAnimationFrame);
++      samples.push(new DOMMatrixReadOnly(getComputedStyle(element, "::after").transform).a);
++    }
++    return samples;
++  });
++  expect(underline.some((value) => value > 0 && value < 1)).toBe(true);
++  expect(underline.at(-1)).toBe(1);
++});
++
++test("touch leaves no sticky hover and a subsequent mouse movement restores the fill", async ({
++  page,
++}, testInfo) => {
++  test.skip(
++    !testInfo.project.use.hasTouch,
++    "This regression needs both touchscreen and mouse input.",
++  );
++  await page.emulateMedia({ reducedMotion: "no-preference" });
++  await page.goto("/");
++  await expect(page.locator("html")).toHaveAttribute("data-motion", "system");
++  const action = page.locator(".button-primary");
++  await action.evaluate((element) =>
++    element.addEventListener("click", (event) => event.preventDefault()),
++  );
++  await action.tap();
++  await expect(page.locator("html")).toHaveAttribute("data-input", "touch");
++  await expect
++    .poll(() =>
++      action.evaluate(
++        (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::before").transform).a,
++      ),
++    )
++    .toBe(0);
++  await action.hover();
++  await expect(page.locator("html")).toHaveAttribute("data-input", "mouse");
++  await expect
++    .poll(() =>
++      action.evaluate(
++        (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::before").transform).a,
++      ),
++    )
++    .toBe(1);
++  await page.mouse.move(0, 0);
++  await expect
++    .poll(() =>
++      action.evaluate(
++        (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::before").transform).a,
++      ),
++    )
++    .toBe(0);
++});

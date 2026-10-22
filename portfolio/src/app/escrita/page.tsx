@@ -27,6 +27,7 @@ export default function WritingPage() {
             {writingCollections.map((collection) => (
               <article
                 className="writing-collection"
+                data-scroll-reveal
                 id={collection.id}
                 aria-labelledby={`${collection.id}-title`}
                 key={collection.id}
@@ -40,7 +41,7 @@ export default function WritingPage() {
               </article>
             ))}
           </div>
-          <div className="empty-editorial">
+          <div className="empty-editorial" data-scroll-reveal>
             <h3>Os primeiros textos estão em preparação.</h3>
             <p>
               Ainda não há artigos publicados. Este espaço vai reunir o que aprendo ao construir,

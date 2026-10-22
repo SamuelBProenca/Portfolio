@@ -11,7 +11,7 @@ export default function ContactSection() {
           <span className="section-index">PRÓXIMO PASSO / 2026</span>
         </div>
         <div className="contact-layout">
-          <div className="contact-section__copy">
+          <div className="contact-section__copy" data-scroll-reveal>
             <h2>
               Vamos falar
               <br />
