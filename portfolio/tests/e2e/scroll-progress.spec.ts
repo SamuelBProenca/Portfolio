@@ -53,8 +53,9 @@ test("the themed indicator follows wheel and keyboard scrolling without shifting
   await expect.poll(async () => (await progress(page)).actual).toBeGreaterThan(0);
   await expectSynchronized(page);
   await page.keyboard.press("Control+End");
-  await expect.poll(async () => (await progress(page)).expected).toBeGreaterThan(0.99);
-  await expect.poll(async () => (await progress(page)).actual).toBeGreaterThan(0.99);
+  // Finish the native smooth scroll before issuing the opposite keyboard command.
+  await expect.poll(async () => (await progress(page)).expected).toBe(1);
+  await expect.poll(async () => (await progress(page)).actual).toBe(1);
   await expectSynchronized(page);
   await page.keyboard.press("Control+Home");
   await expect.poll(async () => (await progress(page)).expected).toBe(0);
