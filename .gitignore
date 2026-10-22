@@ -138,3 +138,32 @@ test-results/
 
 # Local source copy; the published application lives in portfolio/.
 /portfolio-design-v1/
+
+# Private credentials and local authentication state (templates contain no values).
+.aws/
+.ssh/
+.gnupg/
+.codex/
+.agents/
+.npmrc
+.pypirc
+.netrc
+.git-credentials
+id_rsa
+id_ed25519
+id_ecdsa
+id_dsa
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+credentials
+credentials.json
+credentials.yaml
+credentials.yml
+service-account*.json
+service_account*.json
+*.tfstate
+*.tfstate.*
