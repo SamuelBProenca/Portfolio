@@ -19,6 +19,24 @@ async function expectSynchronized(page: Page) {
     .toBeLessThan(0.005);
 }
 
+async function scrollWithKeyboard(page: Page, edge: "top" | "bottom") {
+  const finished = page.evaluate(
+    (edge) =>
+      new Promise<void>((resolve) => {
+        function onEnd() {
+          const target = edge === "top" ? 0 : document.documentElement.scrollHeight - innerHeight;
+          if (Math.abs(scrollY - target) >= 1) return;
+          document.removeEventListener("scrollend", onEnd);
+          resolve();
+        }
+        document.addEventListener("scrollend", onEnd);
+      }),
+    edge,
+  );
+  await page.keyboard.press(edge === "top" ? "Control+Home" : "Control+End");
+  await finished;
+}
+
 test("the themed indicator follows wheel and keyboard scrolling without shifting the layout", async ({
   page,
 }) => {
@@ -52,12 +70,12 @@ test("the themed indicator follows wheel and keyboard scrolling without shifting
   await page.mouse.wheel(0, 650);
   await expect.poll(async () => (await progress(page)).actual).toBeGreaterThan(0);
   await expectSynchronized(page);
-  await page.keyboard.press("Control+End");
+  await scrollWithKeyboard(page, "bottom");
   // Finish the native smooth scroll before issuing the opposite keyboard command.
   await expect.poll(async () => (await progress(page)).expected).toBe(1);
   await expect.poll(async () => (await progress(page)).actual).toBe(1);
   await expectSynchronized(page);
-  await page.keyboard.press("Control+Home");
+  await scrollWithKeyboard(page, "top");
   await expect.poll(async () => (await progress(page)).expected).toBe(0);
   await expect.poll(async () => (await progress(page)).actual).toBe(0);
   expect(await track.evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
@@ -97,7 +115,7 @@ test("progress recalculates after accordion changes, dynamic content and client 
   await expect(page.locator(".page-hero")).toBeVisible();
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
   await expect(page.locator(".scroll-progress__fill")).toHaveCount(1);
-  await page.keyboard.press("Control+End");
+  await scrollWithKeyboard(page, "bottom");
   await expect.poll(async () => (await progress(page)).expected).toBeGreaterThan(0.99);
   await expect.poll(async () => (await progress(page)).actual).toBeGreaterThan(0.99);
   await expectSynchronized(page);
@@ -105,6 +123,33 @@ test("progress recalculates after accordion changes, dynamic content and client 
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator(".scroll-progress__fill")).toHaveCount(1);
   await expectSynchronized(page);
+});
+
+test("native smooth scrolling survives content height changes in both directions", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-scroll-progress", "ready");
+
+  for (const edge of ["bottom", "top"] as const) {
+    await page.evaluate((edge) => {
+      scrollTo({
+        top: edge === "bottom" ? document.documentElement.scrollHeight : 0,
+        behavior: "smooth",
+      });
+      // A late layout change must not cancel the browser's active smooth scroll.
+      window.setTimeout(() => {
+        document.body.style.paddingBottom = edge === "bottom" ? "4px" : "8px";
+      }, 80);
+    }, edge);
+    if (edge === "bottom") {
+      await expect.poll(async () => (await progress(page)).expected).toBeGreaterThan(0.99);
+    } else {
+      await expect.poll(async () => (await progress(page)).expected).toBe(0);
+    }
+    await expectSynchronized(page);
+  }
 });
 
 test("reduced motion keeps progress tied directly to the user's scroll position", async ({

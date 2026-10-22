@@ -23,17 +23,23 @@ export default function ScrollProgress() {
         const context = gsap.context(() => {}, container.current);
         let frame = 0;
         let settled = 0;
-        let refresh = () => {};
-        const observer = new ResizeObserver(() => {
-          cancelAnimationFrame(frame);
+        let renderProgress = () => {};
+        function queueProgress() {
+          if (frame) return;
           frame = requestAnimationFrame(() => {
-            refresh();
-            // Recalculate section positions once the accordion's height settles.
-            clearTimeout(settled);
-            settled = window.setTimeout(() => ScrollTrigger.refresh(true), 100);
+            frame = 0;
+            renderProgress();
           });
+        }
+        const observer = new ResizeObserver(() => {
+          queueProgress();
+          // Recalculate section positions only after layout and scrolling settle.
+          clearTimeout(settled);
+          settled = window.setTimeout(() => ScrollTrigger.refresh(true), 100);
         });
         cleanup = () => {
+          window.removeEventListener("scroll", queueProgress);
+          window.removeEventListener("resize", queueProgress);
           observer.disconnect();
           cancelAnimationFrame(frame);
           clearTimeout(settled);
@@ -44,20 +50,19 @@ export default function ScrollProgress() {
         context.add(() => {
           gsap.set(fill.current, { scaleX: 0, transformOrigin: "left center" });
           const setProgress = gsap.quickSetter(fill.current, "scaleX");
-          const progress = ScrollTrigger.create({
-            id: "page-reading-progress",
-            start: 0,
-            end: () => Math.max(1, ScrollTrigger.maxScroll(window)),
-            onUpdate: (self) => setProgress(self.progress),
-            onRefresh: (self) => setProgress(self.progress),
-          });
-          refresh = () => progress.refresh();
+          // Reading the native ratio cannot reset an in-progress browser scroll.
+          renderProgress = () =>
+            setProgress(
+              Math.min(1, Math.max(0, scrollY / Math.max(1, ScrollTrigger.maxScroll(window)))),
+            );
         });
 
         // Hide the native scrollbar only after its visual replacement is ready.
         root.dataset.scrollProgress = "ready";
+        window.addEventListener("scroll", queueProgress, { passive: true });
+        window.addEventListener("resize", queueProgress, { passive: true });
         observer.observe(document.body);
-        refresh();
+        renderProgress();
       } catch {
         // Preserve native scrolling and its scrollbar if enhancement is unavailable.
         cleanup();
