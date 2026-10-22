@@ -73,6 +73,22 @@ Com essa correção, a suíte local completa passou novamente: 142 testes de nav
 
 Após a troca do mirror, as três verificações de navegação que falhavam passaram no Linux. Restou uma falha no teste mobile de inversão da rolagem: ele mandava voltar ao topo ao ultrapassar 99% da ida ao fim, antes de concluir a rolagem suave nativa. A condição de chegada nesse teste foi reforçada para exigir 100% da posição real e do indicador antes do comando oposto, mantendo a asserção de retorno exato a zero.
 
+## Correção após a publicação
+
+A PR #10 foi integrada somente depois de ambos os checks finais aprovarem. A execução da PR teve 141 aprovações diretas, uma aprovação na retentativa e oito casos ignorados. O deploy de produção do commit `a9b37f1` foi confirmado, e o domínio público foi verificado no Edge em quatro cenários de movimento, sem erros JavaScript ou overflow observados.
+
+O [run automático da main](https://github.com/SamuelBProenca/Portfolio/actions/runs/39851399702) voltou a falhar no cenário mobile de retorno ao topo: 140 aprovações diretas, um caso aprovado na retentativa, uma falha e oito ignorados. A falha não foi apresentada como um check aprovado.
+
+A correção seguinte preserva a aparência e os demais efeitos:
+
+- `src/components/scroll-progress.tsx:27`: agrupa leituras e a pintura do indicador em `requestAnimationFrame`.
+- `src/components/scroll-progress.tsx:54`: calcula a proporção usando a posição nativa e a altura atual, mantendo o `quickSetter` do GSAP para o preenchimento.
+- `src/components/scroll-progress.tsx:62`: listeners passivos de scroll/resize atualizam apenas o indicador. Foi removido o trigger exclusivo da barra e seu `refresh()` de instância, que podia escrever/restaurar a posição durante a rolagem. ScrollTrigger continua responsável pelas entradas das seções e por seu recálculo seguro após alterações de layout.
+- `tests/e2e/scroll-progress.spec.ts:22`: aguarda o evento nativo `scrollend` na borda pretendida antes do próximo comando de teclado.
+- `tests/e2e/scroll-progress.spec.ts:128`: nova regressão com alteração de altura durante rolagem suave nos dois sentidos.
+
+Lint, TypeScript, formatação, 66 testes unitários e build passaram para essa correção. A suíte completa passou a ter 51 cenários em três perfis, totalizando 153 execuções configuradas; seu resultado final fica registrado na PR da correção. Nenhuma dependência ou estilo foi adicionado nesta etapa.
+
 ## Referências consultadas
 
 - [ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/)
