@@ -29,7 +29,7 @@ As entradas das seções durante a rolagem realmente ainda não existiam: a prim
 | `src/components/project-progress/EngineeringProgress.tsx:14`                                                | Marca a apresentação do plano de engenharia.                                                                                                                                                                                                        |
 | `src/components/scroll-progress.tsx:25`                                                                     | Mantém a atualização do indicador durante mudanças de altura e agenda o recálculo global dos triggers 100 ms após a altura estabilizar. Evita recalcular todas as entradas em cada frame do acordeão. Cancela também esse agendamento ao desmontar. |
 | `tests/e2e/scroll-reveals.spec.ts:1`                                                                        | Seis cenários em três perfis: progressão real com movimento automático e ativação salva; mudança da preferência; foco; navegação; ausência de JavaScript.                                                                                           |
-| `tests/e2e/scroll-progress.spec.ts:130`                                                                     | Regressão conjunta dos efeitos anteriores após inicialização, mudança de altura e navegação com ScrollTrigger.                                                                                                                                      |
+| `tests/e2e/scroll-progress.spec.ts:136`                                                                     | Regressão conjunta dos efeitos anteriores após inicialização, mudança de altura e navegação com ScrollTrigger.                                                                                                                                      |
 | `tests/e2e/fluidity.spec.ts:26`                                                                             | Aguarda a entrada da seção antes de medir a estabilidade do link durante o sublinhado, mantendo a comparação de geometria.                                                                                                                          |
 
 Sem mudanças de copy, paleta ou novas dependências nesta revisão. GSAP `3.15.0` já havia sido adicionado na etapa local anterior, a pedido do proprietário. Os efeitos CSS anteriores continuam em 300 ms; o marquee mantém seu ciclo linear de 24 s.
@@ -60,6 +60,12 @@ Após a revisão, o proprietário confirmou que `http://localhost:3000` estava f
 Uma reprodução adicional no Edge isolado, com movimento reduzido ativo, salvou `portfolio:full-motion=true` somente no localhost e abriu ambos os endereços no mesmo contexto. Resultado: localhost com `data-motion=full`, transição de `0.3s` e marquee; 127.0.0.1 com preferência ausente, `data-motion=system`, transição de `0.01ms` e marquee desativado. As preferências são separadas por origem (protocolo, host e porta). Essa reprodução explica como a diferença pode ocorrer sem remover os efeitos do código; não leu o armazenamento da sessão pessoal do proprietário em 127.0.0.1.
 
 O domínio público também tem armazenamento próprio: a escolha salva no localhost não é transferida automaticamente. A regra aprovada de respeitar o movimento reduzido do sistema, salvo ativação anterior explícita do site, foi preservada.
+
+## Validação no GitHub
+
+A primeira execução da [PR #10](https://github.com/SamuelBProenca/Portfolio/pull/10) passou em lint, TypeScript, formatação, testes unitários e build, mas os testes de navegador no Linux tiveram três falhas no cenário de navegação/rolagem e uma instabilidade no cenário de início/fim do documento. A main não foi atualizada com esses checks falhando.
+
+O teste de progresso foi ajustado para esperar a página de destino e o reposicionamento da rolagem, usar `Control+End`/`Control+Home` e conferir a posição real do documento antes de avaliar o indicador. Nenhum componente ou efeito foi alterado nessa correção. Os 18 testes locais de progresso passaram novamente, assim como ESLint e TypeScript. A suíte completa será reexecutada no GitHub antes da integração; os resultados remotos ficam vinculados à PR.
 
 ## Referências consultadas
 

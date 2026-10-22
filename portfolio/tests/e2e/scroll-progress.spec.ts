@@ -52,10 +52,12 @@ test("the themed indicator follows wheel and keyboard scrolling without shifting
   await page.mouse.wheel(0, 650);
   await expect.poll(async () => (await progress(page)).actual).toBeGreaterThan(0);
   await expectSynchronized(page);
-  await page.keyboard.press("End");
+  await page.keyboard.press("Control+End");
+  await expect.poll(async () => (await progress(page)).expected).toBeGreaterThan(0.99);
   await expect.poll(async () => (await progress(page)).actual).toBeGreaterThan(0.99);
   await expectSynchronized(page);
-  await page.keyboard.press("Home");
+  await page.keyboard.press("Control+Home");
+  await expect.poll(async () => (await progress(page)).expected).toBe(0);
   await expect.poll(async () => (await progress(page)).actual).toBe(0);
   expect(await track.evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
   expect(
@@ -90,8 +92,12 @@ test("progress recalculates after accordion changes, dynamic content and client 
   await expectSynchronized(page);
   await page.getByRole("link", { name: "Conheça minha trajetória", exact: true }).click();
   await expect(page).toHaveURL(/\/sobre$/);
+  // URL updates can precede the new page's commit and Next's scroll restoration.
+  await expect(page.locator(".page-hero")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
   await expect(page.locator(".scroll-progress__fill")).toHaveCount(1);
-  await page.keyboard.press("End");
+  await page.keyboard.press("Control+End");
+  await expect.poll(async () => (await progress(page)).expected).toBeGreaterThan(0.99);
   await expect.poll(async () => (await progress(page)).actual).toBeGreaterThan(0.99);
   await expectSynchronized(page);
   await page.locator(".wordmark").click();
@@ -200,7 +206,7 @@ test.describe("without JavaScript", () => {
     expect(
       await page.locator("html").evaluate((element) => getComputedStyle(element).scrollbarColor),
     ).toBe("auto");
-    await page.keyboard.press("End");
+    await page.keyboard.press("Control+End");
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
   });
 });
