@@ -3,6 +3,7 @@
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import type { SelectedProject } from "@/content/projects";
 import Link from "next/link";
+import CurriculumPreview from "@/components/curriculum-preview";
 
 export default function SelectedWorks({ projects }: { projects: readonly SelectedProject[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(projects[0]?.id ?? null);
@@ -40,7 +41,10 @@ export default function SelectedWorks({ projects }: { projects: readonly Selecte
         const panelId = `${accordionId}-${project.id}-panel`;
 
         return (
-          <article className="project-accordion__item" key={project.id}>
+          <article
+            className={`project-accordion__item project-accordion__item--${project.visual.kind}`}
+            key={project.id}
+          >
             <h3 className="project-accordion__heading">
               <button
                 className="project-accordion__trigger"
@@ -77,31 +81,35 @@ export default function SelectedWorks({ projects }: { projects: readonly Selecte
                     aria-hidden="true"
                   >
                     <span className="project-visual__caption">{project.visual.caption}</span>
-                    <div className="terminal">
-                      <div className="terminal__bar">
-                        <i />
-                        <i />
-                        <i />
-                        <span>{project.visual.label}</span>
-                      </div>
-                      <div className="terminal__body">
-                        {project.visual.kind === "api" && (
-                          <div className="project-visual__endpoint">GET /api/cards/:repo</div>
-                        )}
-                        <div className="project-visual__lines">
-                          {project.visual.lines.map((line) => (
-                            <div key={line}>{line}</div>
-                          ))}
+                    {project.visual.kind === "curriculum" ? (
+                      <CurriculumPreview steps={project.visual.lines} />
+                    ) : (
+                      <div className="terminal">
+                        <div className="terminal__bar">
+                          <i />
+                          <i />
+                          <i />
+                          <span>{project.visual.label}</span>
                         </div>
-                        <div className="dim project-visual__note">
-                          {project.visual.kind === "terminal"
-                            ? "[ ESCOPO DOCUMENTADO ]"
-                            : project.visual.kind === "api"
-                              ? "GitHub → JSON → Portfólio"
-                              : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]"}
+                        <div className="terminal__body">
+                          {project.visual.kind === "api" && (
+                            <div className="project-visual__endpoint">GET /api/cards/:repo</div>
+                          )}
+                          <div className="project-visual__lines">
+                            {project.visual.lines.map((line) => (
+                              <div key={line}>{line}</div>
+                            ))}
+                          </div>
+                          <div className="dim project-visual__note">
+                            {project.visual.kind === "terminal"
+                              ? "[ ESCOPO DOCUMENTADO ]"
+                              : project.visual.kind === "api"
+                                ? "GitHub → JSON → Portfólio"
+                                : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]"}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                   <div className="featured-copy">
                     <div>
@@ -116,15 +124,25 @@ export default function SelectedWorks({ projects }: { projects: readonly Selecte
                           Ver plano técnico <span aria-hidden="true">→</span>
                         </Link>
                       )}
-                      <a
-                        className="project-accordion__repository"
-                        href={project.repository}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Ver repositório de ${project.title} no GitHub`}
-                      >
-                        Ver no GitHub <span aria-hidden="true">↗</span>
-                      </a>
+                      {project.deployHref && (
+                        <a className="project-deploy" href={project.deployHref}>
+                          Abrir {project.title}{" "}
+                          <span className="arr" aria-hidden="true">
+                            ↗
+                          </span>
+                        </a>
+                      )}
+                      {project.repository && (
+                        <a
+                          className="project-accordion__repository"
+                          href={project.repository}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Ver repositório de ${project.title} no GitHub`}
+                        >
+                          Ver no GitHub <span aria-hidden="true">↗</span>
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>

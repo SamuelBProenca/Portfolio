@@ -29,7 +29,13 @@ test("desktop mouse hover animates fills and navigation even with a coarse prima
     return samples;
   });
   expect(fill.some((value) => value > 0 && value < 1)).toBe(true);
-  expect(fill.at(-1)).toBe(1);
+  await expect
+    .poll(() =>
+      action.evaluate(
+        (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::before").transform).a,
+      ),
+    )
+    .toBe(1);
   const link = page
     .getByRole("navigation", { name: "Menu principal" })
     .getByRole("link", { name: "Sobre", exact: true });
@@ -43,7 +49,13 @@ test("desktop mouse hover animates fills and navigation even with a coarse prima
     return samples;
   });
   expect(underline.some((value) => value > 0 && value < 1)).toBe(true);
-  expect(underline.at(-1)).toBe(1);
+  await expect
+    .poll(() =>
+      link.evaluate(
+        (element) => new DOMMatrixReadOnly(getComputedStyle(element, "::after").transform).a,
+      ),
+    )
+    .toBe(1);
 });
 
 test("touch leaves no sticky hover and a subsequent mouse movement restores the fill", async ({

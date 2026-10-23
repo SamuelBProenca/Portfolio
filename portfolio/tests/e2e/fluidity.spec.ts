@@ -21,6 +21,15 @@ test("text links draw only a thin underline with 300ms hover and keyboard feedba
   ]) {
     await page.goto(route.path);
     for (const selector of route.selectors) {
+      if (selector === ".project-accordion__repository") {
+        await page.getByRole("button", { name: /OpsCLI/ }).click();
+        await page.locator(".project-accordion").evaluate(async (element) => {
+          await new Promise(requestAnimationFrame);
+          await Promise.all(
+            element.getAnimations({ subtree: true }).map((animation) => animation.finished),
+          );
+        });
+      }
       const link = page.locator(selector).first();
       await link.evaluate((element) =>
         element.scrollIntoView({ block: "center", behavior: "instant" }),
@@ -127,7 +136,7 @@ test("accordion height and opacity progress in both directions without exposing 
   const trigger = item.getByRole("button");
   await trigger.click();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: /OctoCards/ })).toBeFocused();
+  await expect(page.getByRole("button", { name: /OpsCLI/ })).toBeFocused();
 });
 
 test("accordion reverses interrupted transitions and accommodates content and viewport changes", async ({
@@ -137,7 +146,7 @@ test("accordion reverses interrupted transitions and accommodates content and vi
   await page.goto("/#projetos");
   await page.locator(".project-accordion").evaluate(async (element) => {
     const buttons = element.querySelectorAll<HTMLButtonElement>(".project-accordion__trigger");
-    for (const index of [1, 0, 2, 0, 1, 1, 2]) {
+    for (const index of [1, 0, 3, 0, 1, 1, 3]) {
       buttons[index].click();
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
@@ -336,7 +345,7 @@ test("reduced motion shows the full static strip and changes accordion state imm
     .locator(".intro-strip__viewport")
     .evaluate((element) => ({ client: element.clientWidth, content: element.scrollWidth }));
   expect(viewport.content).toBeLessThanOrEqual(viewport.client);
-  const trigger = page.getByRole("button", { name: /OpsCLI/ });
+  const trigger = page.getByRole("button", { name: /Curriculum Studio/ });
   await trigger.click();
   const panel = page.locator(".project-accordion__reveal").first();
   await expect
@@ -349,5 +358,5 @@ test("reduced motion shows the full static strip and changes accordion state imm
   ).toBeLessThanOrEqual(0.01);
   expect(await panel.evaluate((element) => getComputedStyle(element).transitionDelay)).toBe("0s");
   await trigger.press("Enter");
-  await expect(page.getByRole("region", { name: /OpsCLI/ })).toBeVisible();
+  await expect(page.getByRole("region", { name: /Curriculum Studio/ })).toBeVisible();
 });

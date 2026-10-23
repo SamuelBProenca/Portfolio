@@ -1,0 +1,221 @@
+/* Curriculum Studio follows the portfolio tokens; this drawing illustrates the product. */
+.project-accordion__item--curriculum .featured {
+  background: var(--canvas-2);
+}
+.project-visual--curriculum {
+  background: var(--canvas);
+  border-color: var(--hairline);
+  padding: 74px 34px 38px;
+}
+.project-visual--curriculum .project-visual__caption {
+  color: var(--muted);
+  font-size: 9px;
+}
+.project-deploy {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-fill);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  gap: 22px;
+  max-width: 100%;
+  font-size: 13px;
+  padding: 15px 18px;
+  white-space: normal;
+  transition:
+    background var(--motion-duration) var(--motion-easing),
+    border-color var(--motion-duration) var(--motion-easing);
+}
+.project-deploy:hover {
+  background: #a53f2c;
+  border-color: var(--accent-hover);
+}
+.project-deploy .arr {
+  font-size: 20px;
+  color: inherit;
+  transition: transform var(--motion-duration) var(--motion-easing);
+}
+.project-deploy:hover .arr,
+.project-deploy:focus-visible .arr {
+  transform: translate(2px, -2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-deploy,
+  .project-deploy .arr {
+    transition: none;
+  }
+}
+.studio-mini {
+  width: min(100%, 480px);
+  border: 1px solid var(--hairline);
+  background: var(--canvas-2);
+  box-shadow: 0 20px 45px #0004;
+}
+.studio-mini__header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--hairline);
+  padding: 14px 17px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.studio-mini__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #a6a49f;
+  font-weight: 800;
+  font-size: 11px;
+}
+.studio-mini__mark > span {
+  color: var(--accent-hover);
+}
+.studio-mini__edition {
+  margin-left: auto;
+  color: var(--muted);
+  font: 7px var(--font-mono);
+}
+.studio-mini__intro {
+  padding: 23px 22px;
+  font: 700 clamp(22px, 2.4vw, 31px)/1.12 var(--font-display);
+  letter-spacing: -0.03em;
+}
+.studio-mini__intro > span {
+  color: var(--accent-hover);
+}
+.studio-mini__workspace {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 18px;
+  padding: 0 20px 22px;
+}
+.studio-mini__editor {
+  min-width: 0;
+  padding-top: 10px;
+  font: 9px/1.7 var(--font-mono);
+  color: var(--muted);
+}
+.studio-mini__label {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 1px;
+  margin-bottom: 21px;
+}
+.studio-mini__editor > div {
+  border-top: 1px solid var(--hairline);
+  padding: 10px 0;
+}
+.studio-mini__editor > div:last-of-type {
+  color: var(--text);
+}
+.studio-mini__action {
+  display: block;
+  padding: 11px 9px;
+  margin-top: 23px;
+  background: var(--accent-fill);
+  color: var(--text);
+  font: 9px var(--font-body);
+}
+.studio-mini__paper {
+  padding: 22px 19px;
+  background: var(--paper);
+  color: var(--ink);
+  min-width: 0;
+}
+.studio-mini__paper-mark {
+  display: block;
+  font: 6px var(--font-mono);
+  letter-spacing: 1px;
+  color: #6b665d;
+  margin-bottom: 13px;
+}
+.studio-mini__paper > strong {
+  display: block;
+  font: 700 20px var(--font-display);
+}
+.studio-mini__paper > span:not(.studio-mini__paper-mark) {
+  font-size: 8px;
+  color: #6b665d;
+}
+.studio-mini__section {
+  font: 6px var(--font-mono);
+  letter-spacing: 0.8px;
+  margin: 19px 0 8px;
+  color: #575550;
+}
+.studio-mini__paper > i {
+  display: block;
+  height: 3px;
+  margin: 6px 0;
+  background: #c6c1b7;
+}
+.studio-mini__paper > i:nth-of-type(3n) {
+  width: 70%;
+}
+.studio-mini__footer {
+  border-top: 1px solid var(--hairline);
+  padding: 11px 19px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 8px;
+  color: var(--muted);
+}
+.studio-mini__footer > span:last-child {
+  color: var(--accent-hover);
+}
+@media (max-width: 760px) {
+  .project-accordion__panel .project-visual--curriculum {
+    padding: 66px 16px 25px;
+    border-color: var(--hairline);
+  }
+  .studio-mini__header {
+    padding: 12px;
+    font-size: 10px;
+  }
+  .studio-mini__edition {
+    display: none;
+  }
+  .studio-mini__intro {
+    padding: 20px 15px;
+    font-size: 26px;
+  }
+  .studio-mini__workspace {
+    gap: 12px;
+    padding: 0 12px 16px;
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+  .studio-mini__editor {
+    font-size: 8px;
+  }
+  .studio-mini__label {
+    font-size: 6px;
+    letter-spacing: 0.4px;
+    margin-bottom: 15px;
+  }
+  .studio-mini__paper {
+    padding: 17px 12px;
+  }
+  .studio-mini__paper > strong {
+    font-size: 18px;
+  }
+  .studio-mini__action {
+    padding: 9px 7px;
+    font-size: 8px;
+  }
+  .studio-mini__footer {
+    padding: 10px 12px;
+    font-size: 8px;
+  }
+  .project-deploy {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 15px 14px;
+    gap: 12px;
+  }
+}

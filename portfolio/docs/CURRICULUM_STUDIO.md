@@ -4,6 +4,46 @@ A integração atende `https://samuelproenca.com/curriculumstudio` com um proxy
 para o projeto Flask separado na Vercel. Não exige comprar outro domínio.
 O endereço `vercel.app` do backend continua sendo uma origem pública.
 
+## Destaque e identidade visual
+
+Curriculum Studio é o primeiro trabalho selecionado da home. O texto explica
+como o produto relaciona perfil e vaga, expõe evidências e lacunas e libera PDF
+após revisão, mantendo as experiências originais. A página `/projetos` usa o
+mesmo conteúdo e preserva a âncora `#curriculum`.
+
+O botão **Abrir Curriculum Studio**, no próprio destaque, aponta para
+`/curriculumstudio`. É um link HTML com navegação de documento: o destino é
+uma aplicação Flask independente, sem prefetch/RSC do Next.js. O produto possui
+um botão de retorno a `/#projetos`. Não há link para seu repositório privado.
+
+- `src/content/projects.ts`: contexto, ordem e endereço do produto.
+- `src/components/selected-works.tsx`: painel e botão de acesso.
+- `src/components/curriculum-preview.tsx`: ilustração decorativa em HTML/CSS.
+- `src/styles/curriculum-studio.css`: composição com os tokens existentes,
+  versão mobile, foco de teclado e movimento reduzido.
+- `src/app/projetos/page.tsx`: acesso também pelo arquivo de projetos.
+
+O editor Flask compartilha os tokens de fundo, superfície, papel, terracota e
+famílias tipográficas do portfólio. A ilustração não contém dados pessoais,
+estatísticas inventadas ou chamadas externas.
+
+Capturas locais, sem representar deploy em produção:
+
+![Destaque no desktop](images/curriculum-highlight-desktop.png)
+
+![Destaque no celular](images/curriculum-highlight-mobile.png)
+
+Testes de componente cobrem conteúdo, seleção, foco, ocultação de painéis e
+destino do acesso. `tests/e2e/curriculum-studio.spec.ts` verifica navegação de
+documento pela home e por `/projetos`, com a rota do app simulada. O fluxo real
+por proxy local também foi validado com o Flask: análise, revisão, PDF e retorno.
+
+Validação local em 23/10/2026: build, TypeScript, lint, formatação e 70 testes
+unitários aprovados; 151 testes de navegador aprovados e oito dispensados
+conforme o dispositivo. A execução usa o Chromium instalado no ambiente. O teste
+de estabilidade dos links aguarda o fechamento e a abertura do accordion; as
+verificações de hover aguardam o estado final sem presumir uma taxa de quadros.
+
 ## Ativação
 
 1. Publique `SamuelBProenca/Curriculim_Service` como projeto Flask, raiz do repo.
