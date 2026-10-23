@@ -8,16 +8,16 @@ describe("selected works accordion", () => {
   it("keeps closing panels mounted for animation but excludes their content from interaction", async () => {
     const user = userEvent.setup();
     render(<SelectedWorks projects={selectedProjects} />);
-    const first = screen.getByRole("button", { name: /OpsCLI/ });
-    const panel = screen.getByRole("region", { name: /OpsCLI/ });
+    const first = screen.getByRole("button", { name: /Curriculum Studio/ });
+    const panel = screen.getByRole("region", { name: /Curriculum Studio/ });
     await user.click(first);
     expect(panel).toBeInTheDocument();
     expect(panel).not.toHaveAttribute("hidden");
     expect(panel).toHaveAttribute("aria-hidden", "true");
     expect(panel).toHaveAttribute("inert");
-    expect(screen.queryByRole("link", { name: /OpsCLI/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Abrir Curriculum Studio/ })).not.toBeInTheDocument();
     await user.keyboard("{Enter}");
-    expect(screen.getByRole("region", { name: /OpsCLI/ })).toBe(panel);
+    expect(screen.getByRole("region", { name: /Curriculum Studio/ })).toBe(panel);
     expect(panel).not.toHaveAttribute("inert");
     expect(panel).toHaveAttribute("aria-hidden", "false");
   });
@@ -36,21 +36,23 @@ describe("selected works accordion", () => {
     expect(first).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("starts with OpsCLI expanded and keeps other project links hidden", () => {
+  it("starts with Curriculum Studio context and a direct app link without exposing its private repository", () => {
     render(<SelectedWorks projects={selectedProjects} />);
-    const first = screen.getByRole("button", { name: /OpsCLI/ });
-    const panel = screen.getByRole("region", { name: /OpsCLI/ });
+    const first = screen.getByRole("button", { name: /Curriculum Studio/ });
+    const panel = screen.getByRole("region", { name: /Curriculum Studio/ });
 
     expect(first).toHaveAttribute("aria-expanded", "true");
     expect(first).toHaveAttribute("aria-controls", panel.id);
     expect(panel).toHaveAttribute("aria-labelledby", first.id);
     expect(screen.getAllByRole("region")).toHaveLength(1);
-    expect(within(panel).getByRole("link", { name: /OpsCLI/ })).toHaveAttribute(
+    expect(within(panel).getByRole("link", { name: /Abrir Curriculum Studio/ })).toHaveAttribute(
       "href",
-      "https://github.com/SamuelBProenca/OpsCLI",
+      "/curriculumstudio",
     );
     expect(screen.queryByRole("link", { name: /OctoCards/ })).not.toBeInTheDocument();
-    expect(within(panel).getByText(/código da ferramenta ainda não está disponível/)).toBeVisible();
+    expect(within(panel).getByText(/requisitos da vaga aos fatos do perfil/)).toBeVisible();
+    expect(within(panel).queryByRole("link", { name: /GitHub/ })).not.toBeInTheDocument();
+    expect(document.querySelector('a[href*="Curriculim_Service"]')).not.toBeInTheDocument();
   });
 
   it("switches project details and repository while closing the previous panel", async () => {
@@ -58,7 +60,7 @@ describe("selected works accordion", () => {
     render(<SelectedWorks projects={selectedProjects} />);
     await user.click(screen.getByRole("button", { name: /OctoCards/ }));
 
-    expect(screen.getByRole("button", { name: /OpsCLI/ })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: /Curriculum Studio/ })).toHaveAttribute(
       "aria-expanded",
       "false",
     );
@@ -85,7 +87,7 @@ describe("selected works accordion", () => {
   it("allows closing the active project and reopening it with the keyboard", async () => {
     const user = userEvent.setup();
     render(<SelectedWorks projects={selectedProjects} />);
-    const first = screen.getByRole("button", { name: /OpsCLI/ });
+    const first = screen.getByRole("button", { name: /Curriculum Studio/ });
     await user.click(first);
     expect(first).toHaveAttribute("aria-expanded", "false");
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
@@ -99,8 +101,8 @@ describe("selected works accordion", () => {
   it("moves keyboard focus between project headers without changing the selection", async () => {
     const user = userEvent.setup();
     render(<SelectedWorks projects={selectedProjects} />);
-    const first = screen.getByRole("button", { name: /OpsCLI/ });
-    const second = screen.getByRole("button", { name: /OctoCards/ });
+    const first = screen.getByRole("button", { name: /Curriculum Studio/ });
+    const second = screen.getByRole("button", { name: /OpsCLI/ });
     const last = screen.getByRole("button", { name: /Design Patterns Dojo/ });
     first.focus();
     await user.keyboard("{ArrowDown}");

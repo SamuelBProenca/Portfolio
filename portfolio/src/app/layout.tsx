@@ -10,6 +10,7 @@ import "@/styles/styles.css";
 import "@/styles/responsive.css";
 import "@/styles/rework.css";
 import "@/styles/interactions.css";
+import "@/styles/curriculum-studio.css";
 
 export const metadata: Metadata = {
   title: { default: "Samuel Proença — Engenharia de Software", template: "%s — Samuel Proença" },

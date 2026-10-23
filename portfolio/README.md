@@ -65,6 +65,8 @@ O plano técnico do OctoCards está em `/projetos/octocards`. Seus dados ficam e
 
 Os trabalhos selecionados da home usam um accordion com um projeto aberto por vez. Para editar a seleção, os textos e as ilustrações, altere `selectedProjects` em `src/content/projects.ts`. As fontes e os critérios de publicação estão em `docs/PROJECT_SOURCES.md`.
 
+Curriculum Studio abre como primeiro destaque, com contexto do produto e botão de acesso a `/curriculumstudio`. O arquivo de projetos compartilha esse conteúdo; seu código permanece privado. A ativação do proxy e as capturas desktop/mobile estão em [docs/CURRICULUM_STUDIO.md](docs/CURRICULUM_STUDIO.md).
+
 ## Conteúdo e escopo
 
 Os textos vieram do protótipo local, originalmente ancorado no repositório público `SamuelBProenca/Portfolio`, com ajustes editoriais. O design de `portfolio-design-v1` foi promovido para esta pasta, preservando o histórico Git. A versão anterior fica em `../legacy/pre-rework/portfolio/`.

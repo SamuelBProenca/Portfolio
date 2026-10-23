@@ -44,7 +44,11 @@ export default function ProjectsPage() {
                   </Link>
                 )}
               </p>
-              {"repository" in project ? (
+              {project.deployHref ? (
+                <a className="arr" href={project.deployHref} aria-label={`Abrir ${project.title}`}>
+                  <span aria-hidden="true">↗</span>
+                </a>
+              ) : project.repository ? (
                 <a
                   className="arr"
                   href={project.repository}

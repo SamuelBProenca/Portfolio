@@ -10,16 +10,16 @@ Revisão dos repositórios públicos em 19/10/2026. Os textos foram resumidos em
 
 O antigo destaque de automação apontava para [network_monitoring](https://github.com/SamuelBProenca/network_monitoring), cujo README descreve uma proposta de monitoramento de rede. O link foi corrigido para OpsCLI, que corresponde ao escopo de automação operacional. PowerShell e C# foram removidos desse destaque porque não foram confirmados nas fontes de OpsCLI.
 
-Curriculum Service continua no arquivo de projetos com a indicação original de repositório não confirmado. Ele não integra os destaques, pois não foi encontrado entre os repositórios públicos consultados. O endereço `/projetos#curriculum` foi preservado.
+Em 23/10/2026, Curriculum Studio foi incluído como primeiro destaque após revisão do produto privado e teste local de análise, revisão e PDF. O painel explica o vínculo entre requisitos da vaga e fatos do perfil, o processamento em memória e a preservação dos textos das experiências. O botão abre `/curriculumstudio`; não há link para o código privado. O endereço `/projetos#curriculum` foi preservado e usa o mesmo conteúdo. A publicação depende dos deploys e da configuração descrita em [CURRICULUM_STUDIO.md](CURRICULUM_STUDIO.md).
 
-As ilustrações dos painéis mostram o escopo, o fluxo da API e os temas de estudo. Não são capturas de execução, métricas de uso ou resultados de testes dos repositórios. Não foi confirmada uma instância pública em produção desses projetos.
+As ilustrações dos painéis mostram o escopo, o fluxo da API, os temas de estudo e o editor de currículo. Não são capturas de execução, métricas de uso ou resultados de testes dos repositórios. A ilustração do Curriculum Studio é feita em HTML/CSS, sem dados de candidatos. Não foi confirmada uma instância pública em produção desses projetos.
 
 ## Comportamento do accordion
 
-- OpsCLI abre por padrão. Clicar em outro projeto fecha o anterior e mostra seus detalhes.
+- Curriculum Studio abre por padrão. Clicar em outro projeto fecha o anterior e mostra seus detalhes.
 - Clicar no projeto aberto recolhe o painel.
 - Enter e Espaço alternam o painel; setas, Home e End movem o foco entre os títulos.
 - Cada botão expõe `aria-expanded` e `aria-controls`; os painéis possuem nome acessível e os recolhidos ficam ocultos também para navegação por teclado.
-- Cada painel possui um link próprio para o repositório; o clique no título seleciona o projeto.
+- Curriculum Studio possui um link direto para o produto. Os demais painéis possuem links para seus repositórios públicos; o clique no título seleciona o projeto.
 
 Testes de componente e navegador cobrem seleção, fechamento, foco por teclado, visibilidade e destino dos links, além do layout mobile em 320 px.

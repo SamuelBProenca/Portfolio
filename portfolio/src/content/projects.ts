@@ -6,25 +6,42 @@ export type Project = {
   description: string;
   repository?: `https://github.com/${string}`;
   detailsHref?: `/projetos/${string}`;
+  deployHref?: "/curriculumstudio";
 };
 
-export type SelectedProject = Omit<Project, "number" | "id" | "repository"> & {
+export type SelectedProject = Omit<Project, "number" | "id"> & {
   id: string;
-  repository: `https://github.com/${string}`;
   summary: string;
   category: string;
   headline: string;
   visual: {
-    kind: "terminal" | "api" | "patterns";
+    kind: "terminal" | "api" | "patterns" | "curriculum";
     label: string;
     caption: string;
     lines: readonly string[];
   };
 };
 
-// Repository descriptions, READMEs and source reviewed on 2026-10-19.
+// Public repository evidence reviewed on 2026-10-19; private product on 2026-10-23.
 // See docs/PROJECT_SOURCES.md for evidence and publication limits.
 export const selectedProjects = [
+  {
+    id: "curriculum",
+    title: "Curriculum Studio",
+    summary: "Perfil e vaga, conectados por evidências reais.",
+    category: "Produto web / Currículos e evidências",
+    headline: "Da vaga ao currículo. Com evidências.",
+    technologies: "Python / Flask / ReportLab / Redis opcional",
+    description:
+      "O desafio é adaptar um currículo a cada oportunidade sem inventar competências. O Curriculum Studio relaciona os requisitos da vaga aos fatos do perfil, mostra evidências e lacunas e gera o PDF após a revisão. Os dados são processados em memória e os textos das experiências são preservados.",
+    deployHref: "/curriculumstudio",
+    visual: {
+      kind: "curriculum",
+      label: "curriculum studio / produto",
+      caption: "DO PERFIL AO PDF / ESQUEMA DO PRODUTO",
+      lines: ["01 / Seu perfil", "02 / A oportunidade", "03 / Revisão e PDF"],
+    },
+  },
   {
     id: "opscli",
     title: "OpsCLI",
@@ -87,16 +104,7 @@ export const selectedProjects = [
   },
 ] satisfies readonly SelectedProject[];
 
-export const projects: readonly Project[] = [
-  { number: "01", ...selectedProjects[0] },
-  { number: "02", ...selectedProjects[1] },
-  {
-    number: "03",
-    id: "curriculum",
-    title: "Curriculum Service",
-    technologies: "Geração de PDFs / Validação / Modularidade",
-    description:
-      "Experimento de geração de currículos adaptados a vagas, priorizando estrutura de dados, validação e composição de documentos de forma organizada.",
-  },
-  { number: "04", ...selectedProjects[2] },
-];
+export const projects: readonly Project[] = selectedProjects.map((project, index) => ({
+  number: String(index + 1).padStart(2, "0"),
+  ...project,
+}));

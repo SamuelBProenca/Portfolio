@@ -159,7 +159,7 @@ test("selected works switches one accordion panel at a time", async ({ page, isM
   await page.goto("/#projetos");
   if (isMobile) await page.setViewportSize({ width: 320, height: 800 });
   const works = page.locator(".project-accordion");
-  await expect(works.getByRole("button", { name: /OpsCLI/ })).toHaveAttribute(
+  await expect(works.getByRole("button", { name: /Curriculum Studio/ })).toHaveAttribute(
     "aria-expanded",
     "true",
   );
