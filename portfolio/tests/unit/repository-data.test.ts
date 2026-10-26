@@ -82,10 +82,10 @@ describe("public repository data", () => {
   it("falls back for an upstream failure and retains private product presentation", async () => {
     const fetcher = vi.fn<typeof fetch>().mockRejectedValue(new Error("timeout"));
     const catalog = await loadProjectCatalog({ fetcher });
-    expect(catalog).toHaveLength(4);
+    expect(catalog).toHaveLength(7);
     expect(catalog.find((item) => item.id === "octocards")?.evidence?.source).toBe("snapshot");
     expect(catalog.find((item) => item.id === "curriculum")?.evidence).toBeUndefined();
-    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(fetcher).toHaveBeenCalledTimes(6);
     expect(catalog.find((item) => item.id === "octocards")?.headline).toBe(
       "Do repositório para o portfólio.",
     );
@@ -94,7 +94,7 @@ describe("public repository data", () => {
     const result = await loadProjectCatalog({
       fetcher: async () => new Response("unavailable", { status }),
     });
-    expect(result.filter((item) => item.evidence?.source === "snapshot")).toHaveLength(3);
+    expect(result.filter((item) => item.evidence?.source === "snapshot")).toHaveLength(6);
   });
   it("does not allow malformed JSON or oversized upstream bodies", async () => {
     await expect(
@@ -108,13 +108,24 @@ describe("public repository data", () => {
     ).rejects.toThrow("too large");
   });
   it("preserves the commercial selection regardless of stars, ordering or extra repositories", () => {
-    expect(selectedProjects.map((item) => item.id)).toEqual(["curriculum", "octocards"]);
+    expect(selectedProjects.map((item) => item.id)).toEqual([
+      "curriculum",
+      "greatmaker",
+      "octocards",
+      "linkkeeper",
+    ]);
     const items = [{ id: "new-most-starred", stars: 100000 }, ...catalogProjects.toReversed()];
     expect(selectFeaturedProjects(items).map((item) => item.id)).toEqual([
       "curriculum",
+      "greatmaker",
       "octocards",
+      "linkkeeper",
     ]);
     expect(catalogProjects.map((item) => item.id)).toContain("dojo");
     expect(catalogProjects.map((item) => item.id)).toContain("opscli");
+    expect(catalogProjects.map((item) => item.id)).toContain("icarusroc");
+    expect(snapshot.cards.map((item) => item.url).sort()).toEqual(
+      catalogProjects.flatMap((item) => ("repository" in item ? [item.repository] : [])).sort(),
+    );
   });
 });

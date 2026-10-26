@@ -14,6 +14,7 @@ import "@/styles/curriculum-studio.css";
 import "@/styles/repository-evidence.css";
 
 export const metadata: Metadata = {
+  icons: { icon: "/favicon.svg" },
   title: { default: "Samuel Proença — Engenharia de Software", template: "%s — Samuel Proença" },
   description:
     "Samuel Proença: desenvolvimento backend, APIs e automação com base em infraestrutura. Conheça os projetos, as decisões técnicas e minha trajetória.",

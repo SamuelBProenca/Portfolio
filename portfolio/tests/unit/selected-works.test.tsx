@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import SelectedWorks from "@/components/selected-works";
-import { catalogProjects as selectedProjects } from "@/content/projects";
+import { selectedProjects } from "@/content/projects";
 
 describe("selected works accordion", () => {
   it("keeps closing panels mounted for animation but excludes their content from interaction", async () => {
@@ -25,7 +25,7 @@ describe("selected works accordion", () => {
   it("honors the last selection after repeated toggles", async () => {
     const user = userEvent.setup();
     render(<SelectedWorks projects={selectedProjects} />);
-    const first = screen.getByRole("button", { name: /OpsCLI/ });
+    const first = screen.getByRole("button", { name: /LinkKeeper/ });
     const second = screen.getByRole("button", { name: /OctoCards/ });
     await user.click(second);
     await user.click(first);
@@ -74,13 +74,13 @@ describe("selected works accordion", () => {
       "https://github.com/SamuelBProenca/OctoCards",
     );
 
-    await user.click(screen.getByRole("button", { name: /Design Patterns Dojo/ }));
-    const dojo = screen.getByRole("region", { name: /Design Patterns Dojo/ });
+    await user.click(screen.getByRole("button", { name: /LinkKeeper/ }));
+    const links = screen.getByRole("region", { name: /LinkKeeper/ });
     expect(screen.getAllByRole("region")).toHaveLength(1);
-    expect(within(dojo).getByText(/Adapter, Builder, Decorator/)).toBeVisible();
-    expect(within(dojo).getByRole("link")).toHaveAttribute(
+    expect(within(links).getByText(/CLI atual executa somente validação/)).toBeVisible();
+    expect(within(links).getByRole("link")).toHaveAttribute(
       "href",
-      "https://github.com/SamuelBProenca/DesignPatternsDojo",
+      "https://github.com/SamuelBProenca/LinkKeeper",
     );
   });
 
@@ -102,8 +102,8 @@ describe("selected works accordion", () => {
     const user = userEvent.setup();
     render(<SelectedWorks projects={selectedProjects} />);
     const first = screen.getByRole("button", { name: /Curriculum Studio/ });
-    const second = screen.getByRole("button", { name: /OpsCLI/ });
-    const last = screen.getByRole("button", { name: /Design Patterns Dojo/ });
+    const second = screen.getByRole("button", { name: /GreatMaker/ });
+    const last = screen.getByRole("button", { name: /LinkKeeper/ });
     first.focus();
     await user.keyboard("{ArrowDown}");
     expect(second).toHaveFocus();

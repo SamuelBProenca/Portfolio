@@ -165,7 +165,17 @@ test("selected works switches one accordion panel at a time", async ({ page, isM
   );
 
   for (const project of [
+    {
+      name: "GreatMaker",
+      repository: "GreatMaker",
+      headline: "Da referência à decisão de design.",
+    },
     { name: "OctoCards", repository: "OctoCards", headline: "Do repositório para o portfólio." },
+    {
+      name: "LinkKeeper",
+      repository: "LinkKeeper",
+      headline: "Guardar o link. Definir seu ciclo.",
+    },
   ]) {
     const trigger = works.getByRole("button", { name: new RegExp(project.name) });
     await trigger.click();
@@ -182,8 +192,8 @@ test("selected works switches one accordion panel at a time", async ({ page, isM
     expect(box!.x + box!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
   }
 
-  await expect(works.getByRole("button")).toHaveCount(2);
-  const active = works.getByRole("button", { name: /OctoCards/ });
+  await expect(works.getByRole("button")).toHaveCount(4);
+  const active = works.getByRole("button", { name: /LinkKeeper/ });
   await active.press("Enter");
   await expect(works.getByRole("region")).toHaveCount(0);
   await active.press("ArrowDown");

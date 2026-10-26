@@ -75,8 +75,8 @@ export default function HomePage() {
           <div className="work-intro" data-scroll-reveal>
             <h2 className="section-head">Cada projeto, um problema para resolver.</h2>
             <p>
-              Um produto para adaptar currículos com evidências e uma API para integrar dados do
-              GitHub. Conheça o problema resolvido, o funcionamento e o estágio de cada entrega.
+              Currículos com evidências, referências de design, dados do GitHub e organização de
+              links. Explore quatro projetos e o estágio real de cada entrega.
             </p>
           </div>
           <SelectedWorks projects={selectedProjects} />

@@ -15,14 +15,16 @@ export type SelectedProject = Omit<Project, "number" | "id"> & {
   category: string;
   headline: string;
   visual: {
-    kind: "terminal" | "api" | "patterns" | "curriculum";
+    kind: "terminal" | "api" | "patterns" | "curriculum" | "references" | "links" | "website";
     label: string;
     caption: string;
     lines: readonly string[];
+    note?: string;
   };
 };
 
-// OctoCards reviewed on 2026-10-26; other public work on 2026-10-19; private product on 2026-10-23.
+// OctoCards, GreatMaker, LinkKeeper and IcarusRoc reviewed on 2026-10-26.
+// Other public work reviewed on 2026-10-19; private product on 2026-10-23.
 // See docs/PROJECT_SOURCES.md for evidence and publication limits.
 export const catalogProjects = [
   {
@@ -43,23 +45,23 @@ export const catalogProjects = [
     },
   },
   {
-    id: "opscli",
-    title: "OpsCLI",
-    summary: "Verificações e logs em uma CLI. Proposta documentada.",
-    category: "Automação operacional / Proposta documentada",
-    headline: "Menos repetição. Mais organização.",
-    technologies: "Batch / CLI / Logs",
+    id: "greatmaker",
+    title: "GreatMaker",
+    summary: "Referências de design transformadas em contexto de projeto.",
+    category: "Produto web / DesignRef M1 implementado",
+    headline: "Da referência à decisão de design.",
+    technologies: "TypeScript / Next.js / React / SQLite / Zod",
     description:
-      "Proposta de uma ferramenta modular em Batch para reunir verificações de dispositivos, checagens de conexão e geração de logs estruturados. O repositório público apresenta o escopo no README; o código da ferramenta ainda não está disponível nele.",
-    repository: "https://github.com/SamuelBProenca/OpsCLI",
+      "O Reference Hub do GreatMaker reúne links, imagens, trechos de código e ideias em uma sessão anônima. Permite registrar o que manter ou evitar, organizar um brief e exportar o contexto em JSON e Markdown. O M1 funciona localmente, com persistência SQLite e uploads privados. Geração de interfaces e IA continuam fora desta versão.",
+    repository: "https://github.com/SamuelBProenca/GreatMaker",
     visual: {
-      kind: "terminal",
-      label: "opscli / escopo",
-      caption: "ROTINAS OPERACIONAIS",
+      kind: "references",
+      label: "greatmaker / designref",
+      caption: "DESIGNREF M1 / CAPTURA REAL DA BIBLIOTECA",
       lines: [
-        "Verificação de dispositivos",
-        "Checagem de conexões",
-        "Geração de logs estruturados",
+        "Referências com origem",
+        "Brief e escolhas explícitas",
+        "Handoff em JSON e Markdown",
       ],
     },
   },
@@ -86,6 +88,67 @@ export const catalogProjects = [
     },
   },
   {
+    id: "linkkeeper",
+    title: "LinkKeeper",
+    summary: "Links com categoria, prazo e ciclo de vida explícitos.",
+    category: "Backend / Núcleo e persistência implementados",
+    headline: "Guardar o link. Definir seu ciclo.",
+    technologies: "C# / .NET 10 / SQLite / xUnit",
+    description:
+      "Base de um organizador de links em C# com validação de URL, categorias e prazos. A camada SQLite salva e consulta links por proprietário, evita duplicatas por categoria e permite expirar, arquivar e renovar registros. A CLI atual executa somente validação; API, autenticação e integração com WhatsApp seguem planejadas.",
+    repository: "https://github.com/SamuelBProenca/LinkKeeper",
+    visual: {
+      kind: "links",
+      label: "linkkeeper / storage",
+      caption: "CICLO DO LINK / ESQUEMA DA CAMADA SQLITE",
+      lines: [
+        "URL + categoria + prazo",
+        "SQLite / registros por proprietário",
+        "Active → Expired / Archived",
+      ],
+      note: "CLI: validação / API: próxima etapa",
+    },
+  },
+  {
+    id: "icarusroc",
+    title: "IcarusRoc",
+    summary: "Uma interface para apresentar serviços e receber pedidos de orçamento.",
+    category: "Landing page / Interface implementada",
+    headline: "Serviços apresentados com contexto.",
+    technologies: "TypeScript / Next.js / React / Tailwind CSS",
+    description:
+      "Landing page de serviços digitais com apresentação, processo de desenvolvimento, planos, perguntas frequentes e formulário de orçamento. O código organiza a interface em componentes Next.js e React com Tailwind CSS. O envio real do formulário e a operação pública não foram validados nesta revisão.",
+    repository: "https://github.com/SamuelBProenca/IcarusRoc",
+    visual: {
+      kind: "website",
+      label: "icarusroc / interface",
+      caption: "INTERFACE DE SERVIÇOS / ESQUEMA",
+      lines: ["Apresentação dos serviços", "Processo e planos", "Pedido de orçamento"],
+      note: "Interface implementada / operação não validada",
+    },
+  },
+  {
+    id: "opscli",
+    title: "OpsCLI",
+    summary: "Verificações e logs em uma CLI. Proposta documentada.",
+    category: "Automação operacional / Proposta documentada",
+    headline: "Menos repetição. Mais organização.",
+    technologies: "Batch / CLI / Logs",
+    description:
+      "Proposta de uma ferramenta modular em Batch para reunir verificações de dispositivos, checagens de conexão e geração de logs estruturados. O repositório público apresenta o escopo no README; o código da ferramenta ainda não está disponível nele.",
+    repository: "https://github.com/SamuelBProenca/OpsCLI",
+    visual: {
+      kind: "terminal",
+      label: "opscli / escopo",
+      caption: "ROTINAS OPERACIONAIS",
+      lines: [
+        "Verificação de dispositivos",
+        "Checagem de conexões",
+        "Geração de logs estruturados",
+      ],
+    },
+  },
+  {
     id: "dojo",
     title: "Design Patterns Dojo",
     summary: "Padrões de projeto estudados na prática.",
@@ -105,7 +168,12 @@ export const catalogProjects = [
 ] satisfies readonly SelectedProject[];
 
 // Commercial selection is explicit. Repository activity or stars never promote a project.
-export const featuredProjectIds: readonly string[] = ["curriculum", "octocards"];
+export const featuredProjectIds: readonly string[] = [
+  "curriculum",
+  "greatmaker",
+  "octocards",
+  "linkkeeper",
+];
 export function selectFeaturedProjects<T extends { id: string }>(catalog: readonly T[]): T[] {
   return featuredProjectIds.flatMap((id) => {
     const project = catalog.find((item) => item.id === id);

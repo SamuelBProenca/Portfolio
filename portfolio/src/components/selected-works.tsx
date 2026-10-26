@@ -3,7 +3,9 @@
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import type { SelectedProject } from "@/content/projects";
 import Link from "next/link";
+import Image from "next/image";
 import CurriculumPreview from "@/components/curriculum-preview";
+import styles from "./selected-works.module.css";
 
 export default function SelectedWorks({ projects }: { projects: readonly SelectedProject[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(projects[0]?.id ?? null);
@@ -77,12 +79,21 @@ export default function SelectedWorks({ projects }: { projects: readonly Selecte
               <div className="project-accordion__clip">
                 <div className="featured project-accordion__panel">
                   <div
-                    className={`featured-visual project-visual project-visual--${project.visual.kind}`}
+                    className={`featured-visual project-visual project-visual--${project.visual.kind} ${project.visual.kind === "references" ? styles.referenceVisual : ""}`}
                     aria-hidden="true"
                   >
                     <span className="project-visual__caption">{project.visual.caption}</span>
                     {project.visual.kind === "curriculum" ? (
                       <CurriculumPreview steps={project.visual.lines} />
+                    ) : project.visual.kind === "references" ? (
+                      <Image
+                        className={styles.referenceImage}
+                        src="/images/greatmaker-reference-hub.png"
+                        width={1440}
+                        height={1091}
+                        sizes="(max-width: 760px) 90vw, 45vw"
+                        alt="Biblioteca do DesignRef M1 com referências de código e ideia."
+                      />
                     ) : (
                       <div className="terminal">
                         <div className="terminal__bar">
@@ -101,11 +112,12 @@ export default function SelectedWorks({ projects }: { projects: readonly Selecte
                             ))}
                           </div>
                           <div className="dim project-visual__note">
-                            {project.visual.kind === "terminal"
-                              ? "[ ESCOPO DOCUMENTADO ]"
-                              : project.visual.kind === "api"
-                                ? "GitHub → JSON → Portfólio"
-                                : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]"}
+                            {project.visual.note ??
+                              (project.visual.kind === "terminal"
+                                ? "[ ESCOPO DOCUMENTADO ]"
+                                : project.visual.kind === "api"
+                                  ? "GitHub → JSON → Portfólio"
+                                  : "[ ESTUDAR / IMPLEMENTAR / REVISAR ]")}
                           </div>
                         </div>
                       </div>
