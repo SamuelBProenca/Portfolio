@@ -47,6 +47,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
   const links = navigation.map(({ href, label }) => (
     <Link
       href={href}
+      prefetch={false}
       key={href}
       aria-current={
         pathname === href
@@ -64,7 +65,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
     <>
       <header className="site-header">
         <div className="container site-header__inner">
-          <Link className="wordmark" href="/" aria-label="Samuel Proença — início">
+          <Link className="wordmark" href="/" prefetch={false} aria-label="Samuel Proença — início">
             <span className="monogram">SP.</span>
             <span>
               <span className="wordmark__name">Samuel Proença</span>
@@ -75,7 +76,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
             {links}
           </nav>
           <div className="header-contact">
-            <Link className="contact-outline" href="/#contato">
+            <Link className="contact-outline" href="/#contato" prefetch={false}>
               Vamos conversar ↗
             </Link>
             <button
@@ -102,7 +103,9 @@ function HeaderContents({ pathname }: { pathname: string }) {
           }}
         >
           {links}
-          <Link href="/#contato">Contato</Link>
+          <Link href="/#contato" prefetch={false}>
+            Contato
+          </Link>
         </nav>
       </header>
     </>

@@ -9,6 +9,35 @@ export default function ScrollReveals() {
   useEffect(() => {
     let cancelled = false;
     let cleanup = () => {};
+    let requested = false;
+    let scrolled = window.scrollY > 0;
+    const root = document.documentElement;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    // The first screen is server-rendered and already visible. Only download
+    // the animation library when scrolling can actually reveal another section.
+    const gate = new MutationObserver(startWhenNeeded);
+    function onScroll() {
+      scrolled = true;
+      startWhenNeeded();
+    }
+    function startWhenNeeded() {
+      if (requested || cancelled) return;
+      if (reduced.matches && root.dataset.motion !== "full") {
+        root.dataset.scrollReveals = "ready";
+        return;
+      }
+      if (!scrolled) {
+        root.dataset.scrollReveals = "deferred";
+        return;
+      }
+      requested = true;
+      gate.disconnect();
+      reduced.removeEventListener("change", startWhenNeeded);
+      window.removeEventListener("scroll", onScroll);
+      delete root.dataset.scrollReveals;
+      void initialize();
+    }
 
     async function initialize() {
       try {
@@ -92,10 +121,17 @@ export default function ScrollReveals() {
       }
     }
 
-    void initialize();
+    gate.observe(root, { attributes: true, attributeFilter: ["data-motion"] });
+    reduced.addEventListener("change", startWhenNeeded);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    startWhenNeeded();
     return () => {
       cancelled = true;
+      gate.disconnect();
+      reduced.removeEventListener("change", startWhenNeeded);
+      window.removeEventListener("scroll", onScroll);
       cleanup();
+      delete root.dataset.scrollReveals;
     };
   }, [pathname]);
 

@@ -1,5 +1,7 @@
 # Etapa 2 — ScrollTrigger e indicador de rolagem
 
+**Atualização de 26/10/2026:** o indicador agora calcula a proporção nativa de rolagem com `requestAnimationFrame` e `ResizeObserver`, sem baixar GSAP. As entradas das seções mantêm GSAP/ScrollTrigger, carregados somente após a primeira rolagem e respeitando movimento reduzido. O comportamento visual do indicador foi preservado; a implementação abaixo é o registro histórico da primeira versão. Diagnóstico de rede e medições estão em [FIRST_LOAD_REVIEW_2026-10-26.md](FIRST_LOAD_REVIEW_2026-10-26.md).
+
 Atualização de 22/10: a revisão com entradas das seções, diagnóstico recebido do proprietário e novos checks está em [ANIMATION_REVIEW_2026-10-22.md](ANIMATION_REVIEW_2026-10-22.md). Os números abaixo registram a primeira versão desta etapa.
 
 Implementação inicial em 21/10/2026, após aprovação da etapa de animações automáticas de 300 ms. A revisão de 22/10 foi aprovada para atualização no GitHub; os detalhes e resultados finais estão no relatório vinculado acima.

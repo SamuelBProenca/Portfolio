@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "contact:check": "node scripts/check-contact.mjs",
     "contact:check:vercel": "node scripts/check-contact.mjs --vercel",
+    "site:check": "node scripts/check-site-loading.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
