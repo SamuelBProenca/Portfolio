@@ -35,13 +35,13 @@ export default function HomePage() {
                 simplificar rotinas. Minha base em infraestrutura orienta cada decisão.
               </p>
               <div className="hero-actions">
-                <Link className="button-primary" href="/projetos">
+                <Link className="button-primary" href="/projetos" prefetch={false}>
                   Explore meus projetos{" "}
                   <span className="arr" aria-hidden="true">
                     ↗
                   </span>
                 </Link>
-                <Link className="button-secondary" href="/sobre">
+                <Link className="button-secondary" href="/sobre" prefetch={false}>
                   Conheça minha trajetória{" "}
                   <span className="arr" aria-hidden="true">
                     ↗

@@ -1,4 +1,10 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function activateEntrances(page: Page) {
+  await page.evaluate(() => scrollTo({ top: 4, behavior: "instant" }));
+  await expect(page.locator("html")).toHaveAttribute("data-scroll-reveals", "ready");
+  await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+}
 
 for (const legacyOptIn of [false, true]) {
   test(`sections visibly fade and rise at 300ms with ${legacyOptIn ? "the saved opt-in" : "automatic motion"}`, async ({
@@ -9,7 +15,7 @@ for (const legacyOptIn of [false, true]) {
       await page.addInitScript(() => localStorage.setItem("portfolio:full-motion", "true"));
     }
     await page.goto("/");
-    await expect(page.locator("html")).toHaveAttribute("data-scroll-reveals", "ready");
+    await activateEntrances(page);
     const target = page.locator(".about-content");
     await expect(target).toHaveCSS("opacity", "0");
     const frames = await target.evaluate(async (element) => {
@@ -54,6 +60,9 @@ test("system changes reveal content immediately and can enable future entrances"
   await expect(target).toHaveCSS("opacity", "1");
   await expect(target).toHaveCSS("transform", "none");
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect(page.locator("html")).toHaveAttribute("data-scroll-reveals", "deferred");
+  await expect(target).toHaveCSS("opacity", "1");
+  await activateEntrances(page);
   await expect(target).toHaveCSS("opacity", "0");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(target).toHaveCSS("opacity", "1");
@@ -63,7 +72,7 @@ test("system changes reveal content immediately and can enable future entrances"
 test("keyboard focus never lands inside an invisible section", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-scroll-reveals", "ready");
+  await activateEntrances(page);
   const section = page.locator(".writing-col").first();
   await expect(section).toHaveCSS("opacity", "0");
   const link = section.locator("a");
@@ -78,14 +87,16 @@ test("client navigation initializes entrances for the new page and restores them
 }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-scroll-reveals", "ready");
+  await activateEntrances(page);
   await page.locator(".button-primary").click();
   await expect(page).toHaveURL(/\/projetos$/);
+  await activateEntrances(page);
   await expect(page.locator(".empty-editorial")).toHaveCSS("opacity", "0");
   await page.locator(".empty-editorial").scrollIntoViewIfNeeded();
   await expect(page.locator(".empty-editorial")).toHaveCSS("opacity", "1");
   await page.locator(".wordmark").click();
   await expect(page).toHaveURL(/\/$/);
+  await activateEntrances(page);
   await expect(page.locator(".about-content")).toHaveCSS("opacity", "0");
   await expect(page.locator(".hero-description")).toHaveCSS("opacity", "1");
 });
