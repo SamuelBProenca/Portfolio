@@ -1,10 +1,10 @@
 import { expect, test as base } from "@playwright/test";
 
 const routes = [
-  { path: "/", label: "Início", heading: /MENOS/ },
-  { path: "/projetos", label: "Projetos", heading: /TRABALHO/ },
-  { path: "/sobre", label: "Sobre", heading: /CÓDIGO/ },
-  { path: "/escrita", label: "Escrita", heading: /IDEIAS/ },
+  { path: "/", label: "Início", heading: /Desenvolvo aplicações completas/ },
+  { path: "/projetos", label: "Projetos", heading: /Projetos/ },
+  { path: "/sobre", label: "Sobre", heading: /Da infraestrutura/ },
+  { path: "/escrita", label: "Escrita", heading: /Artigos, estudos e ensaios/ },
 ];
 
 const test = base.extend<{ browserErrors: string[] }>({
@@ -115,7 +115,7 @@ test("contact actions expose working email, GitHub and section destinations", as
   } else {
     await page
       .locator(".site-header")
-      .getByRole("link", { name: /Vamos conversar/ })
+      .getByRole("link", { name: /Entrar em contato/ })
       .click();
   }
   await expect(page).toHaveURL(/\/#contato$/);
@@ -168,13 +168,17 @@ test("selected works switches one accordion panel at a time", async ({ page, isM
     {
       name: "GreatMaker",
       repository: "GreatMaker",
-      headline: "Da referência à decisão de design.",
+      headline: "Referências de design reunidas em um só projeto.",
     },
-    { name: "OctoCards", repository: "OctoCards", headline: "Do repositório para o portfólio." },
+    {
+      name: "OctoCards",
+      repository: "OctoCards",
+      headline: "Dados do GitHub prontos para alimentar suas próprias interfaces.",
+    },
     {
       name: "LinkKeeper",
       repository: "LinkKeeper",
-      headline: "Guardar o link. Definir seu ciclo.",
+      headline: "Links classificados, com prazo e ciclo de vida.",
     },
   ]) {
     const trigger = works.getByRole("button", { name: new RegExp(project.name) });
@@ -260,7 +264,7 @@ test("engineering plan supports nested tasks, references, dependencies and reduc
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await page.getByRole("link", { name: "Ver plano técnico", exact: true }).click();
+  await page.getByRole("link", { name: "Consultar plano técnico", exact: true }).click();
   await expect(page).toHaveURL(/\/projetos\/octocards$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("DADOS COM");
   await expect(page.getByRole("progressbar")).toHaveAttribute("value", "11");

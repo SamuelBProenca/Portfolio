@@ -109,7 +109,7 @@ test("progress recalculates after accordion changes, dynamic content and client 
     element.textContent += " Contexto adicional de engenharia.".repeat(150);
   });
   await expectSynchronized(page);
-  await page.getByRole("link", { name: "Conheça minha trajetória", exact: true }).click();
+  await page.getByRole("link", { name: "Sobre mim", exact: true }).click();
   await expect(page).toHaveURL(/\/sobre$/);
   // URL updates can precede the new page's commit and Next's scroll restoration.
   await expect(page.locator(".page-hero")).toBeVisible();
@@ -235,7 +235,7 @@ test("existing animations survive ScrollTrigger initialization, refresh and rout
     )
     .toBe(0);
   await expectExistingMotion();
-  await page.getByRole("link", { name: "Conheça minha trajetória", exact: true }).click();
+  await page.getByRole("link", { name: "Sobre mim", exact: true }).click();
   await expect(page).toHaveURL(/\/sobre$/);
   await page.locator(".wordmark").click();
   await expect(page).toHaveURL(/\/$/);

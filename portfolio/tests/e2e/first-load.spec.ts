@@ -77,7 +77,7 @@ test.describe("without JavaScript", () => {
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator(".hero-description")).toBeVisible();
     await expect(page.locator("html")).not.toHaveAttribute("data-scroll-progress");
-    await page.getByRole("link", { name: "Explore meus projetos", exact: true }).click();
+    await page.getByRole("link", { name: "Ver projetos", exact: true }).click();
     await expect(page).toHaveURL(/\/projetos$/);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });

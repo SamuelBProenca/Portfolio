@@ -15,9 +15,9 @@ import "@/styles/repository-evidence.css";
 
 export const metadata: Metadata = {
   icons: { icon: "/favicon.svg" },
-  title: { default: "Samuel Proença — Engenharia de Software", template: "%s — Samuel Proença" },
+  title: { default: "Samuel Proença | Desenvolvedor full-stack", template: "%s | Samuel Proença" },
   description:
-    "Samuel Proença: desenvolvimento backend, APIs e automação com base em infraestrutura. Conheça os projetos, as decisões técnicas e minha trajetória.",
+    "Conheça os projetos de Samuel Proença: aplicações web, APIs, automações e ferramentas desenvolvidas com TypeScript, React, Python e C#/.NET.",
 };
 
 export const viewport: Viewport = { colorScheme: "dark", themeColor: "#141414" };

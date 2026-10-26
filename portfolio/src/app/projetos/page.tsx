@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "@/components/page-hero";
 import { loadProjectCatalog } from "@/lib/project-catalog";
+import copyStyles from "@/styles/copy-v2.module.css";
 
 export const metadata: Metadata = {
   title: "Projetos",
@@ -18,10 +19,9 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHero
-        eyebrow="Projetos / Seleção"
-        title="MEU"
-        accent="TRABALHO."
-        description="Produtos web, APIs, ferramentas e interfaces. Conheça o problema que orienta cada projeto, o que já está disponível e as decisões que sustentam sua evolução."
+        eyebrow="Projetos / Arquivo"
+        title="Projetos"
+        description="Aplicações completas, APIs, ferramentas operacionais e estudos. Os projetos apresentam o código disponível, o estágio de desenvolvimento e as decisões técnicas que consigo documentar."
       />
       <section className="content-section">
         <div className="container">
@@ -80,13 +80,15 @@ export default async function ProjectsPage() {
             </article>
           ))}
           <div className="empty-editorial" data-scroll-reveal>
-            <h3>Conheça as decisões por trás do código.</h3>
+            <h3 className={copyStyles.footerHeading}>
+              OctoCards: implementação, testes e próximos passos.
+            </h3>
             <p>
-              O plano técnico do OctoCards apresenta a alpha com cache e documentação, as evidências
-              no código e os próximos passos de operação e integração.
+              O estudo técnico apresenta a estrutura da API, as funcionalidades existentes e as
+              pendências conhecidas.
             </p>
             <Link className="text-link" href="/projetos/octocards">
-              Explore o plano do OctoCards{" "}
+              Consultar estudo técnico{" "}
               <span className="arr" aria-hidden="true">
                 ↗
               </span>

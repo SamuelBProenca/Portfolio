@@ -221,12 +221,12 @@ test("writing previews keep bookmarked categories without suggesting available a
     const collection = page.locator(`#${id}`);
     await expect(collection).toBeInViewport();
     await expect(collection).toHaveAccessibleName(
-      id === "engenharia" ? "Engenharia & prática" : "Ensaios & hipóteses",
+      id === "engenharia" ? "Engenharia e prática" : "Ensaios e hipóteses",
     );
     await expect(collection.getByText("Publicações em preparação")).toBeVisible();
     await expect(collection.getByRole("link")).toHaveCount(0);
     await expect(
-      page.getByText("Ainda não há artigos publicados.", { exact: false }),
+      page.getByText("Ainda não há artigos publicados aqui.", { exact: false }),
     ).toBeVisible();
   }
 });

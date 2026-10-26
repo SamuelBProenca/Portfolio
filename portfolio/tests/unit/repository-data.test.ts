@@ -87,7 +87,7 @@ describe("public repository data", () => {
     expect(catalog.find((item) => item.id === "curriculum")?.evidence).toBeUndefined();
     expect(fetcher).toHaveBeenCalledTimes(6);
     expect(catalog.find((item) => item.id === "octocards")?.headline).toBe(
-      "Do repositório para o portfólio.",
+      "Dados do GitHub prontos para alimentar suas próprias interfaces.",
     );
   });
   it.each([429, 503])("falls back on HTTP %s without removing catalog entries", async (status) => {

@@ -216,7 +216,7 @@ test("the selected navigation underline draws progressively when the route chang
     });
     observer.observe(target, { attributes: true, attributeFilter: ["aria-current"] });
   });
-  await page.getByRole("link", { name: "Explore meus projetos" }).click();
+  await page.getByRole("link", { name: "Ver projetos" }).click();
   await expect(link).toHaveAttribute("aria-current", "page");
   await expect
     .poll(() =>
@@ -341,7 +341,7 @@ test("reduced motion shows the full static strip and changes accordion state imm
   await page.goto("/");
   const strip = page.getByRole("region", { name: "Especialidades" });
   await expect(strip.getByRole("button")).toHaveCount(0);
-  await expect(strip.getByRole("listitem")).toHaveCount(4);
+  await expect(strip.getByRole("listitem")).toHaveCount(5);
   expect(
     await strip
       .locator(".intro-strip__track")
