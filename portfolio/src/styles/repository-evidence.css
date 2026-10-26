@@ -1,0 +1,44 @@
+.repository-evidence {
+  padding: 36px 0 48px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--hairline);
+}
+.repository-evidence h2 {
+  margin-bottom: 16px;
+}
+.repository-evidence > p,
+.repository-languages {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.repository-evidence summary {
+  cursor: pointer;
+  padding: 18px 0;
+  min-height: 48px;
+  color: var(--paper);
+  text-underline-offset: 5px;
+}
+.repository-evidence summary:hover {
+  text-decoration: underline;
+}
+.repository-evidence summary:focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 4px;
+}
+.repository-evidence pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 32rem;
+  overflow: auto;
+  font-family: var(--font-mono, monospace);
+  font-size: 14px;
+  line-height: 1.8;
+  padding: 20px;
+  background: var(--surface, #1b1b1b);
+  color: var(--paper);
+}
+.repository-languages {
+  display: block;
+  margin-top: 8px;
+}

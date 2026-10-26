@@ -75,8 +75,8 @@ export default function HomePage() {
           <div className="work-intro" data-scroll-reveal>
             <h2 className="section-head">Cada projeto, um problema para resolver.</h2>
             <p>
-              Automação de rotinas, integração de dados e estudo de arquitetura. Explore o contexto,
-              o código disponível e o estágio de cada projeto.
+              Um produto para adaptar currículos com evidências e uma API para integrar dados do
+              GitHub. Conheça o problema resolvido, o funcionamento e o estágio de cada entrega.
             </p>
           </div>
           <SelectedWorks projects={selectedProjects} />

@@ -18,6 +18,7 @@
     "contact:check:vercel": "node scripts/check-contact.mjs --vercel",
     "test": "vitest run",
     "test:watch": "vitest",
+    "projects:sync": "node scripts/sync-project-data.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test"

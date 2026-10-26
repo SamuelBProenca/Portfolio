@@ -11,9 +11,9 @@ describe("project progress", () => {
   it("counts only leaf tasks and marks only evidenced OctoCards work complete", () => {
     const summary = summarizeProgress(planTasks(octocardsPlan));
     expect(summary).toEqual({
-      total: 12,
-      percent: 25,
-      counts: { planned: 9, "in-progress": 0, blocked: 0, completed: 3 },
+      total: 15,
+      percent: 73,
+      counts: { planned: 4, "in-progress": 0, blocked: 0, completed: 11 },
     });
     expect(() => validatePlan(octocardsPlan)).not.toThrow();
   });

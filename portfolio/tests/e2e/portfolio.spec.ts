@@ -166,12 +166,6 @@ test("selected works switches one accordion panel at a time", async ({ page, isM
 
   for (const project of [
     { name: "OctoCards", repository: "OctoCards", headline: "Do repositório para o portfólio." },
-    {
-      name: "Design Patterns Dojo",
-      repository: "DesignPatternsDojo",
-      headline: "Entender o padrão. Exercitar a decisão.",
-    },
-    { name: "OpsCLI", repository: "OpsCLI", headline: "Menos repetição. Mais organização." },
   ]) {
     const trigger = works.getByRole("button", { name: new RegExp(project.name) });
     await trigger.click();
@@ -188,11 +182,12 @@ test("selected works switches one accordion panel at a time", async ({ page, isM
     expect(box!.x + box!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
   }
 
-  const active = works.getByRole("button", { name: /OpsCLI/ });
+  await expect(works.getByRole("button")).toHaveCount(2);
+  const active = works.getByRole("button", { name: /OctoCards/ });
   await active.press("Enter");
   await expect(works.getByRole("region")).toHaveCount(0);
   await active.press("ArrowDown");
-  const next = works.getByRole("button", { name: /OctoCards/ });
+  const next = works.getByRole("button", { name: /Curriculum Studio/ });
   await expect(next).toBeFocused();
   await next.press("Space");
   await expect(next).toHaveAttribute("aria-expanded", "true");
@@ -258,8 +253,8 @@ test("engineering plan supports nested tasks, references, dependencies and reduc
   await page.getByRole("link", { name: "Ver plano técnico", exact: true }).click();
   await expect(page).toHaveURL(/\/projetos\/octocards$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("DADOS COM");
-  await expect(page.getByRole("progressbar")).toHaveAttribute("value", "3");
-  await expect(page.getByRole("progressbar")).toHaveAttribute("max", "12");
+  await expect(page.getByRole("progressbar")).toHaveAttribute("value", "11");
+  await expect(page.getByRole("progressbar")).toHaveAttribute("max", "15");
   const groups = page.locator(".project-plan__group");
   await groups.nth(0).locator(":scope > summary").click();
   const reliability = groups.nth(1);

@@ -19,8 +19,8 @@ export default function EngineeringProgress({ plan }: { plan: ProjectPlan }) {
           <div className="engineering-progress__project">
             <span className="eyebrow">{plan.title} / Plano de evolução</span>
             <p>
-              Uma base de API implementada. Próximas etapas propostas: validação, confiabilidade,
-              testes e integração.
+              API em alpha com cache, validação, erros padronizados e documentação. Próximas etapas:
+              limites de lote, política de tentativas e operação da integração.
             </p>
             <div className="engineering-progress__meta">
               <span>
