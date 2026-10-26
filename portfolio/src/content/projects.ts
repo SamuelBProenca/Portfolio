@@ -22,9 +22,9 @@ export type SelectedProject = Omit<Project, "number" | "id"> & {
   };
 };
 
-// Public repository evidence reviewed on 2026-10-19; private product on 2026-10-23.
+// OctoCards reviewed on 2026-10-26; other public work on 2026-10-19; private product on 2026-10-23.
 // See docs/PROJECT_SOURCES.md for evidence and publication limits.
-export const selectedProjects = [
+export const catalogProjects = [
   {
     id: "curriculum",
     title: "Curriculum Studio",
@@ -67,12 +67,12 @@ export const selectedProjects = [
     id: "octocards",
     detailsHref: "/projetos/octocards",
     title: "OctoCards",
-    summary: "Repositórios do GitHub, organizados em cards.",
-    category: "Backend / Integração com GitHub",
+    summary: "Dados do GitHub para interfaces feitas sob medida.",
+    category: "API de dados / Alpha",
     headline: "Do repositório para o portfólio.",
     technologies: "TypeScript / Node.js / Express / API GitHub",
     description:
-      "API que reúne dados de repositórios do GitHub para montar cards de portfólio, com consultas individuais ou em lote. O backend TypeScript com Express separa rotas, controllers, serviços e tipos para organizar a integração e sua evolução.",
+      "Uma fonte de dados para portfólios e catálogos, sem impor a interface. A API reúne README, linguagens e metadados de repositórios públicos, seleciona capas e oferece consultas individuais ou em lote. A alpha inclui cache, tratamento de erros, documentação OpenAPI e um playground opcional.",
     repository: "https://github.com/SamuelBProenca/OctoCards",
     visual: {
       kind: "api",
@@ -81,7 +81,7 @@ export const selectedProjects = [
       lines: [
         "01 / Repositórios do GitHub",
         "02 / Dados estruturados em JSON",
-        "03 / Cards para o portfólio",
+        "03 / A interface é sua",
       ],
     },
   },
@@ -104,7 +104,16 @@ export const selectedProjects = [
   },
 ] satisfies readonly SelectedProject[];
 
-export const projects: readonly Project[] = selectedProjects.map((project, index) => ({
+// Commercial selection is explicit. Repository activity or stars never promote a project.
+export const featuredProjectIds: readonly string[] = ["curriculum", "octocards"];
+export function selectFeaturedProjects<T extends { id: string }>(catalog: readonly T[]): T[] {
+  return featuredProjectIds.flatMap((id) => {
+    const project = catalog.find((item) => item.id === id);
+    return project ? [project] : [];
+  });
+}
+export const selectedProjects = selectFeaturedProjects(catalogProjects);
+export const projects: readonly Project[] = catalogProjects.map((project, index) => ({
   number: String(index + 1).padStart(2, "0"),
   ...project,
 }));

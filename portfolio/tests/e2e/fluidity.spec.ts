@@ -22,7 +22,7 @@ test("text links draw only a thin underline with 300ms hover and keyboard feedba
     await page.goto(route.path);
     for (const selector of route.selectors) {
       if (selector === ".project-accordion__repository") {
-        await page.getByRole("button", { name: /OpsCLI/ }).click();
+        await page.getByRole("button", { name: /OctoCards/ }).click();
         await page.locator(".project-accordion").evaluate(async (element) => {
           await new Promise(requestAnimationFrame);
           await Promise.all(
@@ -136,7 +136,7 @@ test("accordion height and opacity progress in both directions without exposing 
   const trigger = item.getByRole("button");
   await trigger.click();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: /OpsCLI/ })).toBeFocused();
+  await expect(page.getByRole("button", { name: /OctoCards/ })).toBeFocused();
 });
 
 test("accordion reverses interrupted transitions and accommodates content and viewport changes", async ({
@@ -146,13 +146,13 @@ test("accordion reverses interrupted transitions and accommodates content and vi
   await page.goto("/#projetos");
   await page.locator(".project-accordion").evaluate(async (element) => {
     const buttons = element.querySelectorAll<HTMLButtonElement>(".project-accordion__trigger");
-    for (const index of [1, 0, 3, 0, 1, 1, 3]) {
+    for (const index of [1, 0, 1, 0, 1, 1, 1]) {
       buttons[index].click();
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
     }
   });
-  const panel = page.getByRole("region", { name: /Design Patterns Dojo/ });
+  const panel = page.getByRole("region", { name: /OctoCards/ });
   await expect(page.locator(".project-accordion").getByRole("region")).toHaveCount(1);
   await expect
     .poll(() => panel.evaluate((element) => Number(getComputedStyle(element).opacity)))

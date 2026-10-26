@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageHero from "@/components/page-hero";
-import { projects } from "@/content/projects";
+import { loadProjectCatalog } from "@/lib/project-catalog";
 
 export const metadata: Metadata = {
   title: "Projetos",
@@ -9,7 +9,12 @@ export const metadata: Metadata = {
     "Projetos de automação, APIs e engenharia de software de Samuel Proença, com seus contextos e tecnologias.",
 };
 
-export default function ProjectsPage() {
+export const revalidate = 3600;
+export default async function ProjectsPage() {
+  const projects = (await loadProjectCatalog()).map((project, index) => ({
+    number: String(index + 1).padStart(2, "0"),
+    ...project,
+  }));
   return (
     <>
       <PageHero
@@ -28,13 +33,19 @@ export default function ProjectsPage() {
             <article
               className="project-entry"
               data-scroll-reveal
-              id={"id" in project ? project.id : undefined}
+              id={project.id}
               key={project.number}
             >
               <span className="num">{project.number}</span>
               <div>
                 <h2>{project.title}</h2>
                 <span className="project-entry__meta">{project.technologies}</span>
+                {project.evidence && (
+                  <span className="repository-languages">
+                    Linguagens no GitHub:{" "}
+                    {project.evidence.card.principal_languages.join(", ") || "não informadas"}
+                  </span>
+                )}
               </div>
               <p>
                 {project.description}
@@ -71,8 +82,8 @@ export default function ProjectsPage() {
           <div className="empty-editorial" data-scroll-reveal>
             <h3>Conheça as decisões por trás do código.</h3>
             <p>
-              O plano técnico do OctoCards reúne a base implementada, as evidências no código e as
-              próximas etapas propostas de validação, confiabilidade e testes.
+              O plano técnico do OctoCards apresenta a alpha com cache e documentação, as evidências
+              no código e os próximos passos de operação e integração.
             </p>
             <Link className="text-link" href="/projetos/octocards">
               Explore o plano do OctoCards{" "}

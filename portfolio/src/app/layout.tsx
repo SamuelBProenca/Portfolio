@@ -11,6 +11,7 @@ import "@/styles/responsive.css";
 import "@/styles/rework.css";
 import "@/styles/interactions.css";
 import "@/styles/curriculum-studio.css";
+import "@/styles/repository-evidence.css";
 
 export const metadata: Metadata = {
   title: { default: "Samuel Proença — Engenharia de Software", template: "%s — Samuel Proença" },

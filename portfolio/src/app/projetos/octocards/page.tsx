@@ -4,6 +4,10 @@ import PageHero from "@/components/page-hero";
 import ProjectPlan from "@/components/project-progress/ProjectPlan";
 import { localProjectProgress } from "@/content/project-progress";
 import { validatePlan } from "@/lib/project-progress";
+import { loadProjectCatalog } from "@/lib/project-catalog";
+import RepositoryEvidence from "@/components/repository-evidence";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "OctoCards — Plano de engenharia",
@@ -15,6 +19,7 @@ export default async function OctocardsPage() {
   const plan = await localProjectProgress.load("octocards");
   if (!plan) throw new Error("OctoCards plan unavailable");
   validatePlan(plan);
+  const octocards = (await loadProjectCatalog()).find((project) => project.id === "octocards");
   return (
     <>
       <PageHero
@@ -38,6 +43,7 @@ export default async function OctocardsPage() {
               Repositório no GitHub ↗
             </a>
           </div>
+          <RepositoryEvidence evidence={octocards?.evidence} />
           <div className="section-top">
             <h2 id="project-plan-title">Plano de engenharia</h2>
             <span className="section-index">IMPLEMENTAÇÃO / EVOLUÇÃO</span>

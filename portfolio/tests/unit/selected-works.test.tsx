@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import SelectedWorks from "@/components/selected-works";
-import { selectedProjects } from "@/content/projects";
+import { catalogProjects as selectedProjects } from "@/content/projects";
 
 describe("selected works accordion", () => {
   it("keeps closing panels mounted for animation but excludes their content from interaction", async () => {
