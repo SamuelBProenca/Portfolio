@@ -45,7 +45,7 @@ Outros comandos: `npm run test:watch`, `npm run test:e2e:ui`, `npm run format` e
 
 ## Dados públicos e destaques
 
-A landing page destaca Curriculum Studio e OctoCards por curadoria explícita. O catálogo mantém também propostas e estudos. Seus dados técnicos vêm do GitHub no servidor, com cache e referência local para falhas; o contrato permite consumir a API OctoCards quando houver uma instância publicada.
+A landing page destaca Curriculum Studio, GreatMaker, OctoCards e LinkKeeper por curadoria explícita. O catálogo inclui também IcarusRoc, OpsCLI e Design Patterns Dojo, com o estágio de cada projeto identificado. Seus dados técnicos vêm do GitHub no servidor, com cache e referência local para falhas; o contrato permite consumir a API OctoCards quando houver uma instância publicada.
 
 Use `npm run projects:sync` para renovar a referência salva e revise o diff. O comando preserva o arquivo anterior se alguma coleta falhar. Configuração, limites e operação estão em [docs/PROJECT_DATA.md](docs/PROJECT_DATA.md). Para testar com Edge já instalado no Windows, defina `PLAYWRIGHT_CHANNEL=msedge` antes da suíte de navegador.
 

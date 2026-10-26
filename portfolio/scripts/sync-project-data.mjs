@@ -2,22 +2,31 @@ import { readFile, writeFile, rename } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
-async function syncProjects() {
-  // Reuse the validated consumer, without adding another TypeScript runtime dependency.
-  const source = await readFile(new URL("../src/lib/repository-data.ts", import.meta.url), "utf8");
+// Load trusted local modules without adding another TypeScript runtime dependency.
+async function loadLocalModule(path) {
+  const source = await readFile(new URL(path, import.meta.url), "utf8");
   const compiled = ts.transpileModule(source, {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022 },
   }).outputText;
-  const { fetchRepositoryCard } = await import(
-    `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`
-  );
-  const names = ["OctoCards", "OpsCLI", "DesignPatternsDojo"];
+  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`);
+}
+
+async function syncProjects() {
+  const [{ fetchRepositoryCard }, { catalogProjects }] = await Promise.all([
+    loadLocalModule("../src/lib/repository-data.ts"),
+    loadLocalModule("../src/content/projects.ts"),
+  ]);
   const options = {
     apiOrigin: process.env.OCTOCARDS_API_ORIGIN,
     githubToken: process.env.GITHUB_TOKEN,
   };
   const cards = await Promise.all(
-    names.map((name) => fetchRepositoryCard({ owner: "SamuelBProenca", name }, options)),
+    catalogProjects
+      .filter((project) => project.repository)
+      .map((project) => {
+        const [owner, name] = new URL(project.repository).pathname.slice(1).split("/");
+        return fetchRepositoryCard({ owner, name }, options);
+      }),
   );
   const target = fileURLToPath(new URL("../src/content/repository-snapshot.json", import.meta.url));
   await writeFile(

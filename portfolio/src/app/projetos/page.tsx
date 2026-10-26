@@ -6,7 +6,7 @@ import { loadProjectCatalog } from "@/lib/project-catalog";
 export const metadata: Metadata = {
   title: "Projetos",
   description:
-    "Projetos de automação, APIs e engenharia de software de Samuel Proença, com seus contextos e tecnologias.",
+    "Produtos web, APIs, ferramentas e interfaces de Samuel Proença: Curriculum Studio, GreatMaker, OctoCards, LinkKeeper e outros projetos com contexto e tecnologias.",
 };
 
 export const revalidate = 3600;
@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
         eyebrow="Projetos / Seleção"
         title="MEU"
         accent="TRABALHO."
-        description="APIs, automação e estudos de arquitetura. Conheça o problema que orienta cada projeto, o que já está disponível e as decisões que sustentam sua evolução."
+        description="Produtos web, APIs, ferramentas e interfaces. Conheça o problema que orienta cada projeto, o que já está disponível e as decisões que sustentam sua evolução."
       />
       <section className="content-section">
         <div className="container">

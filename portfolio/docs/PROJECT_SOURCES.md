@@ -1,6 +1,6 @@
 # Fontes dos trabalhos selecionados
 
-Curadoria inicial dos repositórios públicos em 19/10/2026, atualizada para a alpha do OctoCards em 26/10/2026. Os textos editoriais de `src/content/projects.ts` preservam contexto e maturidade; a home destaca Curriculum Studio e OctoCards. OpsCLI e Design Patterns Dojo continuam no catálogo.
+Curadoria inicial dos repositórios públicos em 19/10/2026, ampliada em 26/10/2026. Os textos editoriais de `src/content/projects.ts` preservam contexto e maturidade; a home destaca Curriculum Studio, GreatMaker, OctoCards e LinkKeeper. IcarusRoc, OpsCLI e Design Patterns Dojo completam o catálogo.
 
 O catálogo e a página técnica consultam o GitHub no servidor, com validação, cache de uma hora e fallback independente por projeto. O navegador não recebe credenciais nem chama a API do GitHub. A home não depende dessas consultas. O contrato também aceita uma instância OctoCards quando sua origem for configurada. Veja [dados dos projetos e curadoria](PROJECT_DATA.md).
 
@@ -14,7 +14,15 @@ O antigo destaque de automação apontava para [network_monitoring](https://gith
 
 Em 23/10/2026, Curriculum Studio foi incluído como primeiro destaque após revisão do produto privado e teste local de análise, revisão e PDF. O painel explica o vínculo entre requisitos da vaga e fatos do perfil, o processamento em memória e a preservação dos textos das experiências. O botão abre `/curriculumstudio`; não há link para o código privado. O endereço `/projetos#curriculum` foi preservado e usa o mesmo conteúdo. A publicação depende dos deploys e da configuração descrita em [CURRICULUM_STUDIO.md](CURRICULUM_STUDIO.md).
 
-As ilustrações dos dois destaques mostram o fluxo da API e o editor de currículo. Não são capturas de execução, métricas de uso ou resultados de testes dos repositórios. A ilustração do Curriculum Studio é feita em HTML/CSS, sem dados de candidatos. As propostas e os estudos continuam acessíveis no catálogo. Nenhuma instância pública da API OctoCards foi confirmada nesta revisão.
+O GreatMaker usa uma captura real da biblioteca do DesignRef M1, proveniente de `GreatMaker/docs/screenshots/library-desktop.png`, no commit `90cbf7b`. Mostra uma sessão isolada de testes, sem dados de clientes; o arquivo foi copiado para `public/images/greatmaker-reference-hub.png`. Os demais painéis são esquemas em HTML/CSS do editor de currículo, do fluxo da API e da camada de armazenamento do LinkKeeper. Não representam métricas de uso ou resultados comerciais. Nenhuma instância pública da API OctoCards, do GreatMaker ou do LinkKeeper foi confirmada nesta revisão.
+
+## Ampliação de 26/10/2026
+
+- **GreatMaker**: [README no commit 90cbf7b](https://github.com/SamuelBProenca/GreatMaker/blob/90cbf7bb1002351a0ca1acae7397bb461f8b6fb7/README.md) e [relatório M1](https://github.com/SamuelBProenca/GreatMaker/blob/90cbf7bb1002351a0ca1acae7397bb461f8b6fb7/docs/m1-verification.md). Reference Hub local com referências, brief, decisões e exportação; geração de interfaces e IA não são atribuídas ao M1.
+- **LinkKeeper**: [LinkStore no commit 63ec801](https://github.com/SamuelBProenca/LinkKeeper/blob/63ec801f0feb6d212f12eb0bad9041a93a69ea0e/src/LinkKeeper.Storage/LinkStore.cs), [LinkItem](https://github.com/SamuelBProenca/LinkKeeper/blob/63ec801f0feb6d212f12eb0bad9041a93a69ea0e/src/LinkKeeper.Core/LinkItem.cs) e [CLI](https://github.com/SamuelBProenca/LinkKeeper/blob/63ec801f0feb6d212f12eb0bad9041a93a69ea0e/src/LinkKeeper.Cli/Program.cs). O código já contém persistência e ciclo de vida, embora README e FOUNDATION ainda descrevam a fundação anterior. A CLI continua somente de validação. API, autenticação, WhatsApp e worker não são apresentados como entregues. A revisão foi de código, sem executar o projeto .NET nesta entrega.
+- **IcarusRoc**: [página no commit 4771a0c](https://github.com/SamuelBProenca/IcarusRoc/blob/4771a0c87a01ea1cbd1be468306c014f5ade739f/src/app/page.tsx), [dependências](https://github.com/SamuelBProenca/IcarusRoc/blob/4771a0c87a01ea1cbd1be468306c014f5ade739f/package.json) e [formulário](https://github.com/SamuelBProenca/IcarusRoc/blob/4771a0c87a01ea1cbd1be468306c014f5ade739f/components/ContactForm/ContactForm.tsx). Exemplo de landing page de serviços com Next.js, React, TypeScript e Tailwind. Não foram reutilizados depoimentos, números, planos ou alegações comerciais do projeto. Envio do formulário e operação pública não foram testados.
+
+A busca pública também mostrou repositórios de cursos, exercícios, propostas e versões anteriores de CRUD. Eles não foram promovidos automaticamente à home; os destaques continuam sendo uma decisão editorial explícita.
 
 ## Comportamento do accordion
 

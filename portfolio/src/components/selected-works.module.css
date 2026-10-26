@@ -1,0 +1,12 @@
+.referenceVisual {
+  background: var(--canvas);
+  border-color: var(--hairline);
+  padding: 74px 24px 36px;
+}
+
+.referenceImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--hairline);
+}

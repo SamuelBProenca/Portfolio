@@ -30,7 +30,13 @@ test("text links draw only a thin underline with 300ms hover and keyboard feedba
           );
         });
       }
-      const link = page.locator(selector).first();
+      const link =
+        selector === ".project-accordion__repository"
+          ? page
+              .getByRole("region", { name: /OctoCards/ })
+              .locator(selector)
+              .first()
+          : page.locator(selector).first();
       await link.evaluate((element) =>
         element.scrollIntoView({ block: "center", behavior: "instant" }),
       );
@@ -136,7 +142,7 @@ test("accordion height and opacity progress in both directions without exposing 
   const trigger = item.getByRole("button");
   await trigger.click();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: /OctoCards/ })).toBeFocused();
+  await expect(page.getByRole("button", { name: /GreatMaker/ })).toBeFocused();
 });
 
 test("accordion reverses interrupted transitions and accommodates content and viewport changes", async ({
@@ -152,7 +158,7 @@ test("accordion reverses interrupted transitions and accommodates content and vi
       await new Promise(requestAnimationFrame);
     }
   });
-  const panel = page.getByRole("region", { name: /OctoCards/ });
+  const panel = page.getByRole("region", { name: /GreatMaker/ });
   await expect(page.locator(".project-accordion").getByRole("region")).toHaveCount(1);
   await expect
     .poll(() => panel.evaluate((element) => Number(getComputedStyle(element).opacity)))
