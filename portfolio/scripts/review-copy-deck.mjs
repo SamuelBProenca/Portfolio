@@ -76,6 +76,10 @@ try {
     for (const path of paths) {
       await page.goto(origin + path);
       await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+      if (path === "/experimentos/cards") {
+        await page.waitForSelector('[data-enhanced="true"]');
+        await page.locator('li[data-position="current"] img').evaluate((image) => image.decode());
+      }
       const label = path === "/" ? "home" : "deck";
       await page.screenshot({ path: `${folder}/${label}-${device}.png`, fullPage: true });
       if ((await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)) > 1)
