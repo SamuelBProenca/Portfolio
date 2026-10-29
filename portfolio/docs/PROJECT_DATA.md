@@ -34,9 +34,11 @@ O adaptador consulta `/api/cards/:repo?owner=SamuelBProenca` por projeto, valida
 
 ## Revisão do OctoCards
 
-O plano foi atualizado para o commit `6f9ec4bb8d0ebe6f7ac5c59bcd17bcfe86cd85c9`, integrado em 26/10/2026. Inclui coleta pública, capa, consultas individuais e em lote, entradas validadas, erros padronizados, timeout, cache por cinco minutos limitado a 500 entradas, playground opcional, guia e OpenAPI.
+O plano foi atualizado em 28/10/2026 para o commit `b467160150a140bc1f6d19bc99f88fc0b4070333`, que integrou o PR #15. Além dos recursos anteriores, o código aplica dez entradas por lote, query de 2.048 caracteres, deduplicação e até três consultas simultâneas por lote. A API limita chamadas por IP (padrão de 12/minuto), com limite separado para documentação (120/minuto). Os limites e o cache continuam locais ao processo.
 
-A execução da suíte publicada confirmou 12 casos aprovados nos arquivos do serviço e do controller. O comando completo `npm test` ainda falha ao incluir o arquivo legado vazio `backend/src/tests/gitCardService.test.ts`. Essa falha permanece explícita e pendente no plano. Limite de lote, retentativas e conexão de uma instância publicada também não foram marcados como concluídos.
+A cópia isolada desse commit passou no comando completo `npm test`: cinco suítes e 33 testes. Também passaram typecheck, build compilado, smoke HTTP e audit de produção. O arquivo legado vazio foi removido no próprio OctoCards pelo commit `12ab4bc`; não houve exclusão local de testes para obter esse resultado. Backend CI e CodeQL desse commit passaram no GitHub.
+
+O plano preserva os IDs anteriores e acrescenta marcos de limite HTTP, build e CI, além das sete issues abertas #8–#14. Conta 16 de 25 tarefas-folha concluídas. Essa contagem não mede prontidão de produção. Retentativas, instância publicada, orçamento compartilhado, política global de lotes, privacidade de imagens, proteções de segredos, sincronização do contrato, script manual e advisory de desenvolvimento permanecem pendentes. O audit completo retorna sete alertas baixos na árvore Jest/deepmerge; isso não foi escondido nem corrigido com override/downgrade.
 
 ## Verificação
 

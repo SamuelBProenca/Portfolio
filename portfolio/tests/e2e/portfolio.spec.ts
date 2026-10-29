@@ -267,8 +267,8 @@ test("engineering plan supports nested tasks, references, dependencies and reduc
   await page.getByRole("link", { name: "Consultar plano técnico", exact: true }).click();
   await expect(page).toHaveURL(/\/projetos\/octocards$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("DADOS COM");
-  await expect(page.getByRole("progressbar")).toHaveAttribute("value", "11");
-  await expect(page.getByRole("progressbar")).toHaveAttribute("max", "15");
+  await expect(page.getByRole("progressbar")).toHaveAttribute("value", "16");
+  await expect(page.getByRole("progressbar")).toHaveAttribute("max", "25");
   const groups = page.locator(".project-plan__group");
   await groups.nth(0).locator(":scope > summary").click();
   const reliability = groups.nth(1);

@@ -24,7 +24,7 @@ export type SelectedProject = Omit<Project, "number" | "id"> & {
   };
 };
 
-// OctoCards, GreatMaker, LinkKeeper and IcarusRoc reviewed on 2026-10-26.
+// OctoCards reviewed on 2026-10-28; GreatMaker, LinkKeeper and IcarusRoc on 2026-10-26.
 // Other public work reviewed on 2026-10-19; private product on 2026-10-23.
 // See docs/PROJECT_SOURCES.md for evidence and publication limits.
 export const catalogProjects = [
@@ -79,7 +79,7 @@ export const catalogProjects = [
     status: "Alpha; sem instância pública confirmada",
     technologies: "TypeScript / Node.js / Express / API GitHub",
     description:
-      "A API coleta informações de repositórios públicos do GitHub e devolve um contrato estruturado para construir portfólios e catálogos. Oferece consultas individuais ou em lote, cache em memória, tratamento de erros, documentação OpenAPI e playground opcional. A operação de uma instância pública não foi confirmada.",
+      "A API coleta informações públicas do GitHub e devolve JSON para portfólios e catálogos. Inclui cache em memória, lotes de até dez entradas, concorrência limitada por lote, cota por IP, OpenAPI e playground opcional. A suíte completa passou com 33 testes; build compilado e smoke HTTP também foram verificados. A operação de uma instância pública não foi confirmada.",
     repository: "https://github.com/SamuelBProenca/OctoCards",
     visual: {
       kind: "api",

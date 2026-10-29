@@ -18,9 +18,9 @@ export default function EngineeringProgress({ plan }: { plan: ProjectPlan }) {
           <div className="engineering-progress__project">
             <span className="eyebrow">{plan.title} / Plano de evolução</span>
             <p>
-              A alpha consulta repositórios públicos, organiza os dados e oferece cache, tratamento
-              de erros e documentação. Ainda há trabalho no limite de lotes, na política de
-              retentativas, na suíte completa e na operação de uma instância pública.
+              A alpha consulta repositórios públicos e oferece cache, limites de lote e por IP,
+              documentação e testes automatizados. O plano detalha as entregas verificadas e as
+              pendências de operação, segurança e integração com uma instância pública.
             </p>
             <div className="engineering-progress__meta">
               <span>

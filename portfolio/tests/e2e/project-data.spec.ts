@@ -46,10 +46,21 @@ test("commercial highlights stay curated and the catalog exposes public reposito
     page.getByRole("link", { name: "Repositório de LinkKeeper", exact: true }),
   ).toHaveAttribute("href", "https://github.com/SamuelBProenca/LinkKeeper");
   await page.goto("/projetos/octocards");
-  await expect(page.getByRole("link", { name: /Código de referência 6f9ec4b/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Código de referência b467160/ })).toBeVisible();
+  const backlog = page
+    .locator(".project-plan__group")
+    .filter({ hasText: "Pendências da auditoria" });
+  await backlog.locator(":scope > summary").click();
+  const budget = page.locator("#octocards-task-global-github-budget");
+  await budget.locator(":scope > summary").click();
+  await expect(budget.getByRole("link", { name: /Issue #8/ })).toHaveAttribute(
+    "href",
+    "https://github.com/SamuelBProenca/OctoCards/issues/8",
+  );
   const source = page.getByRole("region", { name: "Dados do repositório OctoCards" });
   await source.locator("summary").click();
   await expect(source.locator("pre")).toContainText("# OctoCards");
+  await expect(source.locator("pre")).toContainText("API_RATE_LIMIT_MAX");
   expect(browserGithubRequests).toEqual([]);
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth - innerWidth),

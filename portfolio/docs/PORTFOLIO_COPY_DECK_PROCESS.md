@@ -116,6 +116,8 @@ As quatro capturas finais aguardam a decodificação da imagem antes da fotograf
 
 ## Retomada e limites de validação
 
+Em 28/10/2026, após a apresentação local, o proprietário autorizou condicionalmente o envio e a abertura de PR: medir desempenho novamente, conferir as atualizações do OctoCards no GitHub e passar nos testes a cada etapa. O registro dessa rodada e seus gates está em `OCTOCARDS_REFRESH_VERIFICATION_2026-10-28.md`. Essa autorização posterior substitui o bloqueio de envio descrito no histórico abaixo, sem autorizar merge ou publicação em produção.
+
 O commit local `9cdefaf` separa as copys do experimento. Antes de enviar qualquer branch, abrir PR ou publicar, apresentar esta rodada ao proprietário e receber aprovação explícita. O envio ainda não foi autorizado. CI remoto e validação de deployment continuam pendentes desse envio.
 
 Navegadores nesta rodada: Edge/Chromium com três perfis (desktop, desktop com toque e mobile emulado). Não houve teste em aparelho físico, Safari ou Firefox. O GET público de Curriculum foi conferido na etapa inicial; formulário e PDF públicos não receberam submissões nesta rodada. Os testes de contato e proxy usam os cenários locais controlados da suíte.
