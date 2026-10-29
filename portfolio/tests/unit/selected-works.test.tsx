@@ -67,7 +67,9 @@ describe("selected works accordion", () => {
     expect(screen.getAllByRole("region")).toHaveLength(1);
     const api = screen.getByRole("region", { name: /OctoCards/ });
     expect(
-      within(api).getByRole("heading", { name: "Do repositório para o portfólio." }),
+      within(api).getByRole("heading", {
+        name: "Dados do GitHub prontos para alimentar suas próprias interfaces.",
+      }),
     ).toBeVisible();
     expect(within(api).getByRole("link", { name: /OctoCards/ })).toHaveAttribute(
       "href",

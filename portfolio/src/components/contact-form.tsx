@@ -97,7 +97,8 @@ export default function ContactForm() {
       aria-busy={phase === "sending"}
     >
       <p className="contact-form__intro">
-        Conte o que você precisa resolver e como posso contribuir. Todos os campos são obrigatórios.
+        Preencha seus dados e descreva o projeto ou a oportunidade. Todos os campos são
+        obrigatórios.
       </p>
       <div className="contact-form__fields">
         {fields.map(({ name, label, type, autoComplete }) => (

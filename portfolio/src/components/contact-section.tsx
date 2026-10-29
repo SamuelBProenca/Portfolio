@@ -1,4 +1,5 @@
 import ContactForm from "@/components/contact-form";
+import styles from "@/styles/copy-v2.module.css";
 
 const linkedIn = "https://www.linkedin.com/in/samuel-proen%C3%A7a";
 
@@ -12,16 +13,13 @@ export default function ContactSection() {
         </div>
         <div className="contact-layout">
           <div className="contact-section__copy" data-scroll-reveal>
-            <h2>
-              Vamos falar
-              <br />
-              do próximo
-              <br />
-              projeto.
+            <h2 className={styles.contactHeading}>
+              Tem uma aplicação para desenvolver ou um processo para automatizar?
             </h2>
             <p>
-              Tem um projeto em mente ou uma oportunidade na equipe? Conte o contexto e o que você
-              precisa construir.
+              Conte o que você precisa construir, o que já existe e quais são as principais
+              dificuldades. Também tenho interesse em conversar sobre oportunidades de
+              desenvolvimento full-stack.
             </p>
             <div className="contact-links contact-section__alternatives">
               <a href="https://github.com/SamuelBProenca" target="_blank" rel="noopener noreferrer">

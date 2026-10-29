@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 
-const specialties = ["Backend", "Automação", "Arquitetura", "Infraestrutura"] as const;
+const specialties = [
+  "Interfaces web",
+  "APIs e integrações",
+  "Automação",
+  "Infraestrutura",
+  "Desenvolvimento com IA",
+] as const;
 
 export default function IntroStrip() {
   const [paused, setPaused] = useState(false);

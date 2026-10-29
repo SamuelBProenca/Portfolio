@@ -24,6 +24,14 @@ O GreatMaker usa uma captura real da biblioteca do DesignRef M1, proveniente de 
 
 A busca pública também mostrou repositórios de cursos, exercícios, propostas e versões anteriores de CRUD. Eles não foram promovidos automaticamente à home; os destaques continuam sendo uma decisão editorial explícita.
 
+## Revisão do OctoCards em 28/10/2026
+
+Referência: [commit b467160](https://github.com/SamuelBProenca/OctoCards/commit/b467160150a140bc1f6d19bc99f88fc0b4070333), integrado pelo [PR #15](https://github.com/SamuelBProenca/OctoCards/pull/15), 19 commits após a referência anterior. Conferidos controller, pool de lotes, serviço, configuração, app Express, testes, build e backlog. Foram confirmados limites de entrada, deduplicação, três consultas por lote, rate limit por IP, build compilado e testes HTTP de API/documentação.
+
+Uma cópia isolada e fixada nesse SHA passou na suíte completa de cinco arquivos/33 testes, typecheck e smoke de produção. `npm audit --omit=dev` passou com zero vulnerabilidades; `npm audit --json` retornou código 1 com sete alertas baixos de desenvolvimento. Os [checks Backend CI](https://github.com/SamuelBProenca/OctoCards/actions/runs/40749319560) e [CodeQL](https://github.com/SamuelBProenca/OctoCards/actions/runs/40749319594) estavam aprovados. As [issues #8–#14](https://github.com/SamuelBProenca/OctoCards/issues) foram conferidas abertas.
+
+O texto comercial continua descrevendo uma alpha. Limites por lote/IP não são apresentados como orçamento global; CI não comprova Secret Scanning, e build local não comprova operação pública. A suíte vazia foi removida no upstream no commit `12ab4bc`; nenhum teste do OctoCards foi alterado nesta revisão. Apenas seu registro de fallback foi renovado no portfólio; os outros registros e a curadoria foram preservados.
+
 ## Comportamento do accordion
 
 - Curriculum Studio abre por padrão. Clicar em outro projeto fecha o anterior e mostra seus detalhes.

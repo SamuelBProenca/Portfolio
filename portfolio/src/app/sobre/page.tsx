@@ -15,9 +15,8 @@ export default function AboutPage() {
     <>
       <PageHero
         eyebrow="Sobre / Trajetória"
-        title="MAIS QUE"
-        accent="CÓDIGO."
-        description="Da infraestrutura ao backend, meu foco é simplificar rotinas e construir ferramentas claras. A experiência com operações me ajuda a entender o problema antes de propor uma solução."
+        title="Da infraestrutura ao desenvolvimento full-stack."
+        description="Minha formação em redes e minha experiência com sistemas operacionais deram origem ao interesse por automação e desenvolvimento de software."
       />
       <section className="content-section">
         <div className="container about-page-split">
@@ -32,20 +31,21 @@ export default function AboutPage() {
           </div>
           <div>
             <div className="eyebrow">Prazer, Samuel.</div>
-            <h2 className="subheading">Da infraestrutura para a engenharia de software.</h2>
+            <h2 className="subheading">Trabalhei primeiro com as restrições do ambiente.</h2>
             <p style={{ color: "#bcb8b0", fontSize: "17px", lineHeight: "1.85" }}>
-              Minha experiência em ambientes operacionais me ensinou a enxergar além do código: o
-              custo de uma tarefa repetida, a fragilidade de um processo manual e a importância de
-              ferramentas que funcionem mesmo quando o ambiente não é ideal.
+              Na infraestrutura, lidei com equipamentos, sistemas legados e procedimentos que
+              exigiam verificações frequentes. Parte do meu trabalho passou a ser criar ferramentas
+              para tornar essas rotinas mais consistentes.
             </p>
             <p style={{ color: "#bcb8b0", fontSize: "17px", lineHeight: "1.85" }}>
-              A partir disso, aprofundei meu trabalho em automação, desenvolvimento backend e
-              arquitetura. Estudo para construir sistemas mais claros e duráveis, sem confundir
-              complexidade com qualidade.
+              Com o tempo, ampliei minha atuação para a construção de aplicações web: componentes de
+              interface, APIs, integração entre serviços, persistência e testes. Hoje utilizo IA
+              para apoiar etapas do desenvolvimento e sigo estudando arquitetura e engenharia de
+              software.
             </p>
             <p style={{ marginTop: "30px" }}>
               <Link className="text-link" href="/projetos">
-                Veja essa abordagem nos projetos{" "}
+                Explorar projetos{" "}
                 <span className="arr" aria-hidden="true">
                   ↗
                 </span>
@@ -64,7 +64,7 @@ export default function AboutPage() {
           </div>
           <div className="chronology">
             <div className="chrono-row" data-scroll-reveal>
-              <span>Hoje</span>
+              <span>Experiência profissional</span>
               <strong>Infraestrutura e automação</strong>
               <p>
                 Ferramentas internas, diagnósticos, redes e rotinas que exigem soluções aplicáveis à
@@ -80,11 +80,9 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="chrono-row">
-              <span>Em evolução</span>
-              <strong>Engenharia de software</strong>
-              <p>
-                APIs, arquitetura backend, boas práticas de desenvolvimento e projetos próprios.
-              </p>
+              <span>Projetos atuais</span>
+              <strong>Desenvolvimento full-stack</strong>
+              <p>Aplicações web, APIs, interfaces e ferramentas próprias.</p>
             </div>
           </div>
           <p style={{ marginTop: "36px" }}>

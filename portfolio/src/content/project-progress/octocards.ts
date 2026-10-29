@@ -1,9 +1,12 @@
 import type { ProjectPlan, ProjectReference } from "@/types/project-progress";
 
 const repository = "https://github.com/SamuelBProenca/OctoCards" as const;
-const snapshotSha = "6f9ec4bb8d0ebe6f7ac5c59bcd17bcfe86cd85c9";
+const snapshotSha = "b467160150a140bc1f6d19bc99f88fc0b4070333";
 function code(path: string, label: string): ProjectReference {
   return { kind: "code", label, url: `${repository}/blob/${snapshotSha}/${path}` };
+}
+function issue(number: number, label: string): ProjectReference {
+  return { kind: "issue", label, url: `${repository}/issues/${number}` };
 }
 const service = code("backend/src/services/gitCardService.ts", "Serviço de cards");
 const controller = code("backend/src/controllers/gitCardController.ts", "Controller da API");
@@ -18,9 +21,9 @@ export const octocardsPlan: ProjectPlan = {
   title: "OctoCards",
   repository,
   snapshotSha,
-  reviewedAt: "2026-10-26",
+  reviewedAt: "2026-10-28",
   description:
-    "API em alpha para coletar dados públicos do GitHub e alimentar interfaces próprias. A versão atual inclui cache, seleção de capas, playground opcional e documentação de uso; o plano separa essa implementação dos próximos passos de operação.",
+    "API em alpha para coletar dados públicos do GitHub e alimentar interfaces próprias. Inclui cache, lotes limitados, cota por IP, playground opcional e build compilado. O plano distingue entregas verificadas das pendências de operação e segurança.",
   groups: [
     {
       id: "foundation",
@@ -76,12 +79,12 @@ export const octocardsPlan: ProjectPlan = {
       id: "reliability",
       title: "Confiabilidade e limites",
       description:
-        "Cache e falhas já têm tratamento. Limites de lote e retentativas continuam como propostas.",
+        "Cache, validação e limites por lote e por IP implementados. Retentativas e orçamento compartilhado continuam pendentes.",
       tasks: [
         {
           id: "request-validation",
           title: "Validar entradas da API",
-          status: "planned",
+          status: "completed",
           dependsOn: ["card-endpoints"],
           references: [controller],
           subtasks: [
@@ -96,10 +99,14 @@ export const octocardsPlan: ProjectPlan = {
             {
               id: "batch-limits",
               title: "Limitar o tamanho dos lotes",
-              status: "planned",
+              status: "completed",
               description:
-                "Ainda faltam teto de itens, remoção de duplicatas e uma política explícita de concorrência. A coleta atual percorre os itens em sequência.",
-              references: [code("backend/src/utils/getRepos.ts", "Comportamento atual dos lotes")],
+                "Até dez entradas por lote, query de até 2.048 caracteres e deduplicação preservando ordem. A coleta permite até três repositórios simultâneos por lote, interrompendo novos agendamentos após falha; não é um limite global.",
+              references: [
+                controller,
+                code("backend/src/utils/getRepos.ts", "Concorrência por lote"),
+                code("backend/src/utils/getRepos.test.ts", "Testes da concorrência"),
+              ],
             },
           ],
         },
@@ -148,6 +155,18 @@ export const octocardsPlan: ProjectPlan = {
           ],
         },
         {
+          id: "client-budget",
+          title: "Limitar chamadas por IP e proteger a documentação",
+          status: "completed",
+          description:
+            "A API aplica 12 requisições por minuto por IP como padrão configurável. A documentação tem limite separado de 120 por minuto. Excesso retorna 429 e Retry-After; cache e limites permanecem locais ao processo.",
+          references: [
+            code("backend/src/app.ts", "Limitadores HTTP"),
+            code("backend/src/config/octoConfig.ts", "Configuração e proxies confiáveis"),
+            code("backend/src/routes/app.test.ts", "Testes HTTP de rate limit"),
+          ],
+        },
+        {
           id: "cache-strategy",
           title: "Aplicar cache de curta duração",
           status: "completed",
@@ -165,9 +184,9 @@ export const octocardsPlan: ProjectPlan = {
         {
           id: "automated-tests",
           title: "Construir uma suíte automatizada",
-          status: "planned",
+          status: "completed",
           description:
-            "Os 12 casos do serviço e do controller passaram na revisão. O comando npm test ainda falha porque também encontra o arquivo vazio legado em src/tests.",
+            "O comando npm test completo passou com cinco suítes e 33 testes no commit revisado: serviço, controller, HTTP, configuração e concorrência. A integração GitHub usa mocks; o resultado não certifica disponibilidade pública.",
           references: [code("backend/package.json", "Comando Jest"), serviceTests, controllerTests],
           subtasks: [
             {
@@ -193,12 +212,38 @@ export const octocardsPlan: ProjectPlan = {
         {
           id: "test-command",
           title: "Retirar o arquivo de testes vazio legado",
-          status: "planned",
+          status: "completed",
           description:
-            "O comando Jest inclui src/tests/gitCardService.test.ts, que está vazio e faz a execução completa falhar. Os 12 casos dos outros dois arquivos passam; a correção do comando ou do arquivo continua pendente no OctoCards.",
+            "O commit 12ab4bc removeu o arquivo legado de zero bytes. A suíte completa publicada agora descobre os cinco arquivos de teste existentes e passa sem exclusões locais ou mudança de comando nesta revisão.",
           references: [
-            code("backend/src/tests/gitCardService.test.ts", "Arquivo legado vazio"),
+            {
+              kind: "commit",
+              label: "Remoção do arquivo vazio",
+              url: `${repository}/commit/12ab4bcaa0b1dc2137dafa1da96e5cd787dfde94`,
+            },
             code("backend/package.json", "Seleção de testes pelo Jest"),
+          ],
+        },
+        {
+          id: "compiled-production",
+          title: "Compilar e verificar o servidor de produção",
+          status: "completed",
+          description:
+            "O build compila TypeScript e copia os assets. O comando npm start usa JavaScript compilado; o smoke test verifica API headless, documentação, Swagger e validação de entrada.",
+          references: [
+            code("backend/package.json", "Build e start"),
+            code("backend/scripts/smoke-build.js", "Smoke de produção"),
+          ],
+        },
+        {
+          id: "continuous-checks",
+          title: "Executar CI e análise de código no GitHub",
+          status: "completed",
+          description:
+            "Backend CI e CodeQL passaram no commit revisado. O pipeline cobre testes, tipos, smoke do build e audit de produção. Configurar Secret Scanning e Push Protection é uma pendência separada.",
+          references: [
+            code(".github/workflows/backend-ci.yml", "Workflow de backend"),
+            code(".github/workflows/codeql.yml", "Workflow CodeQL"),
           ],
         },
         {
@@ -211,7 +256,7 @@ export const octocardsPlan: ProjectPlan = {
           references: [
             code("backend/public/GUIA_DO_OCTOCARDS.md", "Guia de uso"),
             code("backend/public/swagger.yaml", "OpenAPI"),
-            code("backend/src/index.ts", "API e playground opcionais"),
+            code("backend/src/app.ts", "API e playground opcionais"),
           ],
         },
         {
@@ -221,6 +266,70 @@ export const octocardsPlan: ProjectPlan = {
           dependsOn: ["api-tests", "cache-strategy"],
           description:
             "Nesta etapa o portfólio consulta o GitHub diretamente e mantém uma referência local. O adaptador do contrato OctoCards está preparado; ativar a API como fonte depende de uma URL publicada e da verificação dessa operação.",
+        },
+      ],
+    },
+    {
+      id: "operational-backlog",
+      title: "Pendências da auditoria",
+      description:
+        "Sete issues abertas no GitHub em 28/10/2026. O total do plano inclui essas pendências; não é uma porcentagem de prontidão para produção.",
+      tasks: [
+        {
+          id: "global-github-budget",
+          title: "Definir orçamento compartilhado de consultas ao GitHub",
+          status: "planned",
+          description:
+            "O limite por IP e o cache são locais ao processo. Ainda falta um orçamento compartilhado para múltiplas instâncias e clientes.",
+          references: [issue(8, "Issue #8 · orçamento compartilhado")],
+        },
+        {
+          id: "global-batch-policy",
+          title: "Decidir falha parcial e concorrência global de lotes",
+          status: "planned",
+          description:
+            "O lote atual preserva ordem e falha por inteiro. Até três consultas por lote não limitam consultas de outros lotes.",
+          references: [issue(9, "Issue #9 · política global de lotes")],
+        },
+        {
+          id: "external-image-privacy",
+          title: "Definir privacidade para imagens externas",
+          status: "planned",
+          description:
+            "Imagens HTTPS de terceiros podem expor a conexão do visitante. A política de carregamento e privacidade continua pendente.",
+          references: [issue(10, "Issue #10 · imagens externas")],
+        },
+        {
+          id: "github-secret-scanning",
+          title: "Confirmar Secret Scanning e Push Protection",
+          status: "planned",
+          description:
+            "CodeQL aprovado não confirma a configuração dessas proteções do repositório. A verificação administrativa permanece aberta.",
+          references: [issue(11, "Issue #11 · proteção de segredos")],
+        },
+        {
+          id: "contract-sync",
+          title: "Sincronizar TypeScript e OpenAPI",
+          status: "planned",
+          description:
+            "O contrato é mantido em dois formatos. A semântica de description como README e a detecção de divergências em CI ainda exigem decisão.",
+          references: [issue(12, "Issue #12 · contrato da API")],
+        },
+        {
+          id: "manual-script",
+          title: "Remover ou documentar o script manual com placeholders",
+          status: "planned",
+          description:
+            "O script manual com nomes de exemplo não faz parte da suíte automatizada e ainda precisa de propósito e parâmetros definidos.",
+          references: [issue(13, "Issue #13 · script manual")],
+        },
+        {
+          id: "dev-advisory",
+          title: "Acompanhar o advisory de desenvolvimento do deepmerge",
+          status: "planned",
+          description:
+            "O audit completo registra sete alertas baixos na árvore de desenvolvimento do Jest. O audit de produção passou sem vulnerabilidades; a atualização transitiva segue acompanhada na issue.",
+          references: [issue(14, "Issue #14 · advisory de desenvolvimento")],
         },
       ],
     },

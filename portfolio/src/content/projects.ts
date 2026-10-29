@@ -4,6 +4,7 @@ export type Project = {
   title: string;
   technologies: string;
   description: string;
+  status?: string;
   repository?: `https://github.com/${string}`;
   detailsHref?: `/projetos/${string}`;
   deployHref?: "/curriculumstudio";
@@ -23,19 +24,21 @@ export type SelectedProject = Omit<Project, "number" | "id"> & {
   };
 };
 
-// OctoCards, GreatMaker, LinkKeeper and IcarusRoc reviewed on 2026-10-26.
+// OctoCards reviewed on 2026-10-28; GreatMaker, LinkKeeper and IcarusRoc on 2026-10-26.
 // Other public work reviewed on 2026-10-19; private product on 2026-10-23.
 // See docs/PROJECT_SOURCES.md for evidence and publication limits.
 export const catalogProjects = [
   {
     id: "curriculum",
     title: "Curriculum Studio",
-    summary: "Perfil e vaga, conectados por evidências reais.",
-    category: "Produto web / Currículos e evidências",
-    headline: "Da vaga ao currículo. Com evidências.",
-    technologies: "Python / Flask / ReportLab / Redis opcional",
+    summary:
+      "Relacione requisitos da vaga aos fatos do perfil e revise o conteúdo antes de gerar o PDF.",
+    category: "Aplicação web · Currículos",
+    headline: "Um currículo para cada vaga, sem inventar experiência.",
+    technologies: "Python / Flask / ReportLab",
+    status: "Implementação local verificada; acesso pelo portfólio",
     description:
-      "O desafio é adaptar um currículo a cada oportunidade sem inventar competências. O Curriculum Studio relaciona os requisitos da vaga aos fatos do perfil, mostra evidências e lacunas e gera o PDF após a revisão. Os dados são processados em memória e os textos das experiências são preservados.",
+      "O Curriculum Studio relaciona os requisitos da vaga aos fatos do perfil, identifica correspondências e lacunas e oferece revisão antes de gerar o currículo em PDF. O conteúdo das experiências é preservado. A página pública foi conferida nesta revisão; o fluxo de geração foi validado localmente na integração original.",
     deployHref: "/curriculumstudio",
     visual: {
       kind: "curriculum",
@@ -47,12 +50,13 @@ export const catalogProjects = [
   {
     id: "greatmaker",
     title: "GreatMaker",
-    summary: "Referências de design transformadas em contexto de projeto.",
-    category: "Produto web / DesignRef M1 implementado",
-    headline: "Da referência à decisão de design.",
+    summary: "Guarde links, imagens, códigos e ideias com notas, tags e decisões de design.",
+    category: "Aplicação full-stack · M1 local",
+    headline: "Referências de design reunidas em um só projeto.",
+    status: "M1 implementado para uso local",
     technologies: "TypeScript / Next.js / React / SQLite / Zod",
     description:
-      "O Reference Hub do GreatMaker reúne links, imagens, trechos de código e ideias em uma sessão anônima. Permite registrar o que manter ou evitar, organizar um brief e exportar o contexto em JSON e Markdown. O M1 funciona localmente, com persistência SQLite e uploads privados. Geração de interfaces e IA continuam fora desta versão.",
+      "O DesignRef reúne referências em uma sessão temporária, permite registrar o que preservar ou evitar, organizar um briefing e exportar as informações em JSON ou Markdown. O M1 funciona localmente com Next.js, TypeScript, SQLite e uploads privados, com testes de integração e de navegador documentados. A geração de interfaces por IA pertence ao planejamento futuro.",
     repository: "https://github.com/SamuelBProenca/GreatMaker",
     visual: {
       kind: "references",
@@ -69,12 +73,13 @@ export const catalogProjects = [
     id: "octocards",
     detailsHref: "/projetos/octocards",
     title: "OctoCards",
-    summary: "Dados do GitHub para interfaces feitas sob medida.",
-    category: "API de dados / Alpha",
-    headline: "Do repositório para o portfólio.",
+    summary: "Consulte repositórios públicos e receba README, linguagens e metadados em JSON.",
+    category: "API REST · Alpha",
+    headline: "Dados do GitHub prontos para alimentar suas próprias interfaces.",
+    status: "Alpha; sem instância pública confirmada",
     technologies: "TypeScript / Node.js / Express / API GitHub",
     description:
-      "Uma fonte de dados para portfólios e catálogos, sem impor a interface. A API reúne README, linguagens e metadados de repositórios públicos, seleciona capas e oferece consultas individuais ou em lote. A alpha inclui cache, tratamento de erros, documentação OpenAPI e um playground opcional.",
+      "A API coleta informações públicas do GitHub e devolve JSON para portfólios e catálogos. Inclui cache em memória, lotes de até dez entradas, concorrência limitada por lote, cota por IP, OpenAPI e playground opcional. A suíte completa passou com 33 testes; build compilado e smoke HTTP também foram verificados. A operação de uma instância pública não foi confirmada.",
     repository: "https://github.com/SamuelBProenca/OctoCards",
     visual: {
       kind: "api",
@@ -90,12 +95,14 @@ export const catalogProjects = [
   {
     id: "linkkeeper",
     title: "LinkKeeper",
-    summary: "Links com categoria, prazo e ciclo de vida explícitos.",
-    category: "Backend / Núcleo e persistência implementados",
-    headline: "Guardar o link. Definir seu ciclo.",
+    summary:
+      "Um núcleo em C# com validação, registros SQLite e regras para expirar, arquivar e renovar links.",
+    category: "Backend · Em desenvolvimento",
+    headline: "Links classificados, com prazo e ciclo de vida.",
+    status: "Núcleo e persistência implementados; produto em evolução",
     technologies: "C# / .NET 10 / SQLite / xUnit",
     description:
-      "Base de um organizador de links em C# com validação de URL, categorias e prazos. A camada SQLite salva e consulta links por proprietário, evita duplicatas por categoria e permite expirar, arquivar e renovar registros. A CLI atual executa somente validação; API, autenticação e integração com WhatsApp seguem planejadas.",
+      "O núcleo do LinkKeeper define categorias, prazos e ciclo de vida dos links. A camada SQLite salva e consulta links por proprietário, além de regras para duplicatas e transições de estado. A CLI atual executa somente validação; API, autenticação e integrações externas continuam planejadas.",
     repository: "https://github.com/SamuelBProenca/LinkKeeper",
     visual: {
       kind: "links",

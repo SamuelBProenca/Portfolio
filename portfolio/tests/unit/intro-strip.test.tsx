@@ -7,12 +7,18 @@ describe("specialty marquee", () => {
   it("exposes specialties once to assistive technology and hides the looping copy", () => {
     render(<IntroStrip />);
     const strip = screen.getByRole("region", { name: "Especialidades" });
-    expect(within(strip).getAllByRole("listitem")).toHaveLength(4);
+    expect(within(strip).getAllByRole("listitem")).toHaveLength(5);
     expect(
       within(strip)
         .getAllByRole("listitem")
         .map((item) => item.textContent),
-    ).toEqual(["Backend+", "Automação+", "Arquitetura+", "Infraestrutura+"]);
+    ).toEqual([
+      "Interfaces web+",
+      "APIs e integrações+",
+      "Automação+",
+      "Infraestrutura+",
+      "Desenvolvimento com IA+",
+    ]);
     expect(within(strip).getAllByRole("list")).toHaveLength(1);
     const groups = strip.querySelectorAll("ul");
     expect(groups).toHaveLength(2);

@@ -69,7 +69,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
             <span className="monogram">SP.</span>
             <span>
               <span className="wordmark__name">Samuel Proença</span>
-              <span className="wordmark__role">Software Engineering / Portfolio</span>
+              <span className="wordmark__role">Desenvolvedor full-stack</span>
             </span>
           </Link>
           <nav className="desktop-nav" aria-label="Menu principal">
@@ -77,7 +77,7 @@ function HeaderContents({ pathname }: { pathname: string }) {
           </nav>
           <div className="header-contact">
             <Link className="contact-outline" href="/#contato" prefetch={false}>
-              Vamos conversar ↗
+              Entrar em contato ↗
             </Link>
             <button
               className="menu-toggle"
