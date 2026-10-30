@@ -34,7 +34,7 @@ test("project details identify the parent navigation section on desktop and touc
   await expect(page).toHaveURL(/\/sobre$/);
   await page.getByRole("link", { name: "Vamos conversar sobre sua equipe ou projeto" }).click();
   await expect(page).toHaveURL(/\/#contato$/);
-  await expect(page.getByRole("form", { name: "Formulário de contato" })).toBeInViewport();
+  await expect(page.getByRole("link", { name: "Enviar e-mail", exact: true })).toBeInViewport();
 });
 
 test("navigation underlines animate on hover and keyboard focus without moving links", async ({
@@ -85,7 +85,7 @@ test("CTA fills maintain contrast and geometry through hover, focus and press", 
 }) => {
   test.skip(isMobile, "Fine-pointer hover states are intentionally disabled on touch.");
   await page.goto("/");
-  for (const selector of [".button-primary", ".contact-outline", ".contact-form__submit"]) {
+  for (const selector of [".button-primary", ".contact-outline", "[data-contact-action]"]) {
     const button = page.locator(selector);
     await button.scrollIntoViewIfNeeded();
     const box = await button.boundingBox();
@@ -151,7 +151,7 @@ test("reduced motion preserves state feedback without animated movement", async 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const durations = await page
-    .locator(".button-primary, .contact-outline, .contact-form__submit, .text-link .arr")
+    .locator(".button-primary, .contact-outline, [data-contact-action], .text-link .arr")
     .evaluateAll((elements) =>
       elements.map((element) => getComputedStyle(element).transitionDuration),
     );
@@ -179,38 +179,31 @@ test("reduced motion preserves state feedback without animated movement", async 
   ).toBe("none");
 });
 
-test("server field errors restore focus after pending inputs are enabled and allow retry", async ({
+test("email action supports keyboard activation without sending mail (OS handoff intercepted)", async ({
   page,
 }) => {
-  let attempts = 0;
-  await page.route("**/api/contact", async (route) => {
-    attempts++;
-    await route.fulfill({
-      status: attempts === 1 ? 400 : 200,
-      contentType: "application/json",
-      body: JSON.stringify(
-        attempts === 1
-          ? { error: "Revise o e-mail.", fields: { email: "Confira o endereço informado." } }
-          : { message: "Mensagem aceita para envio." },
-      ),
-    });
-  });
   await page.goto("/#contato");
-  const form = page.getByRole("form", { name: "Formulário de contato" });
-  await form.getByLabel("Nome completo").fill("Ana Silva");
-  const email = form.getByLabel("E-mail", { exact: true });
-  await email.fill("ana@example.com");
-  await form.getByLabel("Assunto").fill("Novo projeto");
-  await form.getByLabel("Mensagem", { exact: true }).fill("Vamos conversar sobre um novo projeto.");
-  await form.getByRole("button", { name: /Enviar mensagem/ }).click();
-  await expect(email).toBeFocused();
-  await expect(email).toHaveAccessibleDescription("Confira o endereço informado.");
-  await expect(form.getByRole("alert")).toHaveText("Revise o e-mail.");
-  await email.fill("ana.silva@example.com");
-  await form.getByRole("button", { name: /Enviar mensagem/ }).click();
-  await expect(form.getByRole("status")).toHaveText("Mensagem aceita para envio.");
-  await expect(email).not.toHaveAttribute("aria-describedby");
-  expect(attempts).toBe(2);
+  const action = page.getByRole("link", { name: "Enviar e-mail", exact: true });
+  // Capture activation before the OS handler opens. This does not prove email delivery.
+  await action.evaluate((element) => {
+    element.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+        element.setAttribute("data-activated-destination", element.getAttribute("href")!);
+      },
+      { once: true },
+    );
+  });
+  await action.focus();
+  await expect(action).toBeFocused();
+  expect(await action.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe("solid");
+  await action.press("Enter");
+  await expect(action).toHaveAttribute(
+    "data-activated-destination",
+    "mailto:samuelbrito782@gmail.com",
+  );
+  await expect(page).toHaveURL(/\/#contato$/);
 });
 
 test("writing previews keep bookmarked categories without suggesting available articles", async ({

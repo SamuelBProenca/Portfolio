@@ -1,5 +1,7 @@
 # GitHub e Vercel — publicação do portfólio
 
+> Current contact: Google Forms intake is prepared but awaits the owner's published responder URL; direct professional email is available meanwhile. Set `PROJECT_INTAKE_FORM_URL` and rebuild to enable the questionnaire link. The home no longer renders the email form or requires Resend/Redis for its external links. The email-service setup below is retained for future activation. See [the current implementation](CONTACT_INTAKE_2026-10-30.md) and [the email diagnosis](CONTACT_DIAGNOSIS_2026-10-29.md).
+
 ## Diagnóstico do contato
 
 Na preparação local foram encontrados somente `.env.example` e, depois, um `.env.local` de configuração inicial. Nenhuma chave Resend ou credencial Redis estava configurada. Nesse estado, `POST /api/contact` retorna 503; a mensagem exibida pelo formulário é uma falha real, não uma confirmação de envio.
