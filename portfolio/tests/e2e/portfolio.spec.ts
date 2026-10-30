@@ -87,13 +87,13 @@ test("primary navigation reaches every page and closes the mobile menu", async (
   }
 });
 
-test("contact actions expose working email, GitHub and section destinations", async ({
+test("contact actions expose professional email, GitHub and section destinations", async ({
   page,
   isMobile,
 }) => {
   await page.goto("/");
   const contact = page.locator("#contato");
-  await expect(contact.getByRole("link", { name: /e-mail/ })).toHaveAttribute(
+  await expect(contact.getByRole("link", { name: "Enviar e-mail", exact: true })).toHaveAttribute(
     "href",
     "mailto:samuelbrito782@gmail.com",
   );
@@ -207,42 +207,26 @@ test("selected works switches one accordion panel at a time", async ({ page, isM
   await expect(next).toHaveAttribute("aria-expanded", "true");
 });
 
-test("contact form validates, shows loading and confirms acceptance", async ({ page }) => {
-  let count = 0;
-  let release!: () => void;
-  const pending = new Promise<void>((resolve) => {
-    release = resolve;
-  });
-  await page.route("**/api/contact", async (route) => {
-    count++;
-    expect(route.request().postDataJSON()).toMatchObject({
-      name: "Ana Silva",
-      email: "ana@example.com",
-      website: "",
-    });
-    await pending;
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ message: "Mensagem aceita para envio." }),
-    });
+test("contact keeps the number out of view and offers email until the real form is configured", async ({
+  page,
+}) => {
+  const contactRequests: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname === "/api/contact") contactRequests.push(request.url());
   });
   await page.goto("/#contato");
-  const form = page.getByRole("form", { name: "Formulário de contato" });
-  await form.getByRole("button", { name: /Enviar mensagem/ }).click();
-  await expect(form.getByRole("alert")).toContainText("Revise os campos");
-  await expect(form.getByLabel("Nome completo")).toBeFocused();
-  expect(count).toBe(0);
-  await form.getByLabel("Nome completo").fill("Ana Silva");
-  await form.getByLabel("E-mail", { exact: true }).fill("ana@example.com");
-  await form.getByLabel("Assunto").fill("Novo projeto");
-  await form.getByLabel("Mensagem", { exact: true }).fill("Vamos conversar sobre um novo projeto.");
-  await form.getByRole("button", { name: /Enviar mensagem/ }).click();
-  await expect(form.getByRole("button", { name: /Enviando mensagem/ })).toBeDisabled();
-  release();
-  await expect(form.getByRole("status")).toContainText("Mensagem aceita para envio.");
-  await expect(form.getByLabel("Mensagem", { exact: true })).toHaveValue("");
-  expect(count).toBe(1);
+  const contact = page.getByRole("region", { name: /Tem uma aplicação para desenvolver/ });
+  const action = contact.getByRole("link", { name: "Enviar e-mail", exact: true });
+  await expect(action).toBeVisible();
+  await expect(contact.getByText("samuelbrito782@gmail.com", { exact: true })).toBeVisible();
+  await expect(contact.locator('a[href*="wa.me"]')).toHaveCount(0);
+  await expect(contact.getByText(/98958/)).toHaveCount(0);
+  await expect(contact.getByRole("link", { name: "Descrever meu projeto" })).toHaveCount(0);
+  await expect(contact.getByRole("form")).toHaveCount(0);
+  await expect(action).not.toHaveAttribute("target");
+  await expect(action).toHaveAccessibleDescription(/Abre seu aplicativo de e-mail/);
+  await expect(action).toHaveAttribute("href", "mailto:samuelbrito782@gmail.com");
+  expect(contactRequests).toEqual([]);
   await expect(page.locator('#contato a[href^="https://www.linkedin.com/in/"]')).toBeVisible();
 });
 

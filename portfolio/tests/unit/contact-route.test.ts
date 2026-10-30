@@ -40,6 +40,33 @@ async function submit(body: unknown = valid, headers: Record<string, string> = {
 }
 
 describe("contact endpoint", () => {
+  it("accepts the browser's transport host when Next canonicalizes the internal URL", async () => {
+    send.mockResolvedValue(Response.json({ id: "accepted-message" }));
+    const response = await submit(valid, {
+      host: "127.0.0.1:3000",
+      origin: "http://127.0.0.1:3000",
+      "sec-fetch-site": "same-origin",
+    });
+    expect(response.status).toBe(200);
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+  it.each<Record<string, string>>([
+    { host: "127.0.0.1:3000", origin: "http://attacker.example" },
+    { host: "localhost:3000", origin: "http://localhost.attacker.example:3000" },
+    { host: "localhost:3000", origin: "null" },
+    {
+      host: "localhost:3000",
+      origin: "http://attacker.example",
+      "x-forwarded-host": "attacker.example",
+    },
+    { host: "localhost:3000", origin: "http://localhost:3000", "sec-fetch-site": "cross-site" },
+    { host: "localhost:3000/path", origin: "http://localhost:3000" },
+    { host: "user@localhost:3000", origin: "http://localhost:3000" },
+  ])("rejects foreign, opaque, forwarded and malformed origin targets: %j", async (headers) => {
+    const response = await submit(valid, headers);
+    expect(response.status).toBe(403);
+    expect(send).not.toHaveBeenCalled();
+  });
   it("validates all required fields before contacting the provider", async () => {
     const response = await submit({
       name: "",

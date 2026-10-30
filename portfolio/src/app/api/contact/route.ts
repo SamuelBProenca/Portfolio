@@ -2,6 +2,7 @@ import { validateContact, isEmail } from "@/lib/contact/validation";
 import { deliverContact } from "@/lib/contact/delivery.server";
 import { limitContact } from "@/lib/contact/rate-limit.server";
 import { reportContactFailure } from "@/lib/contact/failure.server";
+import { isAllowedContactOrigin } from "@/lib/contact/origin";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -39,14 +40,9 @@ async function readBody(request: Request): Promise<unknown> {
 }
 
 export async function POST(request: Request) {
-  const origin = request.headers.get("origin");
   // Cross-site browser form posts are rejected; non-browser clients still face
   // validation, a honeypot and server-side quotas.
-  if (
-    (origin && origin !== new URL(request.url).origin) ||
-    request.headers.get("sec-fetch-site") === "cross-site"
-  )
-    return reply({ error: "Origem não permitida." }, 403);
+  if (!isAllowedContactOrigin(request)) return reply({ error: "Origem não permitida." }, 403);
   if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json")
     return reply({ error: "Envie os dados em JSON." }, 415);
   let input: unknown;

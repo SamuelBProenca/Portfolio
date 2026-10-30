@@ -81,7 +81,9 @@ O retrato atual foi fornecido pelo proprietário em `samuel hero.png` e converti
 
 ## Contato e hospedagem
 
-O formulário em `/#contato` envia para `POST /api/contact`, com entrega server-side via Resend. Configure `RESEND_API_KEY`, `CONTACT_TO_EMAIL` e `CONTACT_FROM_EMAIL` a partir de `.env.example` e verifique o domínio remetente no Resend.
+The contact section at `/#contato` is prepared for a short project questionnaire hosted in Google Forms, with direct email for recruitment and professional contacts. Set `PROJECT_INTAKE_FORM_URL` to the real published responder link and rebuild. Until the owner creates that form, the section offers the approved email directly. No WhatsApp number is displayed in the section and neither channel calls the email API. See [the implementation and verification record](docs/CONTACT_INTAKE_2026-10-30.md) and [the ready-to-copy form template](docs/GOOGLE_FORMS_MODELO_PTBR.md).
+
+The email form and `POST /api/contact` implementation are retained for future activation, but the home page no longer renders the form. To restore it, configure `RESEND_API_KEY`, `CONTACT_TO_EMAIL` and `CONTACT_FROM_EMAIL` using `.env.example`, verify the sender domain in Resend, and complete delivery testing before exposing the form.
 
 Em serverless ou múltiplas instâncias, configure também `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`. Em um único processo Node persistente, é possível escolher explicitamente `CONTACT_RATE_LIMIT_MODE=memory`; esse modo não é adequado a serverless. Sem configuração válida, o endpoint retorna erro, nunca uma confirmação falsa de envio. A aplicação precisa de runtime Node; não use export estático para o contato.
 

@@ -1,0 +1,81 @@
+.directContact {
+  min-width: 0;
+  padding-top: 4px;
+  max-width: 32rem;
+}
+.directContact p {
+  margin: 0 0 12px;
+  line-height: 1.65;
+}
+.action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 52px;
+  padding: 16px 22px;
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.4;
+  position: relative;
+  isolation: isolate;
+  transition: transform var(--motion-duration) var(--motion-easing);
+}
+.action svg {
+  flex: 0 0 auto;
+}
+.action::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--paper-soft);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-selection) var(--motion-easing);
+}
+.action:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+.action:focus-visible::before,
+.action:active::before {
+  transform: scaleX(1);
+}
+.action:active {
+  transform: translateY(1px);
+}
+:global(:root:not([data-input="touch"])) .action:hover::before {
+  transform: scaleX(1);
+}
+.directContact .help {
+  margin-top: 20px;
+  font-size: 14px;
+  max-width: 46ch;
+}
+.alternatives {
+  margin-top: 32px;
+}
+.professionalContact {
+  margin-top: 28px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.professionalContact a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.professionalContact a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(:root:not([data-motion="full"])) .action,
+  :global(:root:not([data-motion="full"])) .action::before {
+    transition: none;
+  }
+  :global(:root:not([data-motion="full"])) .action:active {
+    transform: none;
+  }
+}
